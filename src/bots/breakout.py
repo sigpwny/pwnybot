@@ -2,7 +2,7 @@
 import discord
 from discord.ext import commands
 import time
-
+import random
 NAME = "breakout"
 VERSION = "1.0.0"
 HELP_STR = '''
@@ -22,6 +22,12 @@ class BreakoutRooms(commands.Cog):
     def __init__(self, client):
         self.client = client
 
+    async def destroy_channels(self, message):
+        channels = message.guild.voice_channels
+        for channel in channels:
+            if 'VOICE' in channel.name:
+                await channel.delete()
+
     @commands.Cog.listener()
     async def on_ready(self):
         print(f"[pwnyBot] {NAME} is online")
@@ -29,9 +35,10 @@ class BreakoutRooms(commands.Cog):
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
         # reaction.user().flatten()
-        if reaction.message.author == self.client.user:
-            await reaction.message.channel.send('I reacted to me?')
-        print(reaction, user)
+        # if reaction.message.author == self.client.user:
+        #     await reaction.message.channel.send('I reacted to me?')
+        # print(reaction, user)
+        pass
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -50,28 +57,50 @@ class BreakoutRooms(commands.Cog):
         elif args[1] == 'ping':
             await message.channel.send("Pong!")
         elif args[1] == 'end':
-            await message.channel.send('Duplicating process...')
+            await self.destroy_channels(message)
+        elif args[1] == 'random':
+            conn_members = next(
+                filter(lambda x: 'WAITING' in x.name, message.guild.voice_channels)).members
+
+            random.shuffle(conn_members)
+            possible_chans = []
+            for channel in message.guild.voice_channels:
+                if '-VOICE-' in channel.name:
+                    possible_chans.append(channel)
+            random.shuffle(possible_chans)
+            for i, member in enumerate(conn_members):
+                await member.move_to(possible_chans[i % len(possible_chans)])
         elif args[1] == 'start':
-            await message.channel.send('Killing process...')
-        else:
+            if len(args) < 3 or not args[2].isdigit():
+                await message.channel.send('!breakout start <N> (name?)')
+                return
+            await self.destroy_channels(message)
+            channel_prefix = message.author.name.split('#')[0]
+            if len(args) >= 4:
+                channel_prefix = args[3]
+            n = int(args[2])
             emojiset = ['0️⃣', '1️⃣', '2️⃣', '3️⃣',
                         '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣']
-            n = 3
-            msg = await message.channel.send("Creating 2 Voice Channels, A, and B. React to go to that one.")
+            msg = await message.channel.send(f"Creating {n} Voice Channels ({''.join(emojiset[:n])}).")
+            await message.guild.create_voice_channel("WAITING-VOICE")
+            # Create a voice channel and reaction for each channel
             chans = []
             for i, e in enumerate(emojiset[:n]):
-                print(e)
                 await msg.add_reaction(e)
-                chan = await message.guild.create_voice_channel(f"VOICE CHANNEL TEST{i}")
+                chan = await message.guild.create_voice_channel(f"{channel_prefix}-VOICE-{i}")
                 chans.append(chan)
 
+            # Ensure that their reaction is one of the channel emojis
             def check_reply(reaction, user):
-                print(reaction, user, message.author)
-                return user == message.author and reaction.emoji in emojiset[:n]
+                return reaction.emoji in emojiset[:n]
 
-            reaction, user = await self.client.wait_for('reaction_add', check=check_reply)
-            await user.move_to(chan[emojiset.index(reaction)])
-            await message.channel.send(reaction)
+            while True:
+                # Every time someone reacts,
+                # Move them to the correct channel, then send emoji of channel
+                reaction, user = await self.client.wait_for('reaction_add', timeout=60*5, check=check_reply)
+                print('Reacted to my message!')
+                await message.channel.send(emojiset.index(reaction.emoji))
+                await user.move_to(chans[emojiset.index(reaction.emoji)])
 
 
 def setup(client):
