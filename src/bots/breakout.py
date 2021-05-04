@@ -7,15 +7,11 @@ NAME = "breakout"
 VERSION = "1.0.0"
 HELP_STR = '''
 ```
-!breakout <number> <prefix> <random/choice>
-!breakout start
-!breakout end
+!breakout start <ROOMS> (prefix) - Creates ROOMS breakout rooms
+!breakout end - Ends all breakout rooms
+!breakout random - Move people into random breakout rooms that are currently waiting
 ```
 '''
-
-# reaction_emoji_map = [
-#     :a::b::regional_indicator_c::regional_indicator_d:
-# ]
 
 
 class BreakoutRooms(commands.Cog):
@@ -34,16 +30,10 @@ class BreakoutRooms(commands.Cog):
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
-        # reaction.user().flatten()
-        # if reaction.message.author == self.client.user:
-        #     await reaction.message.channel.send('I reacted to me?')
-        # print(reaction, user)
         pass
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        print(type(self.client))
-        print(message)
         if message.author == self.client.user:
             return
         txt = message.content
