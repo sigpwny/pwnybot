@@ -3,10 +3,6 @@ import os
 from dotenv import load_dotenv
 import json
 
-# pwnyBot Imports
-from utils import *
-from bots import demo
-
 # Third Party Imports
 import discord
 from discord.ext import commands
