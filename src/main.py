@@ -37,7 +37,9 @@ async def on_ready():
 @client.command()
 async def load(ctx, extension):
 	'''
-	This function loads in a specified cog. 
+	This function loads in a specified cog. Note: cogs are basically just files
+	that we are adding into our code individually. Why is this beneficial? Well,
+	it allows us to 'unnload the file' when we need to do some development.
 	'''
 	client.load_extension(f'cogs.{extension}')
 
