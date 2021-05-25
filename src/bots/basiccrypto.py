@@ -34,6 +34,8 @@ class BasicCrypto(commands.Cog):
                 response = b64encode(args[0])
             elif command == '!b32':
                 response = b32encode(args[0])
+            else:
+                return
             response = f'`{response}`'
         except Exception as e:
             print(f'WARNING: {e} on message: `{message}`')
