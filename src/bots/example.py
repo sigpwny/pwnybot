@@ -35,7 +35,7 @@ class Demo(commands.Cog):
 
         if command == None:
             return
-        print(command)
+
         response = None
 
         # Replace this with your code

@@ -16,7 +16,7 @@ def get_command(message):
     else:
         return message[len(PREFIX):]
 
-class Demo(commands.Cog):
+class Portal(commands.Cog):
     def __init__(self,client):
         self.client = client
 
@@ -29,29 +29,33 @@ class Demo(commands.Cog):
         if message.author == self.client.user:
             return
 
-
         command = get_command(message.content)
 
         if command == None:
             return
         response = None
 
-        # Replace this with your code
-
-        portalChannel = command
-        response = "<:pwnyPortalFrom:846831813720932383>" + portalChannel
+        # Get the portal channel and format the response
+        portalChannel = command[1:]
+        response = "<:pwnyPortalFrom:846831813720932383> " + portalChannel
         portalChannel = command[3:-1]
 
-        portalChannel = self.client.get_channel(int(portalChannel))
+        # Check if portal channel exists, send message in both the channels if so
+        try:
+            portalChannel = self.client.get_channel(int(portalChannel))
+        except:
+            portalChannel = None
         if portalChannel == None:
             response = 'Channel does not exist!'
         else:
             await portalChannel.send('<:pwnyPortalTo:846831813136613376> <#' + str(message.channel.id) + '>')
+
         # If there is no response, return. Otherwise send the response
         if response == None:
             return
         else:
             await message.channel.send(response)
+        # await message.delete() TODO Maybe Enable this???
 
 def setup(client):
-    client.add_cog(Demo(client))
+    client.add_cog(Portal(client))
