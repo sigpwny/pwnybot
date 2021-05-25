@@ -6,6 +6,7 @@ from base64 import b32encode, b64encode
 # REQUIRED INFORMATION for the bot to work!
 NAME = "basiccrypto"
 VERSION = "1.0.0"
+BOT_PREF = "bc"
 
 
 class BasicCrypto(commands.Cog):
@@ -33,6 +34,8 @@ class BasicCrypto(commands.Cog):
                 response = b64encode(args[0])
             elif command == '!b32':
                 response = b32encode(args[0])
+            else:
+                return
             response = f'`{response}`'
         except Exception as e:
             print(f'WARNING: {e} on message: `{message}`')
