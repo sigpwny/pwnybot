@@ -1,26 +1,26 @@
 # Standard Python Imports
 import os
+import sys
 
 # pwnyBot Imports
 from utils import *
-from bots import demo
 
 # Third Party Imports
 import discord
 from discord.ext import commands
 
-OUT_PATH = "./files/"
+OUT_PATH = "./out_files/"
 TOKEN = None
 client = None
 loaded = []
 
 def main():
-	os.chdir("src")
 	print_startup()
 	print_version()
 	
-	TOKEN = load_token("token.key")
-	client = commands.Bot(command_prefix = '$') 
+	TOKEN = load_token("./assets/token.key")
+	client = commands.Bot(command_prefix = get_prefix) 
+	
 
 	@client.command()
 	async def bot(ctx, cmd, name):
@@ -47,11 +47,18 @@ def main():
 				
 	# This is technically cogs but we are calling them bots
 	# Stolen from https://www.youtube.com/watch?v=vQw8cFfZPx0 at 6:00
-	loaded = load_conf()
+	if len(sys.argv) > 1:
+		loaded = load_conf(sys.argv[1])
+	else:
+		loaded = load_conf()
+	
 	for fname in os.listdir('./bots'):
 		if fname.endswith('.py') and fname.split('.py')[0] in loaded:
-			client.load_extension(f'bots.{fname[:-3]}')
-			print("[pwnyBot] Loaded",fname)
+			try:
+				client.load_extension(f'bots.{fname[:-3]}')
+				print("[pwnyBot] Loaded",fname)
+			except Exception as e:
+				print("[pwnyBot] Could not load",fname,"\n" + e)
 
 	client.run(TOKEN)
 
