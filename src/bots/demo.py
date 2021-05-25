@@ -13,7 +13,11 @@ class Demo(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print("[pwnyBot] " + NAME + " is online")
-    
+
+    @commands.command()
+    async def test(self,ctx, content = 'No content found :('):
+        await ctx.send('Demo: `' + content + '`')
+
     @commands.Cog.listener()
     async def on_message(self, message):
         if message.author == self.client.user:

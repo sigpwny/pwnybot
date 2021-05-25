@@ -14,6 +14,7 @@ HELP = """CRYPTO HELP:
 !b64d
 !b32d
 """
+BOT_PREF = "bc"
 
 
 class BasicCrypto(commands.Cog):
