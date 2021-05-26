@@ -80,6 +80,9 @@ async def reload(ctx, extension):
 	'''
 	try:
 		client.unload_extension(f'bots.{extension}')
+	except Exception as _: # This is probably not correct, TODO bug check
+		pass
+	try: 
 		client.load_extension(f'bots.{extension}')
 		await log_and_respond(ctx, 'Re-loaded ' + extension + ' successfully')
 	except Exception as e:

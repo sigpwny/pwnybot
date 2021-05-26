@@ -17,7 +17,7 @@ def get_command(message):
     else:
         return message[len(PREFIX):]
 
-class Demo(commands.Cog):
+class Archive(commands.Cog):
     def __init__(self,client):
         self.client = client
 
