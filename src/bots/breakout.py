@@ -21,20 +21,7 @@ class BreakoutRooms(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        # Init
-        if message.author == self.client.user:
-            return
-        isbreakout = message.lower().startswith('!breakout')
-        args = message.split(' ')
-        if not isbreakout:
-            return
-
-        if args == 1:
-            await message.channel.send(HELP_STR)
-        elif args[1] == 'ping':
-            await message.channel.send("Pong!")
-        else:
-            await message.channel.send("That hasn't been coded yet...")
+        pass
 
 
 def setup(client):

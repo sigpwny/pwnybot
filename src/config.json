@@ -4,6 +4,6 @@
     "CONFIGS": {
         "test": ["example","basiccrypto"],
         "ctf": ["ctfmanage","archive"],
-        "pwnybot": ["archive","breakout"]
+        "pwnybot": ["archive","breakout","bounty"]
     }
 }

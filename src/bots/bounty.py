@@ -4,9 +4,9 @@ Yes there is problably a better way to do it, but unless you are willing to refa
 '''
 import discord
 from discord.ext import commands
-
-NAME = "Demo"
-VERSION = "1.0.0"
+import os, json
+NAME = "bounty"
+VERSION = "1.2.0"
 PREFIX = "!bounty"
 
 '''
@@ -27,8 +27,7 @@ Points are distributed evenly between
 '''
 
 board = {}
-BOARD_PATH = './storage/bountyboard.json'
-
+BOARD_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'storage', 'bountyboard.json')
 bounty_params = ['description','goals','deadline','capacity','hunters','contact','link','repeatable']
 
 usage = {
@@ -63,17 +62,22 @@ def get_command(message):
         return message[len(PREFIX):]
 
 def has_permission(message):
-    role = discord.utils.find(lambda r: r.name == 'Admin',message.guild.roles)
-    return role in message.sender.roles 
+    role = discord.utils.find(lambda r: r.name == 'Developer',message.guild.roles)
+    return role in message.author.roles 
     
 def save_board():
+    print('Saving board...')
     with open(BOARD_PATH, 'w') as f:
-        json.dump(f, board, indent=2)
+        json.dump(board, f, indent=2)
+        
 def load_board():
+    print('Loading board...')
     with open(BOARD_PATH, 'r') as f:
         board = json.load(f)
 
 def generate_bounty(name,value,author,args):
+    if name in board:
+        raise Invalid("Bounty already exists")
     print(name, value, author, args)
     print(board)
     board[name] = {'name': name, 'points': value, 'contact': author}
@@ -91,15 +95,12 @@ async def display_bounty(name, ctx):
     bounty = board.get(name,None)
     print('Bounty', bounty)
     if bounty == None:
-        print("Invalid bounty")
-        return
+        raise Invalid("Invalid bounty")
     embed=discord.Embed(title=name,color=0xe0bb00)
     
     for param in bounty_params:
-        if param in 
-        embed.add_field(name="Contact", value="<@" + str(bounty[
-        
-        ]) + '>', inline=True)
+        if bounty.get(param, None) is not None and param != 'contact':
+            embed.add_field(name=param.capitalize(), value=str(bounty[param]), inline=True)
         
     embed.add_field(name="Contact", value="<@" + str(bounty['contact']) + '>', inline=True)
     await ctx.send(embed=embed)
