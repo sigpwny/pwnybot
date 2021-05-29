@@ -48,7 +48,7 @@ class Portal(commands.Cog):
         if portalChannel == None:
             response = 'Channel does not exist!'
         else:
-            await portalChannel.send('<:pwnyPortalTo:846831813136613376> <#' + str(message.channel.id) + '>')
+            await portalChannel.send('<#' + str(message.channel.id) + '>' + '<:pwnyPortalTo:846831813136613376> ')
 
         # If there is no response, return. Otherwise send the response
         if response == None:
