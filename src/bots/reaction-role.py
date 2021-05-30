@@ -41,6 +41,7 @@ class reactionRoles(commands.Cog):
         await ctx.send('Please reply with a reaction role description!')
         description = await ctx.bot.wait_for('message')
 
+        # Embed
         myEmbed = discord.Embed(
             title = "Reaction Message!",
             description = description.content,
