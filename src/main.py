@@ -3,9 +3,6 @@ import os
 import json
 import sys
 
-# pwnyBot Imports
-
-
 # Third Party Imports
 import discord
 from discord.ext import commands
@@ -14,7 +11,7 @@ from dotenv import load_dotenv
 # Load .env file (should be in src/ folder)
 load_dotenv()
 
-# Openn and setup our config file
+# Open and setup our config file
 f = open('config.json', 'r')
 config = json.load(f)
 load_configs = config['CONFIGS']
