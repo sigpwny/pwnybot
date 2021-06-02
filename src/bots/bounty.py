@@ -137,6 +137,26 @@ async def display_board(ctx,filter="Open"):
         i += 1
     await ctx.send(embed=embed)
                 
+async def display_hunters(ctx):
+    embed=discord.Embed(title=f"Top Bounty Hunters", color=0x9808c4)
+    embed.set_thumbnail(url="https://assets-prd.ignimgs.com/2020/09/16/mandalorian-button-1600277980032.jpg")
+    hunter_dict = {}
+
+    # TODO Presave in the JSON instead of this O[n] operation
+    for bounty in board:
+        hunters = bounty.get('hunters',None)
+        if hunters == None:
+            continue
+        print(f'{bounty["name"]} has {len(bounty["hunters"])} hunter/s')
+        for hunter in hunters:
+            if hunter not in hunter_dict:
+                hunter_dict[hunter] = 0 # TODO make this a dict {"score":X,"claimed":[],"active":[]}
+            if bounty["claimed"]: # TODO Make sure claimed cannot be set by just anyone.
+                hunter_dict[hunter] += bounty['points'] # TODO Divide evenly between hunters???
+    
+    for hunter in hunter_dict.keys():
+        embed.add_field(name=f'<@{hunter}>', value=f'{hunter_dict[hunter]}', inline = True)
+    await ctx.send(embed=embed)
 
 def parse_command_with_quotes(raw_command):
     sections = []
@@ -241,7 +261,10 @@ class Bounty(commands.Cog):
                             response = f'<@{message.author.id}> is now a hunter for {bountyName}'
             elif action in ['list','board']:
                 ctx = await self.client.get_context(message)
-                await display_board(ctx)
+                if len(command) >= 2 and command[1] == 'hunters':
+                    await display_board(ctx)
+                else:
+                    await display_board(ctx)
             elif action == 'help':
                 embed=discord.Embed(title=f"!bounty help", color=0x3238e6)
                 embed.set_thumbnail(url="https://i.imgur.com/RaZwe1F.jpeg")
@@ -266,6 +289,7 @@ class Bounty(commands.Cog):
                 if message.author.id not in bounty['hunters']:
                     raise Invalid(f"Error: You must actually be a bounty hunter for challenge {bountyName}")
                 else:
+                    # TODO PM the Contact to say that @Person requested to claim the bounty, and create a DM between those two people
                     msg = f'<@{message.author.id}> requested to claim the bounty of {bounty["points"]} points for challenge `{bountyName}`.'
                     embed=discord.Embed(title=f"Claim Attempt", color=0xf56942)
                     embed.add_field(name="ALERT!!!",value=msg)
@@ -273,9 +297,14 @@ class Bounty(commands.Cog):
                     approval = await message.channel.send(f'<@{bounty["contact"]}>',embed=embed)
                     await approval.add_reaction('✅')
                     await approval.add_reaction('❌')
-                    #await self.client.wait_for('reaction_add', check=lambda r,u:r.message == message and u == int(bounty["contact"]))
-                    print('bep')
-                    # TODO PM the Contact to say that @Person requested to claim the bounty, and create a DM between those two people
+                    print(bounty['contact'])
+                    reaction,user = await self.client.wait_for('reaction_add', check=lambda r,u: r.emoji in ['✅','❌'])
+                    print(user) #TODO Translate user NAME into user ID
+                    if reaction == '✅':
+                        bounty['claimed'] = True
+                        response = 'Bounty successfully claimed!!!' # TODO Make better
+                    elif reaction == '❌':
+                        response = 'Bounty claim was rejected, try again later!'
             elif action == 'leave':
                 if len(command) >= 3:
                     raise Invalid('Error: Invalid arguments')
