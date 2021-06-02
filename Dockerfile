@@ -10,7 +10,7 @@ RUN apt install -y python3.8
 RUN apt-get -y install python3-pip
 
 # Change into the source directory
-WORKDIR /source
+WORKDIR /bot
 
 # Install requirements
 RUN python3 -m pip install -r requirements.txt

@@ -1,9 +1,0 @@
-{
-    "PREFIX": "$",
-    "VERSION": "1.0.0",
-    "CONFIGS": {
-        "test": ["example","basiccrypto"],
-        "ctf": ["ctfmanage","archive"],
-        "pwnybot": ["archive","breakout","bounty"]
-    }
-}

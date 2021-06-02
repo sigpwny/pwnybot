@@ -1,12 +1,11 @@
 import json
 import discord
 from discord.ext import commands
-
-f = open('config.json', 'r')
-config = json.load(f)
+from bot import config, logger
 
 NAME = "reaction-role"
 VERSION = config["VERSION"]
+
 
 class reactionRoles(commands.Cog):
     '''
@@ -14,6 +13,7 @@ class reactionRoles(commands.Cog):
     allow users to create embedded messages and specify the emojis the users should respond to
     and what role each will add.
     '''
+
     def __init__(self, client):
         '''
         Basic constructor.
@@ -27,9 +27,9 @@ class reactionRoles(commands.Cog):
         Upon ready, the bot will seend out a quick response to the terminal
         to indicate that it is ready.
         '''
-        print("[pwnyBot] " + NAME + " is online")
+        logger.info("[pwnyBot] " + NAME + " is online")
 
-    @commands.command(name='react')
+    @commands.command()
     async def react(self, ctx):
         '''
         This function aims to create an interactive system/loop that asks the user
@@ -43,9 +43,9 @@ class reactionRoles(commands.Cog):
 
         # Embed
         myEmbed = discord.Embed(
-            title = "Reaction Message!",
-            description = description.content,
-            colour = 0x00bd03
+            title="Reaction Message!",
+            description=description.content,
+            colour=0x00bd03
         )
         myEmbed.set_footer(text="Message by: " + ctx.message.author.name)
         reactionMessage = await ctx.send(embed=myEmbed)
@@ -59,6 +59,7 @@ class reactionRoles(commands.Cog):
         #         break
 
         #     await reactionMessage.add_reaction(response.content)
+
 
 def setup(client):
     '''
