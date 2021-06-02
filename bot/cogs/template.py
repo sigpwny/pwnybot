@@ -12,6 +12,11 @@ NAME = "Template"
 class Template(commands.Cog):
     def __init__(self, client):
         self.client = client
+        self.prefix = "$test "
+
+    async def cog_check(self, ctx):
+        success = ctx.prefix == self.prefix
+        return success
 
     @commands.Cog.listener()
     async def on_ready(self):

@@ -187,6 +187,10 @@ class Bounty(commands.Cog):
     def __init__(self, bot):
         logger.debug('Starting Bounty')
         self.bot = bot
+        self.prefix = "$bounty "
+
+    async def cog_check(self, ctx):
+        return ctx.prefix == self.prefix
 
     @commands.Cog.listener()
     async def on_ready(self):

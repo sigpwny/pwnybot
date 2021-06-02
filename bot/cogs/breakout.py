@@ -17,6 +17,10 @@ HELP_STR = '''
 class BreakoutRooms(commands.Cog):
     def __init__(self, client):
         self.client = client
+        self.prefix = "$breakout "
+
+    async def cog_check(self, ctx):
+        return ctx.prefix == self.prefix
 
     async def destroy_channels(self, ctx):
         channels = ctx.guild.voice_channels

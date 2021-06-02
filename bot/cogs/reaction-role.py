@@ -20,6 +20,10 @@ class reactionRoles(commands.Cog):
         @param client The Discord client
         '''
         self.client = client
+        self.prefix = "$react "
+
+    async def cog_check(self, ctx):
+        return ctx.prefix == self.prefix
 
     @commands.Cog.listener()
     async def on_ready(self):

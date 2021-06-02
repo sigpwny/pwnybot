@@ -7,6 +7,10 @@ class Manager(commands.Cog):
     def __init__(self, bot):
         logger.debug('Starting Manager')
         self.bot = bot
+        self.prefix = "$"
+
+    async def cog_check(self, ctx):
+        return ctx.prefix == self.prefix
 
     @commands.command()
     async def unload(self, ctx, extension):

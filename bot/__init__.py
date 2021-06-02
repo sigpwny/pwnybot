@@ -43,9 +43,15 @@ class PwnyBot(commands.Bot):
     async def on_member_join(self, member):
         pass
 
-    # More general client handling can be added here
+# This callable returns a list of prefixes
+
+
+def get_prefixes(bot, message):
+    s_prefixes = sorted((cog.prefix for cog in bot.cogs.values()),
+                        key=lambda x: len(x), reverse=True)
+    return s_prefixes
 
 
 # Export client
 client = PwnyBot(
-    command_prefix=config['PREFIX'], activity=Game(name="Online!"))
+    command_prefix=get_prefixes, activity=Game(name="Online!"))

@@ -1,5 +1,4 @@
 {
-    "PREFIX": "$",
     "COG_PREFIX": "bot.cogs",
     "VERSION": "1.0.0",
     "CONFIGS": {
