@@ -13,7 +13,9 @@ EMOTE_TO = '<:pwnyPortalTo:846831813136613376> '
 class Portal(commands.Cog):
     def __init__(self, client):
         self.client = client
-        self.prefix = '$portal '
+        self.prefix = '$'
+        self.portal_from = None
+        self.portal_from_message = None
 
     async def cog_check(self, ctx):
         return ctx.prefix == self.prefix
@@ -22,22 +24,22 @@ class Portal(commands.Cog):
     async def on_ready(self):
         logger.info(f"[pwnyBot] {self.__class__.__name__} is online")
 
-    @commands.command()
-    async def portal(self, ctx, channel):
+    @commands.command(aliases=['p'])
+    async def portal(self, ctx):
         if ctx.author == self.client.user:
             return
 
-        # Get the portal channel and format the response
-        response = EMOTE_FROM + channel
-
-        # Check if portal channel exists, send message in both the channels if so
-        try:
-            portalChannel = self.client.get_channel(int(channel))
-            await ctx.channel.send(response)
-            await portalChannel.send(f'<#{ctx.channel.id}>' + EMOTE_TO)
-        except Exception:
-            response = 'Channel does not exist!'
-            await ctx.channel.send(response)
+        if self.portal_from is None:
+            # This is the original portal, just set variable
+            self.portal_from = ctx.channel.id
+            self.portal_from_message = ctx.message
+        else:
+            # This is the 'to' portal, do magic.
+            await self.client.get_channel(self.portal_from).send(EMOTE_FROM + f'<#{ctx.channel.id}>')
+            await ctx.send(f'<#{self.portal_from}>' + EMOTE_TO)
+            self.portal_from = None
+            await ctx.message.delete()
+            await self.portal_from_message.delete()
 
 
 def setup(client):
