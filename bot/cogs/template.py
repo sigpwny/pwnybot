@@ -1,31 +1,28 @@
 '''
-pwnyBot skeleton code. Please use this as a skeleton for any commands you intend to add.
-Yes there is problably a better way to do it, but unless you are willing to refactor EVERYTHING, then dont mess with it.
+This class is intended to be used as a template to create other cogs. Copy paste, then modify
 '''
 import discord
 from discord.ext import commands
 from bot import logger
 
-NAME = "Template"
+# Each 'bot' is actually a cog. Docs here: https://discordpy.readthedocs.io/en/stable/ext/commands/cogs.html
 
 
 class Template(commands.Cog):
     def __init__(self, client):
         self.client = client
-        self.prefix = "$test "
+        self.prefix = "$test "  # Note the space
 
+    # Runs before any command is checked in this cog
     async def cog_check(self, ctx):
-        success = ctx.prefix == self.prefix
-        return success
+        return ctx.prefix == self.prefix
 
+    # An event listener. Docs here: https://discordpy.readthedocs.io/en/stable/api.html#discord-api-events
     @commands.Cog.listener()
     async def on_ready(self):
-        logger.info("[pwnyBot] " + NAME + " is online")
+        logger.info(f"[pwnyBot] {self.__class__.__name__} is online")
 
-    @commands.command()
-    async def demo(self, ctx):
-        await ctx.send('Demo response!')
-
+    # A command. Docs here: https://discordpy.readthedocs.io/en/stable/ext/commands/commands.html
     @commands.command()
     async def ping(self, ctx):
         await ctx.send('Pong!')

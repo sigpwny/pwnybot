@@ -3,8 +3,8 @@ from discord.ext import commands
 import time
 import random
 from bot import EMOJI_NUMS, logger
-NAME = "breakout"
-VERSION = "1.0.0"
+
+
 HELP_STR = '''
 ```
 !breakout start <ROOMS> (prefix) - Creates ROOMS breakout rooms
@@ -30,7 +30,7 @@ class BreakoutRooms(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        logger.info(f"[pwnyBot] {NAME} is online")
+        logger.info(f"[pwnyBot] {self.__class__.__name__} is online")
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):

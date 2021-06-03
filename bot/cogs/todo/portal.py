@@ -5,9 +5,7 @@ Yes there is problably a better way to do it, but unless you are willing to refa
 import discord
 from discord.ext import commands
 from bot import logger
-NAME = "pwnyPortal"
-VERSION = "1.0.0"
-PREFIX = "!portal"
+
 EMOTE_FROM = "<:pwnyPortalFrom:846831813720932383> "
 EMOTE_TO = '<:pwnyPortalTo:846831813136613376> '
 
@@ -22,7 +20,7 @@ class Portal(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        logger.info("[pwnyBot] " + NAME + " is online")
+        logger.info(f"[pwnyBot] {self.__class__.__name__} is online")
 
     @commands.command()
     async def portal(self, ctx, channel):

@@ -2,9 +2,6 @@ import discord
 from discord.ext import commands
 from bot import logger
 
-NAME = "ctfmanage"
-VERSION = "1.0.0"
-
 help_command = commands.DefaultHelpCommand(
     no_category='Commands'
 )
@@ -20,7 +17,7 @@ class CTFManage(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        logger.info("[pwnyBot] " + NAME + " is online")
+        logger.info(f"[pwnyBot] {self.__class__.__name__} is online")
 
     @commands.command(help='Creates category and channels for new ctf event.')
     async def new(self, ctx, ctfname):

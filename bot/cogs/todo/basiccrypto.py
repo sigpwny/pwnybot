@@ -4,9 +4,6 @@ from discord.ext import commands
 from base64 import b32encode, b64encode
 from bot import logger
 # REQUIRED INFORMATION for the bot to work!
-NAME = "basiccrypto"
-VERSION = "1.0.0"
-BOT_PREF = "bc"
 
 
 class BasicCrypto(commands.Cog):
@@ -15,7 +12,7 @@ class BasicCrypto(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        logger.info("[pwnyBot] " + NAME + " is online")
+        logger.info(f"[pwnyBot] {self.__class__.__name__} is online")
 
     @commands.Cog.listener()
     async def on_message(self, message):

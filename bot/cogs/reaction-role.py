@@ -3,9 +3,6 @@ import discord
 from discord.ext import commands
 from bot import config, logger
 
-NAME = "reaction-role"
-VERSION = config["VERSION"]
-
 
 class reactionRoles(commands.Cog):
     '''
@@ -27,11 +24,7 @@ class reactionRoles(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        '''
-        Upon ready, the bot will seend out a quick response to the terminal
-        to indicate that it is ready.
-        '''
-        logger.info("[pwnyBot] " + NAME + " is online")
+        logger.info(f"[pwnyBot] {self.__class__.__name__} is online")
 
     @commands.command()
     async def react(self, ctx):

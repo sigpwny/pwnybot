@@ -12,6 +12,25 @@ class Manager(commands.Cog):
     async def cog_check(self, ctx):
         return ctx.prefix == self.prefix
 
+    # Note: this runs regardless of cog_check
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx, error):
+        if ctx.prefix == '$':
+            pass
+        """The event triggered when an error is raised while invoking a command."""
+        # Note specific command _error handling exists, this is just faster
+        if isinstance(error, (commands.BadArgument, commands.MissingRequiredArgument)):
+            await ctx.send(f'That command is invalid. The error was: {error} {ctx.message.content}')
+        elif isinstance(error, commands.CommandNotFound):
+            if ctx.prefix != '$':
+                await ctx.send(f'{error}')
+        else:
+            await ctx.send(f'Uh oh: {error}. {type(error)}')
+
+    @commands.Cog.listener()
+    async def on_error(self, ctx, error):
+        await ctx.send(f'Normal error: {error}')
+
     @commands.command()
     async def unload(self, ctx, extension):
         '''

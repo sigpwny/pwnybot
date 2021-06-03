@@ -185,7 +185,6 @@ class Invalid(Exception):
 
 class Bounty(commands.Cog):
     def __init__(self, bot):
-        logger.debug('Starting Bounty')
         self.bot = bot
         self.prefix = "$bounty "
 
@@ -194,19 +193,10 @@ class Bounty(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
+        logger.debug('Loading board...')
         load_board()
-        logger.debug("[pwnyBot] " + NAME + " is online")
-
-    @commands.Cog.listener()
-    async def on_command_error(self, ctx, error):
-        """The event triggered when an error is raised while invoking a command."""
-        # Note specific command _error handling exists, this is just faster
-        if isinstance(error, (commands.BadArgument, commands.MissingRequiredArgument)):
-            await ctx.send(f'a bounty bot error up {error} {ctx.message}')
-        elif isinstance(error, Invalid):
-            await ctx.send(f'We threw an error, but you still messed up {error}')
-        else:
-            await ctx.send(f'We threw an error, but idk what it is {error}')
+        logger.debug('Done.')
+        logger.info(f"[pwnyBot] {self.__class__.__name__} is online")
 
     @commands.command()
     async def create(self, ctx, name, points, *args):
@@ -232,7 +222,7 @@ class Bounty(commands.Cog):
                 await ctx.send(response)
             else:
                 raise Invalid(
-                    f'Error: Unable to locate bounty {arg1}')
+                    f'Error: Unable to locate bounty {bounty_name}')
 
     @commands.command()
     async def info(self, ctx, bounty_name):
@@ -240,13 +230,13 @@ class Bounty(commands.Cog):
             await display_bounty(bounty_name, ctx)
         else:
             raise Invalid(
-                f'Error: Unable to locate bounty {arg1}')
+                f'Error: Unable to locate bounty {bounty_name}')
 
     @commands.command()
     async def join(self, ctx, bounty_name):
         if board.get(bounty_name, None) is None:
             raise Invalid(
-                f'Error: Unable to locate bounty {arg1}')
+                f'Error: Unable to locate bounty {bounty_name}')
         else:
             if board[bounty_name].get('hunters', None) is None:
                 board[bounty_name]['hunters'] = []

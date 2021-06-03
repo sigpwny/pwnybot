@@ -29,13 +29,12 @@ class PwnyBot(commands.Bot):
         for cog in os.listdir(os.path.join('bot', 'cogs')):
             if cog.endswith('.py'):
                 extension = cog[:-3]
-                logger.debug(extension)
                 self.bot_dict[extension] = True
                 try:
                     self.load_extension(f'{config["COG_PREFIX"]}.{extension}')
                 except Exception as e:
                     logger.error(e)
-                logger.info(f'{extension}')
+                logger.info(f'{extension} initially loaded')
 
     async def on_ready(self):
         pass
@@ -49,6 +48,7 @@ class PwnyBot(commands.Bot):
 def get_prefixes(bot, message):
     s_prefixes = sorted((cog.prefix for cog in bot.cogs.values()),
                         key=lambda x: len(x), reverse=True)
+    logger.debug('')
     return s_prefixes
 
 
