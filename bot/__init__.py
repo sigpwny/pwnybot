@@ -21,7 +21,7 @@ logging.basicConfig(level=logging.DEBUG, format='%(message)s')
 logger = logging.getLogger('pwnybot')
 
 # Set levels
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 logging.getLogger('discord').setLevel(logging.WARNING)
 logging.getLogger('asyncio').setLevel(logging.WARNING)
 

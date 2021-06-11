@@ -31,6 +31,10 @@ class Template(commands.Cog):
     async def sum(self, ctx, *numbers):
         await ctx.send(sum(map(int, numbers)))
 
+    @commands.command()
+    async def echo(self, ctx, *args):
+        await ctx.send(' '.join(args))
+
 
 def setup(client):
     client.add_cog(Template(client))

@@ -1,14 +1,8 @@
-'''
-pwnyBot skeleton code. Please use this as a skeleton for any commands you intend to add.
-Yes there is problably a better way to do it, but unless you are willing to refactor EVERYTHING, then dont mess with it.
-'''
 import discord
 from discord.ext import commands
 from bot import logger
 import os
 import json
-
-NAME = "bounty"
 
 
 '''
@@ -153,7 +147,7 @@ async def display_board(ctx, filter="Open"):
 
 
 async def display_hunters(ctx):
-    embed = discord.Embed(title=f"Top Bounty Hunters", color=0x9808c4)
+    embed = discord.Embed(title="Top Bounty Hunters", color=0x9808c4)
     embed.set_thumbnail(
         url="https://assets-prd.ignimgs.com/2020/09/16/mandalorian-button-1600277980032.jpg")
     hunter_dict = {}
@@ -197,6 +191,14 @@ class Bounty(commands.Cog):
         load_board()
         logger.debug('Done.')
         logger.info(f"[pwnyBot] {self.__class__.__name__} is online")
+
+    @commands.Cog.listener()
+    async def on_message(self, msg):
+        # await msg.channel.send('Does it reload this too')
+        # if msg.ctx.prefix == self.prefix:
+        #     pass
+        # Save bounty board
+        pass
 
     @commands.command()
     async def create(self, ctx, name, points, *args):
