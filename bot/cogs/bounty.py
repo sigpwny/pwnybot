@@ -207,8 +207,7 @@ class Bounty(commands.Cog):
                 name, points, ctx.author.id, args)
             await ctx.send(f'Successfully added bounty `{name}`')
         else:
-            raise Invalid(
-                f"You do not have permission to execute `create`")
+            raise Invalid("You do not have permission to execute `create`")
 
         if board == None:
             load_board()
@@ -221,8 +220,7 @@ class Bounty(commands.Cog):
                 response = 'Successfully removed bounty ' + bounty_name
                 await ctx.send(response)
             else:
-                raise Invalid(
-                    f'Error: Unable to locate bounty {bounty_name}')
+                raise Invalid(f'Error: Unable to locate bounty {bounty_name}')
 
     @commands.command()
     async def info(self, ctx, bounty_name):

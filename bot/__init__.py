@@ -16,10 +16,14 @@ load_dotenv(os.path.join('data', '.env'))
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 
 # Set logging up
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG, format='%(message)s')
+
 logger = logging.getLogger('pwnybot')
-logger.setLevel(logging.DEBUG)
+
+# Set levels
+logger.setLevel(logging.INFO)
 logging.getLogger('discord').setLevel(logging.WARNING)
+logging.getLogger('asyncio').setLevel(logging.WARNING)
 
 
 class PwnyBot(commands.Bot):
