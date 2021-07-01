@@ -50,7 +50,8 @@ class PwnyBot(commands.Bot):
 
 
 def get_prefixes(bot, message):
-    s_prefixes = sorted((cog.prefix for cog in bot.cogs.values()),
+    raw_prefixes = ([cog.prefix] if isinstance(cog.prefix, str) else cog.prefix for cog in bot.cogs.values())
+    s_prefixes = sorted([i for s in raw_prefixes for i in s],
                         key=lambda x: len(x), reverse=True)
     logger.debug('')
     return s_prefixes
