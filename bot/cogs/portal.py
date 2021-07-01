@@ -25,10 +25,18 @@ class Portal(commands.Cog):
         logger.info(f"[pwnyBot] {self.__class__.__name__} is online")
 
     @commands.command(aliases=['p'])
-    async def portal(self, ctx):
+    async def portal(self, ctx, location=None):
         if ctx.author == self.client.user:
             return
-
+        if location is not None:
+            try:
+                await self.client.get_channel(int(location[2:-1])).send(EMOTE_FROM + f'<#{ctx.channel.id}>')
+                await ctx.send(f'{location}' + EMOTE_TO)
+                await ctx.message.delete()
+            except ValueError:
+                await ctx.send(f'Channel "{location}" not found.')
+                await ctx.message.delete()
+            return
         if self.portal_from is None:
             # This is the original portal, just set variable
             self.portal_from = ctx.channel.id
