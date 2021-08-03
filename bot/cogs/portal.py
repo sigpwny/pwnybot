@@ -13,18 +13,18 @@ EMOTE_TO = '<:pwnyPortalTo:846831813136613376> '
 class Portal(commands.Cog):
     def __init__(self, client):
         self.client = client
-        self.prefix = '$'
+        self.prefixes = ['$']
         self.portal_from = None
         self.portal_from_message = None
 
-    async def cog_check(self, ctx):
-        return ctx.prefix == self.prefix
+    def cog_check(self, ctx):
+        return ctx.prefix in self.prefixes
 
-    @commands.Cog.listener()
+    @ commands.Cog.listener()
     async def on_ready(self):
         logger.info(f"[pwnyBot] {self.__class__.__name__} is online")
 
-    @commands.command(aliases=['p'])
+    @ commands.command(aliases=['p'])
     async def portal(self, ctx, location=None):
         if ctx.author == self.client.user:
             return

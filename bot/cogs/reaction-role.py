@@ -17,16 +17,16 @@ class reactionRoles(commands.Cog):
         @param client The Discord client
         '''
         self.client = client
-        self.prefix = "$react "
+        self.prefixes = ["$react "]
 
-    async def cog_check(self, ctx):
-        return ctx.prefix == self.prefix
+    def cog_check(self, ctx):
+        return ctx.prefix in self.prefixes
 
-    @commands.Cog.listener()
+    @ commands.Cog.listener()
     async def on_ready(self):
         logger.info(f"[pwnyBot] {self.__class__.__name__} is online")
 
-    @commands.command()
+    @ commands.command()
     async def react(self, ctx):
         '''
         This function aims to create an interactive system/loop that asks the user

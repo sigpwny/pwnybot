@@ -10,16 +10,16 @@ help_command = commands.DefaultHelpCommand(
 class CTFManage(commands.Cog):
     def __init__(self, client):
         self.client = client
-        self.prefix = "$ctf "
+        self.prefixes = ["$ctf "]
 
-    async def cog_check(self, ctx):
-        return ctx.prefix == self.prefix
+    def cog_check(self, ctx):
+        return ctx.prefix in self.prefixes
 
-    @commands.Cog.listener()
+    @ commands.Cog.listener()
     async def on_ready(self):
         logger.info(f"[pwnyBot] {self.__class__.__name__} is online")
 
-    @commands.command(help='Creates category and channels for new ctf event.')
+    @ commands.command(help='Creates category and channels for new ctf event.')
     async def new(self, ctx, ctfname):
         guild = ctx.guild  # define guild
 
@@ -47,7 +47,7 @@ class CTFManage(commands.Cog):
         else:
             await ctx.send('You already created this event.')
 
-    @commands.Cog.listener()
+    @ commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.errors.CheckFailure):
             await ctx.send('You do not have the correct role for this command.')

@@ -75,6 +75,7 @@ def load_board():
     except TypeError:
         raise Invalid('Could not load board.')
 
+
 def generate_bounty(name, value, author, args):
     print('We did it boys')
     if name in board:
@@ -92,6 +93,7 @@ def generate_bounty(name, value, author, args):
         # logger.debug(param, argv)
         if param in bounty_params:
             board[name][param] = argv
+
 
 async def display_bounty(name, ctx):
     bounty = board.get(name, None)
@@ -149,6 +151,7 @@ async def display_board(ctx, filter="Open"):
         i += 1
     await ctx.send(embed=embed)
 
+
 class Invalid(Exception):
     pass
 
@@ -156,10 +159,10 @@ class Invalid(Exception):
 class Bounty(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.prefix = ["$bounty ", "$b "]
+        self.prefixes = ["$bounty ", "$b "]
 
-    async def cog_check(self, ctx):
-        return ctx.prefix in self.prefix
+    def cog_check(self, ctx):
+        return ctx.prefix in self.prefixes
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -175,9 +178,11 @@ class Bounty(commands.Cog):
         else:
             save_board()
             print('Saved board.')
+
     @commands.Cog.listener()
     async def on_message(self, msg):
         pass
+
     @commands.command()
     async def create(self, ctx, name, points, *args):
         self.update_board()
@@ -189,7 +194,6 @@ class Bounty(commands.Cog):
             await ctx.send(f'Successfully added bounty `{name}`')
         else:
             raise Invalid("You do not have permission to execute `create`")
-
 
     @commands.command()
     async def scoreboard(self, ctx):
@@ -204,6 +208,7 @@ class Bounty(commands.Cog):
                             value=f'{board["hunters"][hunter]}', inline=True)
 
         await ctx.send(embed=embed)
+
     @commands.command()
     async def remove(self, ctx, bounty_name):
         self.update_board()

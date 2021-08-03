@@ -7,13 +7,13 @@ class Manager(commands.Cog):
     def __init__(self, bot):
         logger.debug('Starting Manager')
         self.bot = bot
-        self.prefix = "$"
+        self.prefixes = ["$"]
 
-    async def cog_check(self, ctx):
-        return ctx.prefix == self.prefix
+    def cog_check(self, ctx):
+        return ctx.prefix in self.prefixes
 
     # Note: this runs regardless of cog_check
-    @commands.Cog.listener()
+    @ commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         if ctx.prefix == '$':
             pass
@@ -27,14 +27,14 @@ class Manager(commands.Cog):
         else:
             await ctx.send(f'Uh oh: {error}. {type(error)}')
 
-    @commands.Cog.listener()
+    @ commands.Cog.listener()
     async def on_error(self, ctx, error):
         await ctx.send(f'Normal error: {error}')
 
-    @commands.command()
+    @ commands.command()
     async def unload(self, ctx, extension):
         '''
-        This function unloads in a specified cog. 
+        This function unloads in a specified cog.
         '''
         try:
             if extension == 'manager':
@@ -45,7 +45,7 @@ class Manager(commands.Cog):
         except Exception as e:
             await ctx.send('Could not un-load ' + extension + ': `' + str(e) + '`')
 
-    @commands.command(aliases=['r'])
+    @ commands.command(aliases=['r'])
     async def reload(self, ctx, extension=None):
         '''
         This function unloads and load a specified cog
@@ -63,7 +63,7 @@ class Manager(commands.Cog):
         except Exception as e:
             await ctx.send(f'Could not reload {ext}: `{e}`')
 
-    @commands.command()
+    @ commands.command()
     async def load(self, ctx, extension):
         '''
         This function loads a specified cog
@@ -75,7 +75,7 @@ class Manager(commands.Cog):
         except Exception as e:
             await ctx.send(f'Could not load {extension}: `{e}`')
 
-    @commands.command()
+    @ commands.command()
     async def botlist(self, ctx):
         try:
             response = "> __Current Bot List__\n"
