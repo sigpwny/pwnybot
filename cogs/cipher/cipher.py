@@ -3,7 +3,13 @@ from string import ascii_lowercase, ascii_uppercase
 from discord.ext import commands
 from discord.ext.commands import Bot
 
-from lib.util import subcommand_decorator
+from lib.util import subcommand_decorator, Timeout
+from ciphey import decrypt
+from ciphey.iface import Config
+from ciphey import iface
+from rich.console import Console
+
+console = Console(color_system=None, no_color=True, width=120)
 
 
 class ClassicCiphers:
@@ -51,6 +57,25 @@ class Cipher(commands.Cog):
             result = ClassicCiphers.caesar(message, int(key))
 
         await ctx.send(f"```\n{result}\n```")
+
+    @subcommand_decorator({'message': {'description': 'The message to encrypt/decrypt'}})
+    async def auto(self, ctx, message: str):
+        '''
+        Decodes message using ciphey
+        '''
+        await ctx.defer()
+        await ctx.send('Decoding using ciphey for 10 seconds...')
+        try:
+            with Timeout(seconds=10):
+                config = Config().library_default().complete_config()
+                res = config.objs["searcher"].search(message)
+                body = iface.pretty_search_results(res)
+                with console.capture() as capture:
+                    console.print(body)
+
+                await ctx.send(f'```\n{capture.get()}\n```')
+        except TimeoutError:
+            await ctx.send('Could not decrypt :/')
 
     @subcommand_decorator({'message': {'description': 'The message to encrypt/decrypt'}})
     async def rot13(self, ctx, message: str):
