@@ -1,6 +1,2 @@
-# key files
-*.key
-__pycache__
-*.env
 .env
-storage
+script.py
