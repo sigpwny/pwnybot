@@ -13,14 +13,13 @@ from discord_slash import SlashCommand, SlashContext
 
 import aiohttp
 
-from lib.util import setup_logger
+from lib.util import logger
 
 from dotenv import load_dotenv
 
 load_dotenv()
 
 # Setup logging
-logger = setup_logger(logging.INFO)
 
 
 # Setup bot

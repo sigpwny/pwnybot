@@ -155,3 +155,6 @@ def setup_logger(level: int) -> RootLogger:
     logger.addHandler(stream_handler)
 
     return logger
+
+
+logger = setup_logger(logging.INFO)
