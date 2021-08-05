@@ -28,7 +28,7 @@ def execute_untrusted(code):
 
     def safe_import(name, *args, **kwargs):
         whitelist = ['math', 'json', 'string', 're',
-                     'random', 'datetime', 'itertools', 'time', 'requests']
+                     'random', 'datetime', 'itertools', 'time']
         if name in whitelist:
             return __import__(name, *args, **kwargs)
         raise ImportError(

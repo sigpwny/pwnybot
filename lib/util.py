@@ -7,7 +7,7 @@ from discord_slash.utils.manage_commands import create_option
 import inspect
 from discord_slash.model import SlashCommandOptionType as OptionType
 from functools import wraps
-from lib.config import GUILD_ID
+from lib.config import GUILD_IDS
 option_types = set(item.value for item in OptionType)
 
 
@@ -53,7 +53,7 @@ def command_decorator(args):
         ] if len(options) > 0 else None
         help_wrapper = cog_ext.cog_slash(
             name=command.__name__,
-            guild_ids=[GUILD_ID],
+            guild_ids=GUILD_IDS,
             description=command.__doc__,
             options=options,
         )
@@ -101,7 +101,7 @@ def subcommand_decorator(args):
         ] if len(options) > 0 else None
         help_wrapper = cog_ext.cog_subcommand(
             base=class_lower,
-            guild_ids=[GUILD_ID],
+            guild_ids=GUILD_IDS,
             name=command.__name__,
             description=command.__doc__,
             options=options,
