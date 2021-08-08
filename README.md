@@ -12,9 +12,27 @@ DISCORD_TOKEN=ODM4OTA4ODUwODM2NzM0MDAy.YJB8wA.V_CXXXXXXXXXXX
 CTFD_TOKEN=dd91d85dd2e53c597884b80b3a9cf4b75fXXXXXXXXXXXXX
 ```
 
+### Running Locally
+
+```
+docker-compose up --build -d pwnybot
+```
+
+Alternatively, set the environment variables on your machine then run:
+
+```
+pip install --no-cache-dir -r requirements.txt
+python3 main.py
+```
+### Using on another SSH server
+
 In github, set these environment variables:
 
 + `SSH_PRIVATE_KEY`
 + `SERVER_USER`
 + `SERVER_IP`
 + `SSH_KNOWN_HOSTS` - (run `ssh-keyscan host` on server)
+
+### Using elsewhere
+
+Set `GUILD_IDS` and `INTERNAL_CTFD_URL` in `lib/config.py`.

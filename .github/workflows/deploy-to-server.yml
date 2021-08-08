@@ -20,5 +20,6 @@ jobs:
           SSH_KEY_PATH: ${{ github.workspace }}/../private.key
       - name: Check out repository code
         uses: actions/checkout@v2
-      - name: Redeploy latest code
-        run: cat deploy.sh | ssh -i $SSH_KEY_PATH {{secrets.SERVER_USER}}@${{secrets.SERVER_IP}}
+      - name: SSH into server & redeploy latest code
+        run: cat deploy.sh | ssh -i $SSH_KEY_PATH ${{secrets.SERVER_USER}}@${{secrets.SERVER_IP}}
+        shell: bash

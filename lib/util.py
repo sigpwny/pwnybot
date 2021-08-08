@@ -8,6 +8,7 @@ import inspect
 from discord_slash.model import SlashCommandOptionType as OptionType
 from functools import wraps
 from lib.config import GUILD_IDS
+
 option_types = set(item.value for item in OptionType)
 
 
