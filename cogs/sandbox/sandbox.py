@@ -17,8 +17,6 @@ from RestrictedPython import safe_globals
 from RestrictedPython import utility_builtins
 from RestrictedPython.PrintCollector import PrintCollector
 import builtins
-import math
-import json
 from lib.util import Timeout
 from .zope_sandbox import protected_inplacevar
 
@@ -26,13 +24,9 @@ from .zope_sandbox import protected_inplacevar
 def execute_untrusted(code):
     """Interprets the given python code inside a safe execution environment"""
 
-    def safe_import(name, *args, **kwargs):
-        whitelist = ['math', 'json', 'string', 're',
-                     'random', 'datetime', 'itertools', 'time']
-        if name in whitelist:
-            return __import__(name, *args, **kwargs)
-        raise ImportError(
-            f'Only allowed to import from `{", ".join(whitelist)}`')
+    def no_import(name, *args, **kwargs):
+        raise ImportError('No imports for you!!!')
+
     code += "\nresults = printed"
     byte_code = compile_restricted(
         code,
@@ -40,9 +34,13 @@ def execute_untrusted(code):
         mode="exec",
     )
     policy_globals = {**safe_globals, **utility_builtins}
+    print(policy_globals)
+
+    del policy_globals['string']
+    del policy_globals['random']
     policy_globals['__builtins__']['__metaclass__'] = type
     policy_globals['__builtins__']['__name__'] = type
-    policy_globals['__builtins__']['__import__'] = safe_import
+    policy_globals['__builtins__']['__import__'] = no_import
     policy_globals['_getattr_'] = Guards.safer_getattr
     policy_globals['_getiter_'] = Eval.default_guarded_getiter
     policy_globals['_getitem_'] = Eval.default_guarded_getitem
@@ -62,7 +60,8 @@ class Sandbox(commands.Cog):
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
 
-    @command_decorator({})
+    # @command_decorator({})
+    # this command is disabled until further notice
     async def exec(self, ctx: SlashContext) -> None:
         """Execute your last code block message in a restricted python environment.
 
@@ -73,17 +72,22 @@ class Sandbox(commands.Cog):
             last_code_block = [m for m in messages if m.author.id ==
                                ctx.author.id and m.content.startswith('```')][0].content
         except IndexError:
-            await ctx.send(f":x: You haven't made any code blocks!")
+            await ctx.send(":x: You haven't made any code blocks!")
             return
         code = last_code_block[3:-3]
-
+        if code.startswith('python'):
+            code = code[len('python'):]
+        elif code.startswith('py'):
+            code = code[len('py'):]
         try:
             with Timeout(seconds=10):
                 exec_result = execute_untrusted(code)
-                await ctx.send(f':white_check_mark: Executed:```\n{code}\n```\nResult:```{exec_result if exec_result else "None"}```')
+                await ctx.send(f':white_check_mark: Executed:```py\n{code}\n```\nResult:```{exec_result if exec_result else "None"}```')
 
         except TimeoutError:
             await ctx.send(':x: Error: Timeout of 10s exceeded')
+        except SystemExit:
+            await ctx.send(':x: Error: Don\'t kill the bot please :(')
 
 
 def setup(bot: Bot) -> None:

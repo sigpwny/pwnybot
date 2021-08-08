@@ -1,5 +1,6 @@
 discord-py-slash-command
 discord.py
 requests
-python-dotenv
 ciphey
+RestrictedPython
+aiohttp

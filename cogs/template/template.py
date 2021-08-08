@@ -10,21 +10,20 @@ class Template(commands.Cog):
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
 
-    @command_decorator({'message': {'description': "The message (description is optional)"}})
-    async def ping(self, ctx: SlashContext, message: str, times: int = 1) -> None:
-        """The ping command is pretty epic!! (/echo)
+    @command_decorator({'message': {'description': "The message"}})
+    async def repeat(self, ctx: SlashContext, message: str, times: int = 1) -> None:
+        """The repeat command is pretty epic!! (/repeat)
 
         """
         for _ in range(times):
             await ctx.send(message)
 
-    @subcommand_decorator({'message': {'description': "The message (description is optional)"}})
-    async def sub_echo(self, ctx: SlashContext, message: str, times: int = 1) -> None:
-        """The sub_echo command is pretty epic!! (/template sub_echo)
+    @subcommand_decorator({'message': {'description': "The message"}})
+    async def echo(self, ctx: SlashContext, message: str) -> None:
+        """The message command is pretty epic!! (/template message)
 
         """
-        for _ in range(times):
-            await ctx.send(message)
+        await ctx.send(message)
 
 
 def setup(bot: Bot) -> None:

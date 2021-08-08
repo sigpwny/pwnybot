@@ -1,0 +1,7 @@
+version: '3.9' # optional since v1.27.0
+services:
+  pwnybot:
+    build: .
+    environment:
+      - DISCORD_TOKEN
+      - CTFD_TOKEN
