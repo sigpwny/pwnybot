@@ -27,7 +27,7 @@ jobs:
       - name: Connect to university VPN & ssh in
         run: |
           echo "$VPN_PASSWORD" | sudo openconnect --authgroup=1_SplitTunnel_Default --user=$VPN_USERNAME vpn.illinois.edu --passwd-on-stdin & 
-          echo "cat deploy.sh | ssh -i $SSH_KEY_PATH $SERVER_USER@$SERVER_IP"
+          sleep 5
           cat deploy.sh | ssh -i $SSH_KEY_PATH "$SERVER_USER@$SERVER_IP"
         shell: bash
         env:
