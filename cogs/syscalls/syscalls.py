@@ -75,8 +75,8 @@ class Syscalls(commands.Cog):
         for table in os.listdir(basedir):
             self.tables[table] = SyscallTable(os.path.join(basedir, table))
 
-    @command_decorator({'arch': {'description': "Architecture", "choices": ["x86", "x64", "arm", "armthumb"]},
-                        'syscall': {'description': 'Syscall name or ID (decimal and hex are supported)'}})
+    @command_decorator(arch={'description': "Architecture", "choices": ["x86", "x64", "arm", "armthumb"]},
+                       syscall={'description': 'Syscall name or ID (decimal and hex are supported)'})
     async def syscalls(self, ctx: SlashContext, arch: str, syscall: str) -> None:
         """Show information for a syscall from a specific architecture.
         """

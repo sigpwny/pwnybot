@@ -3,6 +3,9 @@ from discord.ext import commands
 from discord_slash import SlashContext
 from lib.util import command_decorator, subcommand_decorator, logger
 import os
+import discord
+from discord_slash.model import SlashCommandOptionType as OptionType
+from lib.config import DEFAULT_ARCHIVE_ID
 
 
 class Manager(commands.Cog):
@@ -12,10 +15,11 @@ class Manager(commands.Cog):
         self.bot = bot
 
     @commands.has_permissions(manage_channels=True, manage_roles=True)
-    @command_decorator({'cog': {'description': "The name of the cog. Default: All cogs"}})
+    @subcommand_decorator(cog={'description': "The name of the cog. Default: All cogs"})
     async def reload(self, ctx: SlashContext, cog: str = None) -> None:
         """Reloads a cog, effectively refreshing those slash commands
         """
+        await ctx.defer()
         if cog is None:
             for cog in os.listdir("cogs"):
                 try:
@@ -30,6 +34,42 @@ class Manager(commands.Cog):
             self.bot.reload_extension(f'cogs.{cog}.{cog}')
             logger.info(f"Reloaded extension: {cog}")
             await ctx.send(f'Cog "{cog}" was reloaded.')
+
+    @commands.bot_has_permissions(manage_channels=True)
+    @commands.has_permissions(manage_channels=True, manage_roles=True)
+    @subcommand_decorator(channel={'description': 'The channel to archive'}, archive_location={'description': 'The location to send the archival to'})
+    async def archive(self, ctx: SlashContext, channel: OptionType.CHANNEL, archive_location: OptionType.CHANNEL = None) -> None:
+        """Archives any channel but requires more permissions. This is dangerous, use with caution.
+
+        """
+        await ctx.defer()
+        is_not_text = discord.utils.get(
+            ctx.guild.text_channels, id=channel.id) is None
+        if is_not_text:
+            ctx.send('That is not a text channel.')
+            return
+
+        if archive_location is None:
+            archive_location = discord.utils.get(
+                ctx.guild.text_channels, id=DEFAULT_ARCHIVE_ID)
+
+        fname = f"{channel.category.name}_{channel.name}_log.txt"
+        with open(fname, 'w') as fw:
+            async for m in channel.history(limit=10000, oldest_first=True):
+                fw.write(
+                    f"[{m.created_at.replace().strftime('%Y-%m-%d %I:%M %p')} UTC] {m.author.display_name}: {m.content}\n{' '.join(map(lambda x: x.url, m.attachments))}\n"
+                )
+
+        await archive_location.send(
+            embed=discord.Embed(
+                title=f"The channel '{channel.name}' has been archived. A text log of the conversation is attached."
+            ),
+            file=discord.File(fname),
+        )
+
+        os.remove(fname)
+
+        await channel.delete()
 
 
 def setup(bot: Bot) -> None:

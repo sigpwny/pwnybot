@@ -39,7 +39,7 @@ class Xkcd(commands.Cog):
         data = await self.get_latest()
         return data.get("num")
 
-    @subcommand_decorator({})
+    @subcommand_decorator()
     async def random(self, ctx: SlashContext) -> None:
         """A random XKCD
 
@@ -51,7 +51,7 @@ class Xkcd(commands.Cog):
         embed = self.generate_embed(data)
         await ctx.send(embed=embed)
 
-    @subcommand_decorator({})
+    @subcommand_decorator()
     async def latest(self, ctx: SlashContext) -> None:
         """The most recent XKCD
 
@@ -61,7 +61,7 @@ class Xkcd(commands.Cog):
         embed = self.generate_embed(data)
         await ctx.send(embed=embed)
 
-    @subcommand_decorator({'num': {'description': "XKCD comic num"}})
+    @subcommand_decorator(num={'description': "XKCD comic num"})
     async def num(self, ctx: SlashContext, num: int) -> None:
         """Get XKCD by number
 

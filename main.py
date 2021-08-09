@@ -28,8 +28,9 @@ slash = SlashCommand(bot, sync_commands=True, sync_on_cog_reload=True)
 async def on_ready() -> None:
 
     logger.info(f"{bot.user} connected.")
-    logger.info(f"Hello, pwnybot is now live... do with that information what you will")
-    await bot.change_presence(activity=discord.Game(name="/help"))
+    logger.info(
+        f"Hello, pwnybot is now live... do with that information what you will")
+    await bot.change_presence(activity=discord.Game(name="Online!"))
 
 
 @bot.event
@@ -51,8 +52,7 @@ async def on_slash_command_error(ctx: SlashContext, err: Exception) -> None:
         await ctx.send("HTTP Client error.")
     else:
         await ctx.send(f"❌ An error has occured")
-
-    await ctx.send(f"\n```{''.join(traceback.format_exception(type(err), err, err.__traceback__))}```")
+        await ctx.send(f"\n```{''.join(traceback.format_exception(type(err), err, err.__traceback__))}```")
     traceback.print_exception(
         type(err), err, err.__traceback__, file=sys.stderr)
 

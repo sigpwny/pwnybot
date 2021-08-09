@@ -31,7 +31,7 @@ def get_option_type(annotation):
         raise NotImplementedError("That type isn't implemented yet")
 
 
-def command_decorator(args):
+def command_decorator(**kwargs):
     def wrapper(command):
         # Dynamically generate options list
         parameters = list(inspect.signature(command).parameters.items())[2:]
@@ -45,7 +45,7 @@ def command_decorator(args):
                 "description": f'{parameter.name} (missing description)'
             }
 
-            merged_data = {**data, **args.get(parameter.name, {})}
+            merged_data = {**data, **kwargs.get(parameter.name, {})}
             options.append(merged_data)
 
         options = [
@@ -78,7 +78,7 @@ def run_from_ctf(func):
     return wrapper
 
 
-def subcommand_decorator(args):
+def subcommand_decorator(**kwargs):
     def wrapper(command):
         # Dynamically generate options list
         parameters = list(inspect.signature(command).parameters.items())[2:]
@@ -91,7 +91,7 @@ def subcommand_decorator(args):
                 "description": f'{parameter.name} (missing description)'
             }
 
-            merged_data = {**data, **args.get(parameter.name, {})}
+            merged_data = {**data, **kwargs.get(parameter.name, {})}
             options.append(merged_data)
 
         class_lower = command.__qualname__.split('.')[0].lower()

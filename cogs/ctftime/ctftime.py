@@ -25,7 +25,7 @@ class CTFTime(commands.Cog):
         self.session = requests.Session()
         self.session.headers.update({'user-agent': USER_AGENT})
 
-    @subcommand_decorator({})
+    @subcommand_decorator()
     async def current(self, ctx: SlashContext) -> None:
         """Show ongoing CTF competitions"""
 
@@ -78,13 +78,16 @@ class CTFTime(commands.Cog):
         if no_running_events:
             await ctx.send("No ongoing CTFs for the moment.")
 
-    @subcommand_decorator({
-        'limit': {'description': 'Number of events to fetch (default: 3, max: 100)'}
-    })
+    @subcommand_decorator(
+        limit={
+            'description': 'Number of events to fetch (default: 3, max: 15)'}
+    )
     async def upcoming(self, ctx: SlashContext, limit: int = 3) -> None:
         """Show upcoming events
         """
         await ctx.defer()
+
+        limit = min(limit, 15)
         no_upcoming_events = True
 
         url = f'https://ctftime.org/api/v1/events/?limit={limit}&start={round(time.time())}'
@@ -131,9 +134,9 @@ class CTFTime(commands.Cog):
         if no_upcoming_events:
             await ctx.send("No upcoming CTFs.")
 
-    @subcommand_decorator({
-        'year': {'description': "Leaderboard's year"}
-    })
+    @subcommand_decorator(
+        year={'description': "Leaderboard's year"}
+    )
     async def top(self, ctx: SlashContext, year: int = None) -> None:
         """Shows CTFtime's leaderboard for a specific year"""
         await ctx.defer()

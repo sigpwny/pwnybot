@@ -26,10 +26,8 @@ jobs:
           sudo apt install -y openconnect
       - name: Connect to university VPN & ssh in
         run: |
-          echo "$VPN_PASSWORD" | sudo openconnect --authgroup=1_SplitTunnel_Default --user=$VPN_USERNAME vpn.illinois.edu --passwd-on-stdin &
-          cat $SSH_KEY_PATH 
+          echo "$VPN_PASSWORD" | sudo openconnect --authgroup=1_SplitTunnel_Default --user=$VPN_USERNAME vpn.illinois.edu --passwd-on-stdin & 
           sleep 5
-          echo "cat deploy.sh | ssh -i $SSH_KEY_PATH $SERVER_USER@$SERVER_IP"
           cat deploy.sh | ssh -i $SSH_KEY_PATH "$SERVER_USER@$SERVER_IP"
         shell: bash
         env:

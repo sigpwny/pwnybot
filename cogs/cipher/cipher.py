@@ -43,7 +43,7 @@ class Cipher(commands.Cog):
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
 
-    @subcommand_decorator({'message': {'description': 'The message to encrypt/decrypt'}, 'key': {'description': 'The key to encrypt/decrypt with (default: brute-force)'}})
+    @subcommand_decorator(message={'description': 'The message to encrypt/decrypt'}, key={'description': 'The key to encrypt/decrypt with (default: brute-force)'})
     async def caesar(self, ctx, message: str, key: int = None):
         '''
         Caesar Cipher
@@ -58,7 +58,7 @@ class Cipher(commands.Cog):
 
         await ctx.send(f"```\n{result}\n```")
 
-    @subcommand_decorator({'message': {'description': 'The message to encrypt/decrypt'}})
+    @subcommand_decorator(message={'description': 'The message to encrypt/decrypt'})
     async def auto(self, ctx, message: str):
         '''
         Decodes message using ciphey
@@ -77,14 +77,14 @@ class Cipher(commands.Cog):
         except TimeoutError:
             await ctx.send('Could not decrypt :/')
 
-    @subcommand_decorator({'message': {'description': 'The message to encrypt/decrypt'}})
+    @subcommand_decorator(message={'description': 'The message to encrypt/decrypt'})
     async def rot13(self, ctx, message: str):
         '''
         Rot13 (caesar) cipher
         '''
         await ctx.send(f"```\n{ClassicCiphers.rot13(message)}\n```")
 
-    @subcommand_decorator({'message': {'description': 'The message to encrypt/decrypt'}})
+    @subcommand_decorator(message={'description': 'The message to encrypt/decrypt'})
     async def atbash(self, ctx, message: str):
         '''
         Atbash cipher

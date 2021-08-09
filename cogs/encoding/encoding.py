@@ -16,9 +16,9 @@ class Encoding(commands.Cog):
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
 
-    @subcommand_decorator({'mode': {'description': 'Operation mode', "choices": ["encode", "decode"]}, 'data': {
+    @subcommand_decorator(mode={'description': 'Operation mode', "choices": ["encode", "decode"]}, data={
         'description': "The data to encode or decode"
-    }})
+    })
     async def base64(self, ctx: SlashContext, mode: str, data: str) -> None:
         '''Base64 encoding/decoding'''
         if mode == "encode":
@@ -32,9 +32,9 @@ class Encoding(commands.Cog):
 
         await ctx.send(f"```\n{data}\n```")
 
-    @subcommand_decorator({'mode': {'description': 'Operation mode', "choices": ["encode", "decode"]}, 'data': {
+    @subcommand_decorator(mode={'description': 'Operation mode', "choices": ["encode", "decode"]}, data={
         'description': "The data to encode or decode"
-    }})
+    })
     async def base32(self, ctx: SlashContext, mode: str, data: str) -> None:
         '''Base32 encoding/decoding'''
         if mode == "encode":
@@ -50,9 +50,9 @@ class Encoding(commands.Cog):
 
         await ctx.send(f"```\n{data}\n```")
 
-    @subcommand_decorator({'mode': {'description': 'Operation mode', "choices": ["encode", "decode"]}, 'data': {
+    @subcommand_decorator(mode={'description': 'Operation mode', "choices": ["encode", "decode"]}, data={
         'description': "The data to encode or decode"
-    }})
+    })
     async def binary(self, ctx: SlashContext, mode: str, data: str) -> None:
         '''Binary encoding/decoding'''
         if mode == "encode":
@@ -72,9 +72,9 @@ class Encoding(commands.Cog):
 
         await ctx.send(f"```\n{data}\n```")
 
-    @subcommand_decorator({'mode': {'description': 'Operation mode', "choices": ["encode", "decode"]}, 'data': {
+    @subcommand_decorator(mode={'description': 'Operation mode', "choices": ["encode", "decode"]}, data={
         'description': "The data to encode or decode"
-    }})
+    })
     async def hex(self, ctx: SlashContext, mode: str, data: str) -> None:
         '''Hex encoding/decoding'''
 
@@ -92,9 +92,9 @@ class Encoding(commands.Cog):
 
         await ctx.send(f"```\n{data}\n```")
 
-    @subcommand_decorator({'mode': {'description': 'Operation mode', "choices": ["encode", "decode"]}, 'data': {
+    @subcommand_decorator(mode={'description': 'Operation mode', "choices": ["encode", "decode"]}, data={
         'description': "The data to encode or decode"
-    }})
+    })
     async def url(self, ctx: SlashContext, mode: str, data: str) -> None:
         '''URL encoding/decoding'''
         if mode == "encode":

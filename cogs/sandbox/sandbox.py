@@ -38,6 +38,7 @@ def execute_untrusted(code):
 
     del policy_globals['string']
     del policy_globals['random']
+    del policy_globals['whrandom']
     policy_globals['__builtins__']['__metaclass__'] = type
     policy_globals['__builtins__']['__name__'] = type
     policy_globals['__builtins__']['__import__'] = no_import
@@ -60,8 +61,8 @@ class Sandbox(commands.Cog):
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
 
-    # @command_decorator({})
     # this command is disabled until further notice
+    @command_decorator()
     async def exec(self, ctx: SlashContext) -> None:
         """Execute your last code block message in a restricted python environment.
 
