@@ -19,7 +19,7 @@ class Template(commands.Cog):
             await ctx.send(message)
 
     @subcommand_decorator({'message': {'description': "The message"}})
-    async def echo(self, ctx: SlashContext, message: str) -> None:
+    async def say(self, ctx: SlashContext, message: str) -> None:
         """The message command is pretty epic!! (/template message)
 
         """
