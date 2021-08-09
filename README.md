@@ -2,7 +2,13 @@
 
 SigPWNYs discord bot
 
-### Setup
+### Using elsewhere
+
++ Generate your own DISCORD_TOKEN and add to your server.
++ Set `GUILD_IDS` to your own discord server in `lib/config.py`.
++ Then follow one of the guides below
+
+### Set for docker
 
 Create a `.env` file like this:
 
@@ -12,27 +18,22 @@ DISCORD_TOKEN=ODXXXXA4XXXXOXXXXM0XXAx.YXXXwA.V_CXXXXXXXXXXX
 CTFD_TOKEN=dXXXX85dXXXX3c5XXXX4b80bXXXXf4b75fXXXXXXXXXXXXX
 ```
 
-### Running Locally
-
 ```
 docker-compose up --build -d pwnybot
 ```
 
-Alternatively, set the environment variables on your machine then run:
+### Local testing
+
 
 ```
+git clone git@github.com:sigpwny/pwnybot.git
+cd pwnybot
 pip install --no-cache-dir -r requirements.txt
-python3 main.py
+DISCORD_TOKEN=ODXXXXA4XXXXOXXXXM0XXAx.YXXXwA.V_CXXXXXXXXXXX CTFD_TOKEN=dXXXX85dXXXX3c5XXXX4b80bXXXXf4b75fXXXXXXXXXXXXX python3 main.py
 ```
-### Using on another SSH server
 
-In github, set these environment variables:
+### Modifying pwnybot on sigpwny
 
-+ `SSH_PRIVATE_KEY`
-+ `SERVER_USER`
-+ `SERVER_IP`
-+ `SSH_KNOWN_HOSTS` - (run `ssh-keyscan host` on server)
-
-### Using elsewhere
-
-Set `GUILD_IDS` and `INTERNAL_CTFD_URL` in `lib/config.py`.
++ For small fixes, push them directly to master.
++ Otherwise, please contact @reteps so he can disable the docker while you run it locally and test. This prevents duplicating commands / other weirdness.
++ 
