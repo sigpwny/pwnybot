@@ -10,9 +10,9 @@ jobs:
       - name: Create SSH key
         run: |
           mkdir -p ~/.ssh/
-          echo "$SSH_PRIVATE_KEY" > ../private.key
+          echo "$SSH_PRIVATE_KEY" | base64 -d > ../private.key
           sudo chmod 600 ../private.key
-          echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          echo "$SSH_KNOWN_HOSTS" | base64 -d > ~/.ssh/known_hosts
         shell: bash
         env:
           SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
@@ -20,6 +20,22 @@ jobs:
           SSH_KEY_PATH: ${{ github.workspace }}/../private.key
       - name: Check out repository code
         uses: actions/checkout@v2
-      - name: SSH into server & redeploy latest code
-        run: cat deploy.sh | ssh -i $SSH_KEY_PATH ${{secrets.SERVER_USER}}@${{secrets.SERVER_IP}}
+      - name: Install openconnect
+        run: |
+          sudo apt update
+          sudo apt install -y openconnect
+      - name: Connect to university VPN & ssh in
+        run: |
+          echo "$VPN_PASSWORD $VPN_USERNAME"
+          echo "$VPN_PASSWORD" | sudo openconnect --authgroup=1_SplitTunnel_Default --user=$VPN_USERNAME vpn.illinois.edu --passwd-on-stdin &
+          cat $SSH_KEY_PATH 
+          sleep 5
+          echo "cat deploy.sh | ssh -i $SSH_KEY_PATH $SERVER_USER@$SERVER_IP"
+          cat deploy.sh | ssh -i $SSH_KEY_PATH "$SERVER_USER@$SERVER_IP"
         shell: bash
+        env:
+          VPN_PASSWORD: ${{secrets.VPN_PASSWORD}}
+          VPN_USERNAME: ${{secrets.VPN_USERNAME}}
+          SSH_KEY_PATH: ${{ github.workspace }}/../private.key
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          SERVER_IP: ${{ secrets.SERVER_IP }}
