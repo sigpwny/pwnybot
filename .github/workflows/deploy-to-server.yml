@@ -26,7 +26,6 @@ jobs:
           sudo apt install -y openconnect
       - name: Connect to university VPN & ssh in
         run: |
-          echo "$VPN_PASSWORD $VPN_USERNAME"
           echo "$VPN_PASSWORD" | sudo openconnect --authgroup=1_SplitTunnel_Default --user=$VPN_USERNAME vpn.illinois.edu --passwd-on-stdin &
           cat $SSH_KEY_PATH 
           sleep 5
