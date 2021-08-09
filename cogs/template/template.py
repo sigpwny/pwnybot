@@ -10,7 +10,7 @@ class Template(commands.Cog):
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
 
-    @command_decorator({'message': {'description': "The message"}, 'times': {'description': "# of times max 3"}})
+    @command_decorator(message={'description': "The message"}, times={'description': "# of times max 3"})
     async def repeat(self, ctx: SlashContext, message: str, times: int = 1) -> None:
         """The repeat command is pretty epic!! (/repeat)
 
@@ -18,7 +18,7 @@ class Template(commands.Cog):
         for _ in range(min(times, 3)):
             await ctx.send(message)
 
-    @subcommand_decorator({'message': {'description': "The message"}})
+    @subcommand_decorator(message={'description': "The message"})
     async def say(self, ctx: SlashContext, message: str) -> None:
         """The message command is pretty epic!! (/template message)
 

@@ -18,7 +18,7 @@ class CTF(commands.Cog):
     @commands.bot_has_permissions(manage_channels=True, manage_roles=True)
     @commands.has_permissions(manage_channels=True, manage_roles=True)
     @commands.guild_only()
-    @subcommand_decorator({'name': {'description': "The name of the CTF"}})
+    @subcommand_decorator(name={'description': "The name of the CTF"})
     async def create(self, ctx: SlashContext, name: str) -> None:
         '''
         Creates a new CTF!
@@ -47,7 +47,7 @@ class CTF(commands.Cog):
     @commands.bot_has_permissions(manage_channels=True)
     @commands.has_permissions(manage_channels=True)
     @commands.guild_only()
-    @subcommand_decorator({})
+    @subcommand_decorator()
     @run_from_ctf
     async def delete(self, ctx: SlashContext) -> None:
         '''
@@ -64,7 +64,7 @@ class CTF(commands.Cog):
     @commands.bot_has_permissions(manage_channels=True)
     @commands.has_permissions(manage_channels=True)
     @commands.guild_only()
-    @subcommand_decorator({})
+    @subcommand_decorator()
     @run_from_ctf
     async def archive(self, ctx: SlashContext) -> None:
         '''
@@ -106,7 +106,7 @@ class CTF(commands.Cog):
     @commands.bot_has_permissions(manage_roles=True)
     @commands.has_permissions(manage_roles=True)
     @commands.guild_only()
-    @subcommand_decorator({'who': {'description': "The role / member to add to the CTF"}})
+    @subcommand_decorator(who={'description': "The role / member to add to the CTF"})
     @run_from_ctf
     async def add(self, ctx: SlashContext, who: OptionType.MENTIONABLE) -> None:
         '''
@@ -134,7 +134,7 @@ class CTF(commands.Cog):
     @commands.bot_has_permissions(manage_roles=True)
     @commands.has_permissions(manage_roles=True)
     @commands.guild_only()
-    @subcommand_decorator({'who': {'description': "The role / member to add to the CTF"}})
+    @subcommand_decorator(who={'description': "The role / member to add to the CTF"})
     @run_from_ctf
     async def remove(self, ctx: SlashContext, who: OptionType.MENTIONABLE) -> None:
         '''
@@ -156,7 +156,7 @@ class CTF(commands.Cog):
 
         await ctx.send(f'Removed <@{who}> from this CTF!')
 
-    @command_decorator({'who': {'description': "The person to give to"}, 'points': {'description': "How many points"}})
+    @command_decorator(who={'description': "The person to give to"}, points={'description': "How many points"})
     async def give(self, ctx: SlashContext, who: OptionType.USER, points: int):
         '''
         Give a member points on internal CTFd

@@ -16,7 +16,7 @@ class Chal(commands.Cog):
 
     @commands.bot_has_permissions(manage_channels=True)
     @commands.guild_only()
-    @subcommand_decorator({'name': {'description': "The name of the challenge to create"}})
+    @subcommand_decorator(name={'description': "The name of the challenge to create"})
     @run_from_ctf
     async def create(self, ctx: SlashContext, name: str) -> None:
         """
@@ -48,7 +48,7 @@ class Chal(commands.Cog):
         # await ctx.send('done')
 
     @commands.guild_only()
-    @subcommand_decorator({})
+    @subcommand_decorator()
     @run_from_ctf
     async def solve(self, ctx: SlashContext) -> None:
         """Solves a CTF challenges
@@ -59,7 +59,7 @@ class Chal(commands.Cog):
     @commands.guild_only()
     @commands.bot_has_permissions(manage_channels=True)
     @commands.has_permissions(manage_channels=True)
-    @subcommand_decorator({})
+    @subcommand_decorator()
     @run_from_ctf
     async def delete(self, ctx: SlashContext) -> None:
         """
@@ -75,7 +75,7 @@ class Chal(commands.Cog):
     @commands.guild_only()
     @commands.bot_has_permissions(manage_channels=True)
     @commands.has_permissions(manage_channels=True)
-    @subcommand_decorator({})
+    @subcommand_decorator()
     @run_from_ctf
     async def archive(self, ctx: SlashContext) -> None:
         """Archives a CTF challenge and puts data in log channel

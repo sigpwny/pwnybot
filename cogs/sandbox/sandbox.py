@@ -60,7 +60,7 @@ class Sandbox(commands.Cog):
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
 
-    # @command_decorator({})
+    # @command_decorator()
     # this command is disabled until further notice
     async def exec(self, ctx: SlashContext) -> None:
         """Execute your last code block message in a restricted python environment.

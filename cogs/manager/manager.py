@@ -12,7 +12,7 @@ class Manager(commands.Cog):
         self.bot = bot
 
     @commands.has_permissions(manage_channels=True, manage_roles=True)
-    @command_decorator({'cog': {'description': "The name of the cog. Default: All cogs"}})
+    @command_decorator(cog={'description': "The name of the cog. Default: All cogs"})
     async def reload(self, ctx: SlashContext, cog: str = None) -> None:
         """Reloads a cog, effectively refreshing those slash commands
         """

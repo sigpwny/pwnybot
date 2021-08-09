@@ -11,7 +11,7 @@ class Breakout(commands.Cog):
         self.bot = bot
         self.created_channels = []
 
-    @subcommand_decorator({'message': {'rooms': "The number of breakout rooms"}})
+    @subcommand_decorator(message={'rooms': "The number of breakout rooms"})
     async def start(self, ctx: SlashContext, rooms: int = 2) -> None:
         """Create N breakout rooms"""
         await ctx.defer()
@@ -21,7 +21,7 @@ class Breakout(commands.Cog):
             self.created_channels.append(chan)
         await ctx.send(f"Created {rooms} Voice Channels.")
 
-    @subcommand_decorator({})
+    @subcommand_decorator()
     async def end(self, ctx: SlashContext) -> None:
         """End breakout rooms"""
         await ctx.defer()
