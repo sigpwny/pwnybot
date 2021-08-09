@@ -49,10 +49,10 @@ class Portal(commands.Cog):
         await dst_msg.edit(
             # format for channel linking: <#874206111719374858>
             # NOTE: it seems like editing requires that the emote is in the server in question.
-            content = EMOTE_FROM + " <#" + str(src_msg.channel.id) + "> " + gen_link_msg(src_msg)
+            content = EMOTE_TO + " <#" + str(src_msg.channel.id) + "> " + gen_link_msg(src_msg)
         )
         await src_msg.edit(
-            content = EMOTE_TO + " <#" + str(dst_msg.channel.id) + "> " + gen_link_msg(dst_msg)
+            content = EMOTE_FROM + " <#" + str(dst_msg.channel.id) + "> " + gen_link_msg(dst_msg)
         )
 
 
