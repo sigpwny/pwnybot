@@ -107,7 +107,7 @@ class Portal(commands.Cog):
         # await ctx.send(EMOTE_FROM + f'<#{location.id}>')
         # await location.send(f'<#{ctx.channel.id}>' + EMOTE_TO)
         dst_msg = await location.send(
-            EMOTE_TO + " " + ctx.mention + " " + gen_link(ctx.message)
+            EMOTE_TO + " " + ctx.message + " " + gen_link(ctx.message)
         )
         src_msg = await ctx.send(
             EMOTE_FROM # + " " + location.mention + " " 
