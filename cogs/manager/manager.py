@@ -52,8 +52,7 @@ class Manager(commands.Cog):
         if archive_location is None:
             archive_location = discord.utils.get(
                 ctx.guild.text_channels, id=DEFAULT_ARCHIVE_ID)
-            if archive_location is None:
-                ctx.send('Could not get the channel with that ID')
+
         fname = f"{channel.category.name}_{channel.name}_log.txt"
         with open(fname, 'w') as fw:
             async for m in channel.history(limit=10000, oldest_first=True):
