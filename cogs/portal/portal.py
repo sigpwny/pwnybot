@@ -4,9 +4,7 @@ from discord_slash import SlashContext
 from discord_slash.model import SlashCommandOptionType as OptionType
 from discord import utils
 from lib.util import command_decorator, subcommand_decorator
-
-EMOTE_FROM = "<:pwnyPortalFrom:846831813720932383> "
-EMOTE_TO = '<:pwnyPortalTo:846831813136613376> '
+from lib.config import EMOTE_TO, EMOTE_FROM
 
 
 def gen_link_msg(msg):

@@ -8,3 +8,6 @@ GUILD_IDS = list(map(int, os.getenv('GUILD_IDS').split(',')))
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 CTFD_TOKEN = os.getenv('CTFD_TOKEN')
 DEFAULT_ARCHIVE_ID = int(os.getenv('DEFAULT_ARCHIVE_ID'))
+
+EMOTE_FROM = "<:pwnyPortalFrom:846831813720932383> "
+EMOTE_TO = "<:pwnyPortalTo:846831813136613376> "

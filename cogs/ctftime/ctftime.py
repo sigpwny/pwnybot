@@ -80,12 +80,14 @@ class CTFTime(commands.Cog):
 
     @subcommand_decorator(
         limit={
-            'description': 'Number of events to fetch (default: 3, max: 100)'}
+            'description': 'Number of events to fetch (default: 3, max: 15)'}
     )
     async def upcoming(self, ctx: SlashContext, limit: int = 3) -> None:
         """Show upcoming events
         """
         await ctx.defer()
+
+        limit = min(limit, 15)
         no_upcoming_events = True
 
         url = f'https://ctftime.org/api/v1/events/?limit={limit}&start={round(time.time())}'
