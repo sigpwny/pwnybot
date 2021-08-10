@@ -6,3 +6,4 @@ services:
       - DISCORD_TOKEN
       - CTFD_TOKEN
       - DEFAULT_ARCHIVE_ID
+      - GUILD_IDS
