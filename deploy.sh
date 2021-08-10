@@ -1,4 +1,4 @@
 cd ~/pwnybot
 git pull
-docker image prune
+docker system prune -f
 docker-compose up --build -d pwnybot
