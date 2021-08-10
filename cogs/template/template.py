@@ -11,12 +11,12 @@ class Template(commands.Cog):
         self.bot = bot
 
     @command_decorator(message={'description': "The message"}, times={'description': "# of times max 3"})
-    async def repeat(self, ctx: SlashContext, message: str, times: int = 1) -> None:
-        """The repeat command is pretty epic!! (/repeat)
+    async def reverserepeat(self, ctx: SlashContext, message: str, times: int = 1) -> None:
+        """The reverserepeat command is pretty epic!! (/reverserepeat)
 
         """
         for _ in range(min(times, 3)):
-            await ctx.send(message)
+            await ctx.send(message[::-1])
 
     @subcommand_decorator(message={'description': "The message"})
     async def say(self, ctx: SlashContext, message: str) -> None:
