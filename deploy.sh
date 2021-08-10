@@ -1,4 +1,4 @@
 cd ~/pwnybot
 git pull
-docker system prune -f
+docker rmi pwnybot_pwnybot
 docker-compose up --build -d pwnybot

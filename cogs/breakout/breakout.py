@@ -12,7 +12,7 @@ class Breakout(commands.Cog):
         self.bot = bot
         self.created_channels = []
 
-    @subcommand_decorator(message={'rooms': "The number of breakout rooms"})
+    @subcommand_decorator(rooms={"description": "The number of breakout rooms"}, category={"description": "Category name to put breakout rooms under"})
     @commands.has_permissions(manage_channels=True)
     async def start(self, ctx: SlashContext, rooms: int, category: str = None) -> None:
         """Create N breakout rooms (max 5) """
@@ -36,7 +36,7 @@ class Breakout(commands.Cog):
     @subcommand_decorator()
     @commands.has_permissions(manage_channels=True)
     async def end(self, ctx: SlashContext) -> None:
-        """End breakout rooms"""
+        """End ALL breakout rooms"""
         await ctx.defer()
 
         if len(self.created_channels) == 0:
