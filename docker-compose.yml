@@ -5,3 +5,4 @@ services:
     environment:
       - DISCORD_TOKEN
       - CTFD_TOKEN
+      - DEFAULT_ARCHIVE_ID

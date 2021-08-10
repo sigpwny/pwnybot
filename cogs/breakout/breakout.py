@@ -14,11 +14,12 @@ class Breakout(commands.Cog):
 
     @subcommand_decorator(message={'rooms': "The number of breakout rooms"})
     @commands.has_permissions(manage_channels=True)
-    async def start(self, ctx: SlashContext, rooms: int = 2, category: str = None) -> None:
+    async def start(self, ctx: SlashContext, rooms: int, category: str = None) -> None:
         """Create N breakout rooms (max 5) """
         await ctx.defer()
         if category:
-            voice_category = discord.utils.get(ctx.guild, name=category)
+            voice_category = discord.utils.get(
+                ctx.guild.categories, name=category)
             if not voice_category:
                 await ctx.send("Could not find that category.")
                 return
