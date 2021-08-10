@@ -12,8 +12,9 @@ class Breakout(commands.Cog):
         self.created_channels = []
 
     @subcommand_decorator(message={'rooms': "The number of breakout rooms"})
+    @commands.has_permissions(manage_channels=True)
     async def start(self, ctx: SlashContext, rooms: int = 2) -> None:
-        """Create N breakout rooms"""
+        """Create N breakout rooms (max """
         await ctx.defer()
         voice_category = ctx.guild.voice_channels[0].category
         for i in range(rooms):
@@ -22,6 +23,7 @@ class Breakout(commands.Cog):
         await ctx.send(f"Created {rooms} Voice Channels.")
 
     @subcommand_decorator()
+    @commands.has_permissions(manage_channels=True)
     async def end(self, ctx: SlashContext) -> None:
         """End breakout rooms"""
         await ctx.defer()
