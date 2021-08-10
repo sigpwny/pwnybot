@@ -7,4 +7,4 @@ GUILD_IDS = list(map(int, os.getenv('GUILD_IDS').split(',')))
 # , 485104508175646751]
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 CTFD_TOKEN = os.getenv('CTFD_TOKEN')
-DEFAULT_ARCHIVE_ID = os.getenv('DEFAULT_ARCHIVE_ID')
+DEFAULT_ARCHIVE_ID = int(os.getenv('DEFAULT_ARCHIVE_ID'))
