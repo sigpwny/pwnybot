@@ -19,7 +19,11 @@ class Breakout(commands.Cog):
         await ctx.defer()
         if category:
             voice_category = discord.utils.get(ctx.guild, name=category)
-        voice_category = ctx.guild.voice_channels[0].category
+            if not voice_category:
+                await ctx.send("Could not find that category.")
+                return
+        else:
+            voice_category = ctx.guild.voice_channels[0].category
         for i in range(min(rooms, 5)):
             chan = await voice_category.create_voice_channel(f"breakout-{i+1}")
             self.created_channels.append(chan)
