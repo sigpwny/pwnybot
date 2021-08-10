@@ -28,16 +28,14 @@ class Portal(commands.Cog):
             ctx.send('That is not a text channel.')
             return
 
-        dst_msg = await location.send(
-            "filler"
-        )
         src_msg = await ctx.send(
-            "filler"
+            EMOTE_FROM + f" <#{location.id}> "
         )
-        await dst_msg.edit(
-            content=EMOTE_TO +
+        dst_msg = await location.send(
+            EMOTE_TO +
             f" <#{src_msg.channel.id}> " + gen_link_msg(src_msg)
         )
+
         await src_msg.edit(
             content=EMOTE_FROM +
             f" <#{dst_msg.channel.id}> " + gen_link_msg(dst_msg)
