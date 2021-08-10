@@ -10,14 +10,7 @@ EMOTE_TO = '<:pwnyPortalTo:846831813136613376> '
 
 
 def gen_link_msg(msg):
-    return (
-        "https://discord.com/channels/"
-        + str(msg.guild.id)
-        + "/"
-        + str(msg.channel.id)
-        + "/"
-        + str(msg.id)
-    )
+    return f"https://discord.com/channels/{msg.guild.id}/{msg.channel.id}/{msg.id}"
 
 
 class Portal(commands.Cog):
@@ -30,6 +23,12 @@ class Portal(commands.Cog):
     async def portal(self, ctx: SlashContext, location: OptionType.CHANNEL) -> None:
         """Create a portal to a channel"""
         await ctx.defer()
+
+        is_not_text = utils.get(
+            ctx.guild.text_channels, id=location.id) is None
+        if is_not_text:
+            ctx.send('That is not a text channel.')
+            return
 
         dst_msg = await location.send(
             "filler"
