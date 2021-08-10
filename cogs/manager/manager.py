@@ -19,6 +19,7 @@ class Manager(commands.Cog):
     async def reload(self, ctx: SlashContext, cog: str = None) -> None:
         """Reloads a cog, effectively refreshing those slash commands
         """
+        await ctx.defer()
         if cog is None:
             for cog in os.listdir("cogs"):
                 try:
@@ -38,7 +39,7 @@ class Manager(commands.Cog):
     @commands.has_permissions(manage_channels=True, manage_roles=True)
     @subcommand_decorator(channel={'description': 'The channel to archive'}, archive_location={'description': 'The location to send the archival to'})
     async def archive(self, ctx: SlashContext, channel: OptionType.CHANNEL, archive_location: OptionType.CHANNEL = None) -> None:
-        """Archives any channel but requires more permissions. This is very dangerous, use with caution.
+        """Archives any channel but requires more permissions. This is dangerous, use with caution.
 
         """
         await ctx.defer()
@@ -52,23 +53,23 @@ class Manager(commands.Cog):
             archive_location = discord.utils.get(
                 ctx.guild.channels, id=DEFAULT_ARCHIVE_ID)
 
-        fname = f"{ctx.channel.category.name}_{ctx.channel.name}_log.txt"
+        fname = f"{channel.category.name}_{channel.name}_log.txt"
         with open(fname, 'w') as fw:
-            async for m in ctx.channel.history(limit=10000, oldest_first=True):
+            async for m in channel.history(limit=10000, oldest_first=True):
                 fw.write(
                     f"[{m.created_at.replace().strftime('%Y-%m-%d %I:%M %p')} UTC] {m.author.display_name}: {m.content}\n{' '.join(map(lambda x: x.url, m.attachments))}\n"
                 )
-        # with open(fname, 'rb') as f:
+
         await archive_location.send(
             embed=discord.Embed(
-                title=f"Discussion for the challenge {ctx.channel.name} has been archived. A text log of the conversation is attached."
+                title=f"The channel '{channel.name}' has been archived. A text log of the conversation is attached."
             ),
             file=discord.File(fname),
         )
 
         os.remove(fname)
 
-        await ctx.channel.delete()
+        await channel.delete()
 
 
 def setup(bot: Bot) -> None:

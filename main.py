@@ -52,8 +52,7 @@ async def on_slash_command_error(ctx: SlashContext, err: Exception) -> None:
         await ctx.send("HTTP Client error.")
     else:
         await ctx.send(f"❌ An error has occured")
-
-    await ctx.send(f"\n```{''.join(traceback.format_exception(type(err), err, err.__traceback__))}```")
+        await ctx.send(f"\n```{''.join(traceback.format_exception(type(err), err, err.__traceback__))}```")
     traceback.print_exception(
         type(err), err, err.__traceback__, file=sys.stderr)
 
