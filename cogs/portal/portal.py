@@ -25,7 +25,7 @@ class Portal(commands.Cog):
         is_not_text = utils.get(
             ctx.guild.text_channels, id=location.id) is None
         if is_not_text:
-            ctx.send('That is not a text channel.')
+            await ctx.send('That is not a text channel.')
             return
 
         src_msg = await ctx.send(
