@@ -160,6 +160,7 @@ class CTF(commands.Cog):
         '''
 
         raise NotImplementedError()
+
         requests.get(INTERNAL_CTFD_URL + "/api/v1/challenges", headers={
             'token': os.getenv("CTFD_TOKEN"),
             'content-type': 'application/json'
