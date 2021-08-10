@@ -28,8 +28,9 @@ slash = SlashCommand(bot, sync_commands=True, sync_on_cog_reload=True)
 async def on_ready() -> None:
 
     logger.info(f"{bot.user} connected.")
-    logger.info(f"Hello, pwnybot is now live... do with that information what you will")
-    await bot.change_presence(activity=discord.Game(name="/help"))
+    logger.info(
+        f"Hello, pwnybot is now live... do with that information what you will")
+    await bot.change_presence(activity=discord.Game(name="Online!"))
 
 
 @bot.event

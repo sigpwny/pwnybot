@@ -15,7 +15,6 @@ class Chal(commands.Cog):
         self.bot = bot
 
     @commands.bot_has_permissions(manage_channels=True)
-    @commands.guild_only()
     @subcommand_decorator(name={'description': "The name of the challenge to create"})
     @run_from_ctf
     async def create(self, ctx: SlashContext, name: str) -> None:
@@ -47,7 +46,6 @@ class Chal(commands.Cog):
         await ctx.send(embed=embed)
         # await ctx.send('done')
 
-    @commands.guild_only()
     @subcommand_decorator()
     @run_from_ctf
     async def solve(self, ctx: SlashContext) -> None:
@@ -56,7 +54,6 @@ class Chal(commands.Cog):
         """
         raise NotImplementedError()
 
-    @commands.guild_only()
     @commands.bot_has_permissions(manage_channels=True)
     @commands.has_permissions(manage_channels=True)
     @subcommand_decorator()
@@ -72,7 +69,6 @@ class Chal(commands.Cog):
             return
         await ctx.channel.delete()
 
-    @commands.guild_only()
     @commands.bot_has_permissions(manage_channels=True)
     @commands.has_permissions(manage_channels=True)
     @subcommand_decorator()

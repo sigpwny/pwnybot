@@ -17,7 +17,6 @@ class CTF(commands.Cog):
 
     @commands.bot_has_permissions(manage_channels=True, manage_roles=True)
     @commands.has_permissions(manage_channels=True, manage_roles=True)
-    @commands.guild_only()
     @subcommand_decorator(name={'description': "The name of the CTF"})
     async def create(self, ctx: SlashContext, name: str) -> None:
         '''
@@ -46,7 +45,6 @@ class CTF(commands.Cog):
 
     @commands.bot_has_permissions(manage_channels=True)
     @commands.has_permissions(manage_channels=True)
-    @commands.guild_only()
     @subcommand_decorator()
     @run_from_ctf
     async def delete(self, ctx: SlashContext) -> None:
@@ -63,7 +61,6 @@ class CTF(commands.Cog):
 
     @commands.bot_has_permissions(manage_channels=True)
     @commands.has_permissions(manage_channels=True)
-    @commands.guild_only()
     @subcommand_decorator()
     @run_from_ctf
     async def archive(self, ctx: SlashContext) -> None:
@@ -105,10 +102,9 @@ class CTF(commands.Cog):
 
     @commands.bot_has_permissions(manage_roles=True)
     @commands.has_permissions(manage_roles=True)
-    @commands.guild_only()
     @subcommand_decorator(who={'description': "The role / member to add to the CTF"})
     @run_from_ctf
-    async def add(self, ctx: SlashContext, who: OptionType.MENTIONABLE) -> None:
+    async def addrole(self, ctx: SlashContext, who: OptionType.MENTIONABLE) -> None:
         '''
         Adds a role/member to this CTF
         '''
@@ -133,7 +129,6 @@ class CTF(commands.Cog):
 
     @commands.bot_has_permissions(manage_roles=True)
     @commands.has_permissions(manage_roles=True)
-    @commands.guild_only()
     @subcommand_decorator(who={'description': "The role / member to add to the CTF"})
     @run_from_ctf
     async def remove(self, ctx: SlashContext, who: OptionType.MENTIONABLE) -> None:

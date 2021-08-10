@@ -26,7 +26,6 @@ class Portal(commands.Cog):
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
 
-    @commands.guild_only()
     @command_decorator(location={'description': "The channel to portal to"})
     async def portal(self, ctx: SlashContext, location: OptionType.CHANNEL) -> None:
         """Create a portal to a channel"""

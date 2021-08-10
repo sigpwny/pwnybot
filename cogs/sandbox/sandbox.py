@@ -38,6 +38,7 @@ def execute_untrusted(code):
 
     del policy_globals['string']
     del policy_globals['random']
+    del policy_globals['whrandom']
     policy_globals['__builtins__']['__metaclass__'] = type
     policy_globals['__builtins__']['__name__'] = type
     policy_globals['__builtins__']['__import__'] = no_import
