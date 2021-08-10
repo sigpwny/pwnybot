@@ -5,7 +5,7 @@ from lib.util import command_decorator, subcommand_decorator, logger
 import os
 import discord
 from discord_slash.model import SlashCommandOptionType as OptionType
-import DEFAULT_ARCHIVE_ID from lib.config
+from lib.config import DEFAULT_ARCHIVE_ID
 
 
 class Manager(commands.Cog):
