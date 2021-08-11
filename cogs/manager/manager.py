@@ -69,7 +69,7 @@ class Manager(commands.Cog):
 
         os.remove(fname)
 
-        await channel.delete()
+        await ctx.send(f"The channel <#{channel.id}> is ready to be archived, a text log of the channel can be found in <#{archive_location.id}>")
 
 
 def setup(bot: Bot) -> None:
