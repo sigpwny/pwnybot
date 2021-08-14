@@ -64,9 +64,9 @@ class Cipher(commands.Cog):
         Decodes message using ciphey
         '''
         await ctx.defer()
-        await ctx.send('Decoding using ciphey for 10 seconds...')
+        await ctx.send('Decoding using ciphey for 30 seconds...')
         try:
-            with Timeout(seconds=10):
+            with Timeout(seconds=30):
                 config = Config().library_default().complete_config()
                 res = config.objs["searcher"].search(message)
                 body = iface.pretty_search_results(res)
