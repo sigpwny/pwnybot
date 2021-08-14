@@ -39,7 +39,7 @@ class CTFTime(commands.Cog):
             start_date = datetime.strptime(
                 event['start'][:-6], '%Y-%m-%dT%H:%M:%S')
             end_date = datetime.strptime(
-                event['end'][:-6], '%Y-%m-%dT%H:%M:%S')
+                event['finish'][:-6], '%Y-%m-%dT%H:%M:%S')
             if start_date < datetime.now() and end_date > datetime.now():
                 # Convert timestamps to dates
                 start = start_date.strftime('%Y-%m-%d %H:%M:%S') + ' UTC'
