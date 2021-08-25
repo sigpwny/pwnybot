@@ -68,11 +68,11 @@ class CTF(commands.Cog):
             return
 
         if reaction == '❌':
-            def action(chan): await chan.set_permissions(
+            async def action(chan): await chan.set_permissions(
                 user, view_channel=False, connect=False)
             await logs_channel.send(f'User <@{user.id}> left this CTF :(')
         elif reaction == '✔️':
-            def action(chan): await chan.set_permissions(
+            async def action(chan): await chan.set_permissions(
                 user, view_channel=True, connect=False)
             await logs_channel.send(f'User <@{user.id}> joined this CTF :)')
         else:
@@ -80,7 +80,7 @@ class CTF(commands.Cog):
 
         for channel in access_chan.category.channels:
             if channel.id != access_chan.id:
-                action(channel)
+                await action(channel)
 
     @subcommand_decorator()
     async def optin(self, ctx):
@@ -104,7 +104,7 @@ class CTF(commands.Cog):
         uiuc_role = discord.utils.get(ctx.guild.roles, id=UIUC_ROLE_ID)
         if uiuc_role in ctx.author.roles:
             await ctx.author.remove_roles(ctf_role)
-            await ctx.send(':white_check_mark: You were given the CTF role.')
+            await ctx.send(':white_check_mark: You are no longer opted into CTFs.')
         else:
             await ctx.send(':x: You must be UIUC verified to use this command.')
 

@@ -41,15 +41,15 @@ async def on_slash_command_error(ctx: SlashContext, err: Exception) -> None:
     elif isinstance(err, discord.errors.NotFound):
         pass
     elif isinstance(err, discord.errors.Forbidden):
-        await ctx.send("Forbidden.")
+        await ctx.send(":x: Forbidden.")
     elif isinstance(err, commands.errors.MissingPermissions):
-        await ctx.send("Permission denied.")
+        await ctx.send(":x: Permission denied.")
     elif isinstance(err, commands.errors.BotMissingPermissions):
-        await ctx.send("I don't have enough privileges to perform this action :(")
+        await ctx.send(":x: I don't have enough privileges to perform this action :(")
     elif isinstance(err, commands.errors.NoPrivateMessage):
-        await ctx.send("This command can't be used in DM.")
+        await ctx.send(":x: This command can't be used in DM.")
     elif isinstance(err, aiohttp.ClientError):
-        await ctx.send("HTTP Client error.")
+        await ctx.send(":x: HTTP Client error.")
     else:
         await ctx.send(f"❌ An error has occured")
         await ctx.send(f"\n```{''.join(traceback.format_exception(type(err), err, err.__traceback__))}```")
