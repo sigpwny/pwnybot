@@ -114,6 +114,10 @@ class Sandbox(commands.Cog):
             output = ':x: TimeoutError: program runtime exceeded timeout.'
         elif result['oom_killed']:
             output = ':x: MemoryError: program exceeded memory limit'
+        elif len(result['stderr']) > 0:
+            output = f'Exit code: {result["exit_code"]}\n'
+            output += f'Duration: {result["duration"]}\n'
+            output += f'```\n{result["stderr"].decode("utf-8")}```'
         else:
             output = f'Exit code: {result["exit_code"]}\n'
             output += f'Duration: {result["duration"]}\n'
