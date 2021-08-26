@@ -3,6 +3,7 @@ import traceback
 import logging
 import sys
 import os
+import tempfile
 
 import discord
 from discord import Guild
@@ -52,7 +53,15 @@ async def on_slash_command_error(ctx: SlashContext, err: Exception) -> None:
         await ctx.send(":x: HTTP Client error.")
     else:
         await ctx.send(f"❌ An error has occured")
-        await ctx.send(f"\n```{''.join(traceback.format_exception(type(err), err, err.__traceback__))}```")
+        body = ''.join(traceback.format_exception(
+            type(err), err, err.__traceback__))
+        if len(body) > 2000 - 6:
+            new_file, filename = tempfile.mkstemp()
+            os.write(new_file, body.encode('utf-8'))
+            await ctx.send(file=discord.File(filename, 'errors.txt'))
+            os.remove(filename)
+        else:
+            await ctx.send(f"```{body}```")
     traceback.print_exception(
         type(err), err, err.__traceback__, file=sys.stderr)
 

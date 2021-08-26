@@ -7,7 +7,7 @@ from discord_slash.utils.manage_commands import create_option
 import inspect
 from discord_slash.model import SlashCommandOptionType as OptionType
 from functools import wraps
-from lib.config import GUILD_IDS
+from lib.config import GUILD_IDS, CTF_PREFIX
 
 option_types = set(item.value for item in OptionType)
 
@@ -71,7 +71,7 @@ def run_from_ctf(func):
     @wraps(func)
     async def wrapper(self, ctx, *args, **kwargs):
         category_folder = ctx.channel.category
-        if not category_folder.name.startswith("CTF "):
+        if not category_folder.name.startswith(CTF_PREFIX):
             await ctx.send(f"That command must be run inside of a CTF folder (not {category_folder.name}).")
             return
         await func(self, ctx, *args, **kwargs)
