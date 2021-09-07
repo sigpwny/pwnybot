@@ -98,8 +98,12 @@ class CTF(commands.Cog):
         '''
         For UIUC members: Opts into CTFs automatically
         '''
+        print(ctx.guild.roles)
         ctf_role = discord.utils.get(ctx.guild.roles, id=CTF_ROLE_ID)
         uiuc_role = discord.utils.get(ctx.guild.roles, id=UIUC_ROLE_ID)
+        if ctf_role is None or uiuc_role is None:
+            raise ValueError(
+                "CTF ROLE: {ctf_role} CTF ID: {CTF_ROLE_ID} UIUC ROLE: {uiuc_role} UIUC ID: {UIUC_ROLE_ID}")
         if uiuc_role in ctx.author.roles:
             await ctx.author.add_roles(ctf_role)
             await ctx.send(':white_check_mark: You were given the CTF role.')
