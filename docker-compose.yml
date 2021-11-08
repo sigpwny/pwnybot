@@ -1,6 +1,7 @@
 version: '3.3' # optional since v1.27.0
 services:
   pwnybot:
+    restart: always
     build: .
     environment:
       - DISCORD_TOKEN
