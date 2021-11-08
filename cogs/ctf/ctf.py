@@ -104,7 +104,7 @@ class CTF(commands.Cog):
         uiuc_role = discord.utils.get(ctx.guild.roles, id=UIUC_ROLE_ID)
         alum_role = discord.utils.get(ctx.guild.roles, id=ALUM_ROLE_ID)
 
-        if uiuc_role in ctx.author.roles and not alum_role in ctx.author.roles:
+        if uiuc_role in ctx.author.roles:
             await ctx.author.add_roles(ctf_role)
             await ctx.send(':white_check_mark: You were given the CTF role.')
         else:
@@ -122,7 +122,7 @@ class CTF(commands.Cog):
         uiuc_role = discord.utils.get(ctx.guild.roles, id=UIUC_ROLE_ID)
         alum_role = discord.utils.get(ctx.guild.roles, id=ALUM_ROLE_ID)
 
-        if uiuc_role in ctx.author.roles and not alum_role in ctx.author.roles:
+        if uiuc_role in ctx.author.roles:
             await ctx.author.remove_roles(ctf_role)
             await ctx.send(':white_check_mark: You are no longer opted into CTFs :sob:.')
         else:
