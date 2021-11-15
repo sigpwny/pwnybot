@@ -1,40 +1,50 @@
 # PWNYBOT
 
-SigPWNYs discord bot
+The official sigPWNY discord bot.
+### Installation
 
-### Using elsewhere
++ Clone from github
++ Create a `.env` file like this:
 
-+ Generate your own DISCORD_TOKEN and add the bot to your server.
-+ Then follow one of the guides below
-
-### Set for docker
-
-Create a `.env` file like this:
-
+Note that the bot is still partially functional without `CTFD_TOKEN` or `DEFAULT_ARCHIVE_ID` being defined.
 
 ```
-DISCORD_TOKEN=ODXXXXA4XXXXOXXXXM0XXAx.YXXXwA.V_CXXXXXXXXXXX
-CTFD_TOKEN=dXXXX85dXXXX3c5XXXX4b80bXXXXf4b75fXXXXXXXXXXXXX
-DEFAULT_ARCHIVE_ID=123413213123
+DISCORD_TOKEN=XXXXXX
+CTFD_TOKEN=XXXXXX
+DEFAULT_ARCHIVE_ID=XXXXXX
 GUILD_IDS=GUILD1,GUILD2
 ```
 
+
+### Usage
+
+##### With docker
+
 ```
-docker-compose up --build -d pwnybot
+docker-compose up -d pwnybot
 ```
 
-### Local testing
+##### Local testing
 
 
 ```
 git clone git@github.com:sigpwny/pwnybot.git
 cd pwnybot
 pip install --no-cache-dir -r requirements.txt
-DISCORD_TOKEN=ODXXXXA4XXXXOXXXXM0XXAx.YXXXwA.V_CXXXXXXXXXXX CTFD_TOKEN=dXXXX85dXXXX3c5XXXX4b80bXXXXf4b75fXXXXXXXXXXXXX DEFAULT_ARCHIVE_ID=123413213123 GUILDIDS=GUILD1,GUILD2 python3 main.py
+DISCORD_TOKEN=XXXXXX CTFD_TOKEN=XXXXXXDEFAULT_ARCHIVE_ID=XXXXXX GUILDIDS=GUILD1,GUILD2 python3 main.py
 ```
 
-### Modifying pwnybot on sigpwny
+##### Interested in helping?
 
-+ For small fixes, push them directly to master.
-+ Otherwise, please contact @reteps so he can disable the docker while you run it locally and test. This prevents duplicating commands / other weirdness.
-+ 
++ Check the issues for feature requests and bugs
++ Create a branch and submit a PR.
++ Please do not push directly to master! (This will redeploy pwnybot with potentially broken code :0)
++ Check out the `cogs/template` directory for a starting point.
+
+### Features
+
++ "portal" system
++ CTFtime scraper
++ Encoding / Binary / Cipher / XKCD / Syscall table utility methods
++ Breakout Rooms
++ Complete CTF competition management system
