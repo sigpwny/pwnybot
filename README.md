@@ -1,6 +1,6 @@
 # PWNYBOT
 
-The official sigPWNY discord bot.
+The official sigpwny discord bot.
 ### Installation
 
 + Clone from github
@@ -31,7 +31,7 @@ docker-compose up -d pwnybot
 git clone git@github.com:sigpwny/pwnybot.git
 cd pwnybot
 pip install --no-cache-dir -r requirements.txt
-DISCORD_TOKEN=XXXXXX CTFD_TOKEN=XXXXXXDEFAULT_ARCHIVE_ID=XXXXXX GUILDIDS=GUILD1,GUILD2 python3 main.py
+DISCORD_TOKEN=XXXXXX CTFD_TOKEN=XXXXXX DEFAULT_ARCHIVE_ID=XXXXXX GUILDIDS=GUILD1,GUILD2 python3 main.py
 ```
 
 ##### Interested in helping?
