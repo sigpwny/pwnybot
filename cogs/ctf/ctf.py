@@ -50,7 +50,8 @@ class CTF(commands.Cog):
                 await channel.set_permissions(ctf_role, send_messages=False, view_channel=True)
 
                 embed = discord.Embed(
-                    title="🔔 Join this CTF",
+                    title="🔔 Join this CTF.",
+                    description="Do this if you are joining as a guest or participate in CTFs on other teams frequently (and thus don't want the CTF role). If you are a UIUC student, please opt-in using /ctf optin.",
                     colour=discord.Colour.dark_gold()
                 )
 
