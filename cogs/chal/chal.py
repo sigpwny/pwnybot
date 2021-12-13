@@ -77,7 +77,7 @@ class Chal(commands.Cog):
         # raise NotImplementedError()
 
     @commands.bot_has_permissions(manage_channels=True)
-    @commands.has_any_role([HELPER_ROLE_ID, ADMIN_ROLE_ID])
+    @commands.has_any_role(HELPER_ROLE_ID, ADMIN_ROLE_ID)
     @subcommand_decorator()
     @run_from_ctf
     async def delete(self, ctx: SlashContext) -> None:
@@ -92,7 +92,7 @@ class Chal(commands.Cog):
         await ctx.channel.delete()
 
     @commands.bot_has_permissions(manage_channels=True)
-    @commands.has_any_role([HELPER_ROLE_ID, ADMIN_ROLE_ID])
+    @commands.has_any_role(HELPER_ROLE_ID, ADMIN_ROLE_ID)
     @subcommand_decorator()
     @run_from_ctf
     async def archive(self, ctx: SlashContext) -> None:
