@@ -16,7 +16,7 @@ class CTF(commands.Cog):
         self.bot = bot
 
     @commands.bot_has_permissions(manage_channels=True, manage_roles=True)
-    @commands.has_any_role([HELPER_ROLE_ID, ADMIN_ROLE_ID])
+    @commands.has_any_role(HELPER_ROLE_ID, ADMIN_ROLE_ID)
     @subcommand_decorator(name={'description': "The name of the CTF"})
     async def create(self, ctx: SlashContext, name: str) -> None:
         '''
@@ -127,7 +127,7 @@ class CTF(commands.Cog):
             await ctx.send(':x: You must be UIUC verified to use this command.')
 
     @commands.bot_has_permissions(manage_channels=True)
-    @commands.has_any_role([ADMIN_ROLE_ID])
+    @commands.has_any_role(ADMIN_ROLE_ID)
     @subcommand_decorator()
     @run_from_ctf
     async def delete(self, ctx: SlashContext) -> None:
@@ -143,7 +143,7 @@ class CTF(commands.Cog):
         await category_folder.delete()
 
     @commands.bot_has_permissions(manage_channels=True)
-    @commands.has_any_role([ADMIN_ROLE_ID])
+    @commands.has_any_role(ADMIN_ROLE_ID)
     @subcommand_decorator()
     @run_from_ctf
     async def archive(self, ctx: SlashContext) -> None:

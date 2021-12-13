@@ -14,7 +14,7 @@ class Breakout(commands.Cog):
         self.created_channels = []
 
     @subcommand_decorator(rooms={"description": "The number of breakout rooms"}, category={"description": "Category name to put breakout rooms under"})
-    @commands.has_any_role([HELPER_ROLE_ID, ADMIN_ROLE_ID])
+    @commands.has_any_role(HELPER_ROLE_ID, ADMIN_ROLE_ID)
     async def start(self, ctx: SlashContext, rooms: int, category: str = None) -> None:
         """Create N breakout rooms (max 5) """
         await ctx.defer()
@@ -35,7 +35,7 @@ class Breakout(commands.Cog):
         await ctx.send(f"Created {rooms} Voice Channels.")
 
     @subcommand_decorator()
-    @commands.has_any_role([HELPER_ROLE_ID, ADMIN_ROLE_ID])
+    @commands.has_any_role(HELPER_ROLE_ID, ADMIN_ROLE_ID)
     async def end(self, ctx: SlashContext) -> None:
         """End ALL breakout rooms"""
         await ctx.defer()

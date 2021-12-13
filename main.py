@@ -45,6 +45,8 @@ async def on_slash_command_error(ctx: SlashContext, err: Exception) -> None:
         await ctx.send(":x: Forbidden.")
     elif isinstance(err, commands.errors.MissingPermissions):
         await ctx.send(":x: Permission denied.")
+    elif isinstance(err, commands.errors.MissingAnyRole):
+        await ctx.send(":x: Permission denied.")
     elif isinstance(err, commands.errors.BotMissingPermissions):
         await ctx.send(":x: I don't have enough privileges to perform this action :(")
     elif isinstance(err, commands.errors.NoPrivateMessage):
