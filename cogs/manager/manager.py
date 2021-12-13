@@ -5,7 +5,7 @@ from lib.util import command_decorator, subcommand_decorator, logger
 import os
 import discord
 from discord_slash.model import SlashCommandOptionType as OptionType
-from lib.config import DEFAULT_ARCHIVE_ID
+from lib.config import DEFAULT_ARCHIVE_ID, HELPER_ROLE_ID, ADMIN_ROLE_ID
 
 
 class Manager(commands.Cog):
@@ -14,7 +14,7 @@ class Manager(commands.Cog):
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
 
-    @commands.has_permissions(manage_channels=True, manage_roles=True)
+    @commands.has_any_role([HELPER_ROLE_ID, ADMIN_ROLE_ID])
     @subcommand_decorator(cog={'description': "The name of the cog. Default: All cogs"})
     async def reload(self, ctx: SlashContext, cog: str = None) -> None:
         """Reloads a cog, effectively refreshing those slash commands
@@ -36,7 +36,7 @@ class Manager(commands.Cog):
             await ctx.send(f'Cog "{cog}" was reloaded.')
 
     @commands.bot_has_permissions(manage_channels=True)
-    @commands.has_permissions(manage_channels=True, manage_roles=True)
+    @commands.has_any_role([HELPER_ROLE_ID, ADMIN_ROLE_ID])
     @subcommand_decorator(channel={'description': 'The channel to archive'}, archive_location={'description': 'The location to send the archival to'})
     async def archive(self, ctx: SlashContext, channel: OptionType.CHANNEL, archive_location: OptionType.CHANNEL = None) -> None:
         """Archives any channel but requires more permissions. This is dangerous, use with caution.
