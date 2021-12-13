@@ -64,7 +64,7 @@ class Chal(commands.Cog):
             return
 
         embed = discord.Embed(
-            title=f"✔️ '{challenge.name}' was solved with the flag ||{flag}||"
+            title=f":white_check_mark: '{challenge.name}' was solved with the flag ||{flag}||"
         )
         await challenge.edit(name='✔️ ' + challenge.name)
         await ctx.send('Marked channel as solved.')
