@@ -7,7 +7,9 @@ from discord_slash.utils.manage_commands import create_option
 import inspect
 from discord_slash.model import SlashCommandOptionType as OptionType
 from functools import wraps
-from lib.config import GUILD_IDS, CTF_PREFIX
+from lib.config import GUILD_IDS, CTF_PREFIX, CTFD_TOKEN
+import tempfile
+import subprocess
 
 option_types = set(item.value for item in OptionType)
 
@@ -179,5 +181,17 @@ class Timeout:
     def __exit__(self, type, value, traceback):
         signal.alarm(0)
 
+
+def exportWithDiscordChatExporter(channel_id: str):
+    '''
+    Calls DiscordChatExporter based on a channel_id
+    '''
+
+    _, temp_export_filename = tempfile.mkstemp()
+    chat_exporter_location = '../external/DiscordChatExporter2.34.1'
+    cmd = ['dotnet', f'{chat_exporter_location}/DiscordChatExporter.Cli.dll', 'export', '--channel', channel_id, '--token', CTFD_TOKEN, '--output', temp_export_filename]
+    subprocess.run(cmd)
+
+    return temp_export_filename
 
 logger = setup_logger(logging.INFO)
