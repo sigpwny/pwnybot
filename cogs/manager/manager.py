@@ -6,13 +6,38 @@ import os
 import discord
 from discord_slash.model import SlashCommandOptionType as OptionType
 from lib.config import DEFAULT_ARCHIVE_ID, HELPER_ROLE_ID, ADMIN_ROLE_ID
+import tempfile
+import subprocess
 
+def exportWithDiscordChatExporter(channel_id: str):
+    '''
+    Calls DiscordChatExporter based on a channel_id
+    '''
+
+    _, temp_export_filename = tempfile.mkstemp()
+    chat_exporter_location = '../external/DiscordChatExporter2.34.1'
+    cmd = ['dotnet', f'{chat_exporter_location}/DiscordChatExporter.Cli.dll', 'export', '--channel', channel_id, '--token', CTFD_TOKEN, '--output', temp_export_filename]
+    output = subprocess.run(cmd, capture_output=True, text=True)
+
+    return temp_export_filename, output
 
 class Manager(commands.Cog):
     """Describe what the cog does."""
 
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
+
+
+    @commands.bot_has_permissions(manage_channels=True)
+    @commands.has_any_role(HELPER_ROLE_ID, ADMIN_ROLE_ID)
+    @subcommand_decorator(channel={'description': 'The channel to archive'}, archive_location={'description': 'The location to send the archival to'})
+    async def fancy_archive(self, ctx: SlashContext, channel: OptionType.CHANNEL, archive_location: OptionType.CHANNEL = None) -> None:
+        """Archives any channel but requires more permissions. This is dangerous, use with caution.
+
+        """
+
+        filename, output = exportWithDiscordChatExporter(channel.id)
+        await ctx.send(file=discord.File(filename, 'output.html'))
 
     @commands.has_any_role(HELPER_ROLE_ID, ADMIN_ROLE_ID)
     @subcommand_decorator(cog={'description': "The name of the cog. Default: All cogs"})
