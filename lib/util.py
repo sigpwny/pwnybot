@@ -7,7 +7,8 @@ from discord_slash.utils.manage_commands import create_option
 import inspect
 from discord_slash.model import SlashCommandOptionType as OptionType
 from functools import wraps
-from lib.config import GUILD_IDS, CTF_PREFIX
+from lib.config import GUILD_IDS, CTF_PREFIX, CTFD_TOKEN
+
 
 option_types = set(item.value for item in OptionType)
 
@@ -178,6 +179,8 @@ class Timeout:
 
     def __exit__(self, type, value, traceback):
         signal.alarm(0)
+
+
 
 
 logger = setup_logger(logging.INFO)
