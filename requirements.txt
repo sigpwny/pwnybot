@@ -1,5 +1,5 @@
 discord-py-slash-command
-discord.py
+discord.py==1.7.2
 requests
 ciphey
 RestrictedPython
