@@ -37,10 +37,18 @@ class Manager(commands.Cog):
             filename_html = export_with_dce(channel.id, type='html')
             filename_json = export_with_dce(channel.id, type='json')
         except TimeoutError:
-            await ctx.send(':x: Result timed out')
+            await progress_msg.edit(
+                embed=discord.Embed(
+                    title=f"❌ The command timed out."
+                )
+            )
             return
         except subprocess.CalledProcessError:
-            await ctx.send(':x: DCE threw an error')
+            await progress_msg.edit(
+                embed=discord.Embed(
+                    title=f"❌ The export application failed!"
+                )
+            )
             return
             
         await archive_location.send(

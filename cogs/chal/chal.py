@@ -108,19 +108,27 @@ class Chal(commands.Cog):
             await challenge.send(f'❌ You cannot archive {challenge.name}!')
             return
         
-        await ctx.send(embed=discord.Embed(
-            title="🔃 The challenge is being archived..."
-        ))
+        progress_msg = await ctx.send(embed=discord.Embed(
+                title="🔃 The challenge is being archived..."
+            ))
         discord_filename_base = f'{challenge.id}_{challenge.category.name}_{sanitize_channel_name(challenge.name)}'
 
         try:
             filename_html = export_with_dce(challenge.id, type='html')
             filename_json = export_with_dce(challenge.id, type='json')
         except TimeoutError:
-            await ctx.send(':x: Result timed out')
+            await progress_msg.edit(
+                embed=discord.Embed(
+                    title=f"❌ The command timed out."
+                )
+            )
             return
         except subprocess.CalledProcessError:
-            await ctx.send(':x: DCE threw an error')
+            await progress_msg.edit(
+                embed=discord.Embed(
+                    title=f"❌ The export application failed!"
+                )
+            )
             return
             
         await logs_channel.send(embed=discord.Embed(
