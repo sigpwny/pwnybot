@@ -7,10 +7,50 @@ from discord_slash.utils.manage_commands import create_option
 import inspect
 from discord_slash.model import SlashCommandOptionType as OptionType
 from functools import wraps
-from lib.config import GUILD_IDS, CTF_PREFIX, CTFD_TOKEN
-
+from lib.config import GUILD_IDS, CTF_PREFIX, CTFD_TOKEN, DISCORD_TOKEN
+import tempfile
+import subprocess
 
 option_types = set(item.value for item in OptionType)
+
+'''
+https://stackoverflow.com/questions/2281850/timeout-function-if-it-takes-too-long-to-finish
+'''
+
+
+class Timeout:
+    def __init__(self, seconds=1, error_message='Timeout'):
+        self.seconds = seconds
+        self.error_message = error_message
+
+    def handle_timeout(self, signum, frame):
+        raise TimeoutError(self.error_message)
+
+    def __enter__(self):
+        signal.signal(signal.SIGALRM, self.handle_timeout)
+        signal.alarm(self.seconds)
+
+    def __exit__(self, type, value, traceback):
+        signal.alarm(0)
+
+
+def export_with_dce(channel_id: int, type='html', addl_args=[]):
+    '''
+    Calls DiscordChatExporter based on a channel_id
+    '''
+
+    with Timeout(seconds=10):
+        assert type in ['html', 'json']
+
+        _, temp_export_filename = tempfile.mkstemp(suffix=f'.{type}')
+        if type == 'json':
+            addl_args = ['-f', 'Json']
+
+        chat_exporter_location = 'external/DiscordChatExporter2.34.1'
+        cmd = ['dotnet', f'{chat_exporter_location}/DiscordChatExporter.Cli.dll', 'export', '--channel', str(channel_id), '--token', DISCORD_TOKEN, '--output', temp_export_filename, *addl_args]
+        _ = subprocess.run(cmd, check=True, capture_output=True, text=True)
+
+        return temp_export_filename
 
 
 def get_option_type(annotation):
@@ -160,25 +200,7 @@ def setup_logger(level: int) -> RootLogger:
     return logger
 
 
-'''
-https://stackoverflow.com/questions/2281850/timeout-function-if-it-takes-too-long-to-finish
-'''
 
-
-class Timeout:
-    def __init__(self, seconds=1, error_message='Timeout'):
-        self.seconds = seconds
-        self.error_message = error_message
-
-    def handle_timeout(self, signum, frame):
-        raise TimeoutError(self.error_message)
-
-    def __enter__(self):
-        signal.signal(signal.SIGALRM, self.handle_timeout)
-        signal.alarm(self.seconds)
-
-    def __exit__(self, type, value, traceback):
-        signal.alarm(0)
 
 
 
