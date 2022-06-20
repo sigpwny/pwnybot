@@ -28,7 +28,8 @@ class Breakout(commands.Cog):
         else:
             voice_category = ctx.guild.voice_channels[0].category
 
-        for i in range(min(max(rooms,0), 5)):
+        rooms = min(max(rooms,0), 5)
+        for i in range(rooms):
             chan = await voice_category.create_voice_channel(f"breakout-{i+1}")
             self.created_channels.append(chan)
 
