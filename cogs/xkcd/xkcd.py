@@ -18,7 +18,9 @@ class Xkcd(commands.Cog):
     def generate_embed(data):
         title = f'xkcd #{data.get("num")} - {data.get("title")}'
         embed = discord.Embed(
-            title=title, url=f'https://xkcd.com/{data.get("num")}', image=data.get("img"), footer=data.get("alt"))
+            title=title, url=f'https://xkcd.com/{data.get("num")}')
+        embed.set_image(data.get("img"))
+        embed.set_footer(text=data.get("alt"))
         return embed
 
     async def fetch(self, url):
