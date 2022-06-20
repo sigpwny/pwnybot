@@ -19,7 +19,7 @@ class Xkcd(commands.Cog):
         title = f'xkcd #{data.get("num")} - {data.get("title")}'
         embed = discord.Embed(
             title=title, url=f'https://xkcd.com/{data.get("num")}')
-        embed.set_image(data.get("img"))
+        embed.set_image(url=data.get("img"))
         embed.set_footer(text=data.get("alt"))
         return embed
 
