@@ -29,7 +29,7 @@ class Manager(commands.Cog):
             message = [m for m in messages if m.author.id ==
                               ctx.author.id][0].content
             
-            confirm_message = await ctx.send(f'Should I edit the message? (60s expiry):\n{message}\n')
+            confirm_message = await ctx.send(f'Should I edit the message you specified to say this (60s expiry):\n{message}\n')
 
             await confirm_message.add_reaction('✅')
 
