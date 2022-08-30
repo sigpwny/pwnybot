@@ -15,7 +15,38 @@ class Manager(commands.Cog):
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
 
+    @commands.bot_has_permissions(manage_channels=True)
+    @commands.has_any_role(ADMIN_ROLE_ID)
+    @subcommand_decorator(channel={'description': 'The channel to send the message in'})
+    async def edit(self, ctx: SlashContext, bot_message: discord.Message) -> None:
+        '''
+        Edits a message said by the bot, must specify the messageID 
+        '''
+        await ctx.defer()
+        # bot_message = await ctx.fetch_message()
+        try:
+            messages = await ctx.channel.history(limit=100).flatten()
+            message = [m for m in messages if m.author.id ==
+                              ctx.author.id][0].content
+            
+            confirm_message = await ctx.send(f'Should I edit the message? (60s expiry):\n{message}\n')
 
+            await confirm_message.add_reaction('✅')
+
+            def check(reaction, user):
+                return reaction.message.id == confirm_message.id and \
+                user == ctx.author and reaction.emoji == '✅'
+
+            try:
+                await self.bot.wait_for("reaction_add", check=check, timeout=60.0)
+            except asyncio.TimeoutError:
+                await ctx.send(':x: Timed out, did not edit message.')
+            else:
+                await bot_message.edit(content=message)
+                await ctx.send(f':white_check_mark: edited message.')
+        except IndexError:
+            await ctx.send(":x: Send the message in the current channel before calling /say.")
+            return
     @commands.bot_has_permissions(manage_channels=True)
     @commands.has_any_role(ADMIN_ROLE_ID)
     @subcommand_decorator(channel={'description': 'The channel to send the message in'})
