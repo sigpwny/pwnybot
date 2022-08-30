@@ -30,11 +30,12 @@ class Manager(commands.Cog):
                               ctx.author.id][0].content
             
             confirm_message = await ctx.send(f'Should I send this in {channel.name}? (60s expiry):\n{message}\n')
-            await confirm_message.add_reaction(':white_check_mark:')
+
+            await confirm_message.add_reaction('✅')
 
             def check(reaction, user):
                 return reaction.message.id == confirm_message.id and \
-                user == ctx.author and reaction.emoji == ':white_check_mark:'
+                user == ctx.author and reaction.emoji == '✅'
 
             try:
                 await ctx.wait_for("reaction_add", check=check, timeout=60.0)
