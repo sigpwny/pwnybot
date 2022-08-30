@@ -7,15 +7,45 @@ import subprocess
 import discord
 from discord_slash.model import SlashCommandOptionType as OptionType
 from lib.config import DEFAULT_ARCHIVE_ID, HELPER_ROLE_ID, ADMIN_ROLE_ID
-
+import asyncio
 
 class Manager(commands.Cog):
-    """Describe what the cog does."""
+    """Commands for managing the discord server."""
 
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
 
 
+    @commands.bot_has_permissions(manage_channels=True)
+    @commands.has_any_role(ADMIN_ROLE_ID)
+    @subcommand_decorator(channel={'description': 'The channel to send the message in'})
+    async def say(self, ctx: SlashContext, channel: OptionType.CHANNEL) -> None:
+        '''
+        Says your previous message in the channel you specify
+        '''
+        await ctx.defer()
+        try:
+            messages = await ctx.channel.history(limit=100).flatten()
+            message = [m for m in messages if m.author.id ==
+                              ctx.author.id][0].content
+            
+            confirm_message = await ctx.send(f'Should I send this in {channel.name}? (60s expiry):\n{message}\n')
+            await confirm_message.add_reaction(':white_check_mark:')
+
+            def check(reaction, user):
+                return reaction.message.id == confirm_message.id and \
+                user == ctx.author and reaction.emoji == ':white_check_mark:'
+
+            try:
+                await ctx.wait_for("reaction_add", check=check, timeout=60.0)
+            except asyncio.TimeoutError:
+                await ctx.send(':x: Timed out, did not send.')
+            else:
+                await channel.send(message)
+                await ctx.send(f':white_check_mark: sent message in {channel.name}')
+        except IndexError:
+            await ctx.send(":x: Send the message in the current channel before calling /say.")
+            return
     @commands.bot_has_permissions(manage_channels=True)
     @commands.has_any_role(HELPER_ROLE_ID, ADMIN_ROLE_ID)
     @subcommand_decorator(channel={'description': 'The channel to archive'}, archive_location={'description': 'The location to send the archival to'})
