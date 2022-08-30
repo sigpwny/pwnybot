@@ -18,12 +18,12 @@ class Manager(commands.Cog):
     @commands.bot_has_permissions(manage_channels=True)
     @commands.has_any_role(ADMIN_ROLE_ID)
     @subcommand_decorator(channel={'description': 'The channel to send the message in'})
-    async def edit(self, ctx: SlashContext, bot_message: discord.Message) -> None:
+    async def edit(self, ctx: SlashContext, message_id: int) -> None:
         '''
         Edits a message said by the bot, must specify the messageID 
         '''
         await ctx.defer()
-        # bot_message = await ctx.fetch_message()
+        bot_message = await ctx.fetch_message(message_id)
         try:
             messages = await ctx.channel.history(limit=100).flatten()
             message = [m for m in messages if m.author.id ==
