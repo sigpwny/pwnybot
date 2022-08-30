@@ -38,7 +38,7 @@ class Manager(commands.Cog):
                 user == ctx.author and reaction.emoji == '✅'
 
             try:
-                await ctx.wait_for("reaction_add", check=check, timeout=60.0)
+                await self.bot.wait_for("reaction_add", check=check, timeout=60.0)
             except asyncio.TimeoutError:
                 await ctx.send(':x: Timed out, did not send.')
             else:
