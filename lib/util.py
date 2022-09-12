@@ -39,7 +39,7 @@ def export_with_dce(channel_id: int, type='html', addl_args=[]):
     Calls DiscordChatExporter based on a channel_id
     '''
 
-    with Timeout(seconds=10):
+    with Timeout(seconds=60):
         assert type in ['html', 'json']
 
         _, temp_export_filename = tempfile.mkstemp(suffix=f'.{type}')
