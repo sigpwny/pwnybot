@@ -34,7 +34,7 @@ class Timeout:
         signal.alarm(0)
 
 
-def export_with_dce(channel_id: int, type='html', addl_args=[]):
+def export_with_dce(channel_id: int, file_rewrites={}, type='html', addl_args=[]):
     '''
     Calls DiscordChatExporter based on a channel_id
     '''
@@ -50,6 +50,16 @@ def export_with_dce(channel_id: int, type='html', addl_args=[]):
         cmd = ['dotnet', f'{chat_exporter_location}/DiscordChatExporter.Cli.dll', 'export', '--channel', str(channel_id), '--token', DISCORD_TOKEN, '--output', temp_export_filename, *addl_args]
         _ = subprocess.run(cmd, check=True, capture_output=True, text=True)
 
+        if len(file_rewrites) > 0:
+            with open(temp_export_filename, 'r') as f:
+                data = f.read()
+
+            for [old, new] in file_rewrites.items():
+                data = data.replace(old, new)
+
+            with open(temp_export_filename, 'w') as f:
+                f.write(data)
+        
         return temp_export_filename
 
 
