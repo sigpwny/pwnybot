@@ -6,7 +6,7 @@ import os
 import subprocess
 import discord
 from discord_slash.model import SlashCommandOptionType as OptionType
-from lib.config import DEFAULT_ARCHIVE_ID, HELPER_ROLE_ID, ADMIN_ROLE_ID
+from lib.config import DEFAULT_ARCHIVE_ID, DEFAULT_FILE_ARCHIVE_ID, HELPER_ROLE_ID, ADMIN_ROLE_ID
 import asyncio
 
 class Manager(commands.Cog):
@@ -89,15 +89,34 @@ class Manager(commands.Cog):
         if archive_location is None:
             archive_location = discord.utils.get(
                 ctx.guild.text_channels, id=DEFAULT_ARCHIVE_ID)
-    
+            file_archive_location = discord.utils.get(
+                ctx.guild.text_channels, id=DEFAULT_FILE_ARCHIVE_ID)
+        else:
+            # Send files to the same channel as the archive
+            file_archive_location = archive_location
+        
         progress_msg = await ctx.send(embed=discord.Embed(
                 title=f"🔃 The channel is currently being archived..."
             ))
+
+        sent_banner = False
+        file_rewrites = {}
+        async for message in channel.history():
+            # logger.info(message.content)
+            for attachment in message.attachments:
+                if not sent_banner:
+                    sent_banner = True
+                    await file_archive_location.send(embed=discord.Embed(
+                        title=f"📎 Files from the channel {channel.name} are attached below."
+                    ))
+                new_message = await file_archive_location.send(file=await attachment.to_file())
+                file_rewrites[attachment.url] = new_message.attachments[0].url
+    
         discord_filename_base = f'{channel.id}_{channel.category.name}_{sanitize_channel_name(channel.name)}'
 
         try:
-            filename_html = export_with_dce(channel.id, type='html')
-            filename_json = export_with_dce(channel.id, type='json')
+            filename_html = export_with_dce(channel.id, file_rewrites=file_rewrites, type='html')
+            filename_json = export_with_dce(channel.id, file_rewrites=file_rewrites, type='json')
         except TimeoutError:
             await progress_msg.edit(
                 embed=discord.Embed(
