@@ -29,11 +29,11 @@ CTFD_TOKEN=XXXXXX
 GUILD_IDS=GUILD1
 ```
 
-Fill in the DISCORD_TOKEN with the token from the 'Bot' tab of the discord developer portal. Then, fill in the GUILD_IDS with a comma seperated list of each guild IDs you want the server running on.
+Fill in the DISCORD_TOKEN with the token from the 'Bot' tab of the discord developer portal. Then, fill in the GUILD_IDS with a comma seperated list of each guild IDs you want the server running on. If you just have one, do `GUILD_IDS=xxxxxx`.
 
 Note that the bot is still partially functional without `CTFD_TOKEN` being defined.
 
-Additionally, make sure that `lib/config.py` has an accurate ID for the 'admin' role / other IDs are correct. Some commands may not work if this is set incorrectly.
+Using a role with perms higher than the level you need, make sure that `lib/config.py` has an accurate admin role ID. Some commands may not work if this is set incorrectly.
 
 
 3. Startup docker with this command
