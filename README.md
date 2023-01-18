@@ -6,7 +6,7 @@ The official sigpwny discord bot.
 1. Clone from github
 2. If you haven't already, create a discord bot and then go to OAUTH 2 > URL Generator.
 
-Check the 'bot' permission, and under bot you will need:
+Check the 'bot' scope, and after doing so, the list of bot-specific permissions should pop up. You will need:
 
 + Manage Roles
 + Manage Channels
