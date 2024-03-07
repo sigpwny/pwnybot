@@ -5,5 +5,4 @@ services:
     build: .
     environment:
       - DISCORD_TOKEN
-      - CTFD_TOKEN
       - GUILD_IDS
