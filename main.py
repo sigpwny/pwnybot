@@ -49,14 +49,10 @@ async def on_slash_command_error(event: interactions.api.events.CommandError) ->
         type(err), err, err.__traceback__, file=sys.stderr)
 
 
-@interactions.slash_command(name="aaaaaaa", description="BBBBBBBBBBBB", scopes=GUILD_IDS)
-async def qqq(ctx: interactions.SlashContext):
-    await ctx.send("ccccc")
-
 
 if __name__ == "__main__":
-    # for ext in os.listdir("cogs"):
-    #     bot.load_extension(f"cogs.{ext}.{ext}")
-    #     logger.info(f"Loaded extension: {ext}")
+    for ext in os.listdir("cogs"):
+        bot.load_extension(f"cogs.{ext}.{ext}")
+        logger.info(f"Loaded extension: {ext}")
 
     bot.start(DISCORD_TOKEN)
