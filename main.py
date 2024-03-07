@@ -11,7 +11,7 @@ from lib.config import DISCORD_TOKEN
 
 
 # Setup bot
-bot = interactions.Client(disable_dm_commands=True)
+bot = interactions.Client()
 
 
 @interactions.listen()
