@@ -30,7 +30,7 @@ def get_option_type(annotation):
         raise NotImplementedError("That type isn't implemented yet")
 
 
-def command_decorator(*_, **kwargs):
+def command(*_, **kwargs):
     def wrapper(command):
         # Dynamically generate options list
         parameters = list(inspect.signature(command).parameters.items())[2:]
@@ -63,7 +63,7 @@ def command_decorator(*_, **kwargs):
     return wrapper
 
 
-def subcommand_decorator(*_, **kwargs):
+def subcommand(*_, **kwargs):
     def wrapper(command):
         # Dynamically generate options list
         parameters = list(inspect.signature(command).parameters.items())[2:]
