@@ -30,7 +30,7 @@ def get_option_type(annotation):
         raise NotImplementedError("That type isn't implemented yet")
 
 
-def command(*_, **kwargs):
+def command(**kwargs):
     def wrapper(command):
         # Dynamically generate options list
         parameters = list(inspect.signature(command).parameters.items())[2:]
@@ -45,6 +45,7 @@ def command(*_, **kwargs):
             }
 
             merged_data = {**data, **kwargs.get(parameter.name, {})}
+            kwargs.pop(parameter.name, None)
             options.append(merged_data)
 
         options = [
@@ -56,14 +57,21 @@ def command(*_, **kwargs):
             scopes=GUILD_IDS,
             description=command.__doc__,
             options=options,
+            **kwargs,
         )
+        wrapped = help_wrapper(command)
 
-        return help_wrapper(command)
+        # inherit attributes set by other decorators
+        for attr in dir(command):
+            if (not attr.startswith("_") and (not hasattr(wrapped, attr) or getattr(wrapped, attr) == None)):
+                setattr(wrapped, attr, getattr(command, attr))
+
+        return wrapped
 
     return wrapper
 
 
-def subcommand(*_, **kwargs):
+def subcommand(**kwargs):
     def wrapper(command):
         # Dynamically generate options list
         parameters = list(inspect.signature(command).parameters.items())[2:]
@@ -77,6 +85,7 @@ def subcommand(*_, **kwargs):
             }
 
             merged_data = {**data, **kwargs.get(parameter.name, {})}
+            kwargs.pop(parameter.name, None)
             options.append(merged_data)
 
         class_lower = command.__qualname__.split('.')[0].lower()
@@ -93,9 +102,16 @@ def subcommand(*_, **kwargs):
             name=command.__name__,
             description=command.__doc__,
             options=options,
+            **kwargs,
         )
+        wrapped = help_wrapper(command)
 
-        return help_wrapper(command)
+        # inherit attributes set by other decorators
+        for attr in dir(command):
+            if (not attr.startswith("_") and (not hasattr(wrapped, attr) or getattr(wrapped, attr) == None)):
+                setattr(wrapped, attr, getattr(command, attr))
+
+        return wrapped
 
     return wrapper
 
