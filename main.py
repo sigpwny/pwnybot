@@ -7,7 +7,7 @@ import interactions
 import aiohttp
 
 from lib.util import logger
-from lib.config import DISCORD_TOKEN, GUILD_IDS
+from lib.config import DISCORD_TOKEN
 
 
 # Setup bot
