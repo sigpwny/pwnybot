@@ -1,5 +1,5 @@
 import logging
-from logging import RootLogger
+from logging import Logger
 import string
 import inspect
 
@@ -24,7 +24,7 @@ def get_option_type(annotation):
     elif annotation == bool:
         return OptionType.BOOLEAN
     elif annotation == float:
-        return OptionType.FLOAT
+        return OptionType.NUMBER
 
     else:
         raise NotImplementedError("That type isn't implemented yet")
@@ -148,7 +148,7 @@ def sanitize_name(name: str, max_length=32) -> str:
     return name[:max_length]
 
 
-def setup_logger(level: int) -> RootLogger:
+def setup_logger(level: int) -> Logger:
     """Set up logging.
 
     Args:
