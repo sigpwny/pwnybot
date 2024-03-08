@@ -1,3 +1,4 @@
+import interactions
 from interactions import Extension, SlashContext
 
 from lib.util import command, subcommand

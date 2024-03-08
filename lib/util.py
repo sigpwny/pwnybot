@@ -11,25 +11,6 @@ from lib.config import GUILD_IDS
 option_types = set(item.value for item in OptionType)
 
 
-def get_option_type(annotation):
-    if annotation == inspect.Parameter.empty:
-        raise ValueError('All function parameters must have a annotation')
-
-    if annotation in option_types:
-        return annotation
-    elif annotation == int:
-        return OptionType.INTEGER
-    elif annotation == str:
-        return OptionType.STRING
-    elif annotation == bool:
-        return OptionType.BOOLEAN
-    elif annotation == float:
-        return OptionType.NUMBER
-
-    else:
-        raise NotImplementedError(f"Type {annotation} isn't implemented yet")
-
-
 def command(**kwargs):
     '''Decorator for commands. Auto generates name, description, and scope information based on the function and config.
 
@@ -46,7 +27,7 @@ def command(**kwargs):
             data = {
                 "name": parameter.name,
                 "required": parameter.default == inspect.Parameter.empty,
-                "type": get_option_type(parameter.annotation),
+                "type": interactions.OptionType.from_type(parameter.annotation),
                 "description": f'{parameter.name} (missing description)'
             }
 
@@ -88,7 +69,7 @@ def subcommand(**kwargs):
             data = {
                 "name": parameter.name,
                 "required": parameter.default == inspect.Parameter.empty,
-                "type": get_option_type(parameter.annotation),
+                "type": interactions.OptionType.from_type(parameter.annotation),
                 "description": f'{parameter.name} (missing description)'
             }
 
