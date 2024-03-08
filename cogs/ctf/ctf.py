@@ -1,7 +1,7 @@
 import interactions
 from interactions import Extension, SlashContext
 
-from lib.util import command, subcommand, sanitize_name, logger
+from lib.util import subcommand, sanitize_name
 from lib.config import CTF_CATEGORY_CHANNELS, CHALLENGE_CATEGORIES
 
 class CTF(Extension):
@@ -15,7 +15,7 @@ class CTF(Extension):
             await ctx.send("Must be invoked inside a guild")
             return
 
-        name = sanitize_name("ctf-"+name, 100)
+        ctf_name = sanitize_name("ctf-"+name, 100)
         # find category channel
         category_channel = None
         for cat in CTF_CATEGORY_CHANNELS:
@@ -23,8 +23,9 @@ class CTF(Extension):
                 category_channel = cat
         tags = [variant+cat for variant in ["unsolved-", "solved-"] for cat in CHALLENGE_CATEGORIES]
         tags = [interactions.ThreadTag.create(tag) for tag in tags]
-        forum = await ctx.guild.create_forum_channel(name=name, position=1000, category=category_channel, available_tags=tags)
+        forum = await ctx.guild.create_forum_channel(name=ctf_name, position=1000, category=category_channel, available_tags=tags)
 
-        # pinned general
+        general = await forum.create_post(name="General", content=name)
+        await general.pin()
 
-        await ctx.send(f"Created {name}")
+        await ctx.send(f"Created {ctf_name}")
