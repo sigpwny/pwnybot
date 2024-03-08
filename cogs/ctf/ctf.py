@@ -7,6 +7,7 @@ from lib.config import CTF_CATEGORY_CHANNELS, CHALLENGE_CATEGORIES
 class CTF(Extension):
     '''Commands for managing ctf forums'''
 
+
     @subcommand(name={"description": "The name of the ctf"})
     @interactions.slash_default_member_permission(interactions.Permissions.ADMINISTRATOR)
     async def create(self, ctx: SlashContext, name: str):
@@ -29,6 +30,7 @@ class CTF(Extension):
         await general.pin()
 
         await ctx.send(f"Created {ctf_name}")
+
 
     @subcommand(category={"description": "The name of the category"})
     @interactions.slash_default_member_permission(interactions.Permissions.ADMINISTRATOR)
