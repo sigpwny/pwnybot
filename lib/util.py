@@ -58,13 +58,14 @@ def command(**kwargs):
             interactions.SlashCommandOption(**option)
             for option in options
         ] if len(options) > 0 else None
-        help_wrapper = interactions.slash_command(
-            name=command.__name__,
-            scopes=GUILD_IDS,
-            description=command.__doc__,
-            options=options,
+        commandArgs = {
+            "name": sanitize_name(command.__name__),
+            "scopes": GUILD_IDS,
+            "description": command.__doc__,
+            "options": options,
             **kwargs,
-        )
+        }
+        help_wrapper = interactions.slash_command(**commandArgs)
         wrapped = help_wrapper(command)
 
         # inherit attributes set by other decorators
@@ -95,22 +96,23 @@ def subcommand(**kwargs):
             kwargs.pop(parameter.name, None)
             options.append(merged_data)
 
-        class_lower = command.__qualname__.split('.')[0].lower()
+        class_sanitized = sanitize_name(command.__qualname__.split('.')[0])
         class_doc = command.__self__.__doc__ if hasattr(command, "__self__") else None
 
         options = [
             interactions.SlashCommandOption(**option)
             for option in options
         ] if len(options) > 0 else None
-        help_wrapper = interactions.subcommand(
-            base=class_lower,
-            base_description=class_doc,
-            scopes=GUILD_IDS,
-            name=command.__name__,
-            description=command.__doc__,
-            options=options,
+        commandArgs = {
+            "base": class_sanitized,
+            "base_description": class_doc,
+            "scopes": GUILD_IDS,
+            "name": sanitize_name(command.__name__),
+            "description": command.__doc__,
+            "options": options,
             **kwargs,
-        )
+        }
+        help_wrapper = interactions.subcommand(**commandArgs)
         wrapped = help_wrapper(command)
 
         # inherit attributes set by other decorators
@@ -123,14 +125,15 @@ def subcommand(**kwargs):
     return wrapper
 
 
-def sanitize_channel_name(name: str) -> str:
-    """Filter out characters that aren't allowed by Discord for guild channels.
+def sanitize_name(name: str, max_length=32) -> str:
+    """Filter names to conform to Discord name requirements.
 
     Args:
-        name: Channel name.
+        name: The name.
+        max_length: Maximum allowed length.
 
     Returns:
-        Sanitized channel name.
+        Sanitized name.
     """
     whitelist = string.ascii_lowercase + string.digits + "-_"
     name = name.lower().replace(" ", "-")
@@ -142,7 +145,7 @@ def sanitize_channel_name(name: str) -> str:
     while "--" in name:
         name = name.replace("--", "-")
 
-    return name
+    return name[:max_length]
 
 
 def setup_logger(level: int) -> RootLogger:
