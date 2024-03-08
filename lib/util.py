@@ -31,6 +31,12 @@ def get_option_type(annotation):
 
 
 def command(**kwargs):
+    '''Decorator for commands. Auto generates name, description, and scope information based on the function and config.
+
+    Args:
+        kwargs: extra args to pass to interactions.SlashCommandOption in the format `optionname={'description': 'optiondescription'}`.
+        Additionally, args that do not match an option are passed to `interactions.slash_command`
+    '''
     def wrapper(command):
         # Dynamically generate options list
         parameters = list(inspect.signature(command).parameters.items())[2:]
@@ -72,6 +78,7 @@ def command(**kwargs):
 
 
 def subcommand(**kwargs):
+    '''Decorator for subcommands. See `command` for details about `kwargs`'''
     def wrapper(command):
         # Dynamically generate options list
         parameters = list(inspect.signature(command).parameters.items())[2:]
