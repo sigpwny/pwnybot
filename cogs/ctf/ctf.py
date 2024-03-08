@@ -1,9 +1,7 @@
-import typing
-
 import interactions
 from interactions import Extension, SlashContext
 
-from lib.util import subcommand, sanitize_name
+from lib.util import subcommand, sanitize_name, get_ctf_forum
 from lib.config import CTF_CATEGORY_CHANNELS, CHALLENGE_CATEGORIES
 
 class CTF(Extension):
@@ -36,12 +34,11 @@ class CTF(Extension):
     @interactions.slash_default_member_permission(interactions.Permissions.ADMINISTRATOR)
     async def add_category(self, ctx: SlashContext, category: str):
         '''Adds tags for a custom category'''
-        if (not isinstance(ctx.channel, interactions.GuildForumPost) or
-                not (ctx.channel.parent_channel.name or "").startswith("ctf-")):
-            await ctx.send("Must be used inside a ctf forum")
+        forum = await get_ctf_forum(ctx)
+        if (forum == None or ctx.channel.name != "General"):
+            await ctx.send("Must be used inside a ctf forum's General post")
             return
 
-        forum = typing.cast(interactions.GuildForum, ctx.channel.parent_channel)
         await forum.create_tag("unsolved-"+category)
         await forum.create_tag("solved-"+category)
 

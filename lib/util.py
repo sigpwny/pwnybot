@@ -2,6 +2,7 @@ import logging
 from logging import Logger
 import string
 import inspect
+import typing
 
 import interactions
 from interactions.models.internal import OptionType
@@ -151,6 +152,12 @@ def setup_logger(level: int) -> Logger:
     logger.addHandler(stream_handler)
 
     return logger
+
+
+async def get_ctf_forum(ctx: interactions.BaseContext) -> interactions.GuildForum | None:
+    if ( isinstance(ctx.channel, interactions.GuildForumPost) and
+             (ctx.channel.parent_channel.name or "").startswith("ctf-")):
+        return typing.cast(interactions.GuildForum, ctx.channel.parent_channel)
 
 
 
