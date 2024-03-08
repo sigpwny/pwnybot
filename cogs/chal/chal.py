@@ -16,7 +16,7 @@ class Chal(Extension):
     async def get_categories(self, ctx: interactions.AutocompleteContext):
         forum = await get_ctf_forum(ctx)
         if (forum == None or ctx.channel.name != "General"):
-            await ctx.send(["Must be used inside a ctf forum's General post"])
+            await ctx.send(["Must be used inside a ctf forum's general channel"])
             return
 
         categories = set()

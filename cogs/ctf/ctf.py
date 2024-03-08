@@ -21,7 +21,7 @@ class CTF(Extension):
         for cat in CTF_CATEGORY_CHANNELS:
             if (ctx.guild.get_channel(cat) != None):
                 category_channel = cat
-        tags = [variant+cat for variant in ["unsolved-", "solved-"] for cat in CHALLENGE_CATEGORIES]
+        tags = CHALLENGE_CATEGORIES + ["unsolved"]
         tags = [interactions.ThreadTag.create(tag) for tag in tags]
         forum = await ctx.guild.create_forum_channel(name=ctf_name, position=1000, category=category_channel, available_tags=tags)
 
@@ -36,10 +36,9 @@ class CTF(Extension):
         '''Adds tags for a custom category'''
         forum = await get_ctf_forum(ctx)
         if (forum == None or ctx.channel.name != "General"):
-            await ctx.send("Must be used inside a ctf forum's General post")
+            await ctx.send("Must be used inside a ctf forum's general channel")
             return
 
-        await forum.create_tag("unsolved-"+category)
-        await forum.create_tag("solved-"+category)
+        await forum.create_tag(category)
 
-        await ctx.send(f"Added tags for {category}")
+        await ctx.send(f"Added tag for {category}")
