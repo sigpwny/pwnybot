@@ -1,3 +1,5 @@
+import typing
+
 import interactions
 from interactions import Extension, SlashContext
 
@@ -12,7 +14,7 @@ class CTF(Extension):
     async def create(self, ctx: SlashContext, name: str):
         '''Creates a forum for the ctf'''
         if (ctx.guild == None):
-            await ctx.send("Must be invoked inside a guild")
+            await ctx.send("Must be used inside a guild")
             return
 
         ctf_name = sanitize_name("ctf-"+name, 100)
@@ -30,8 +32,17 @@ class CTF(Extension):
 
         await ctx.send(f"Created {ctf_name}")
 
-    @subcommand(name={"description": "The name of the category"})
+    @subcommand(category={"description": "The name of the category"})
     @interactions.slash_default_member_permission(interactions.Permissions.ADMINISTRATOR)
-    async def add_category(self, ctx: SlashContext, name: str):
+    async def add_category(self, ctx: SlashContext, category: str):
         '''Adds tags for a custom category'''
-        await ctx.send("not implemented")
+        if (not isinstance(ctx.channel, interactions.GuildForumPost) or
+                not (ctx.channel.parent_channel.name or "").startswith("ctf-")):
+            await ctx.send("Must be used inside a ctf forum")
+            return
+
+        forum = typing.cast(interactions.GuildForum, ctx.channel.parent_channel)
+        await forum.create_tag("unsolved-"+category)
+        await forum.create_tag("solved-"+category)
+
+        await ctx.send(f"Added tags for {category}")
