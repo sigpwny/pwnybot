@@ -1,15 +1,14 @@
 import interactions
 from interactions import Extension, SlashContext
 
-from lib.util import command, subcommand, sanitize_name
-from lib.config import CTF_CATEGORY_CHANNEL
+from lib.util import command, subcommand, sanitize_name, logger
+from lib.config import CTF_CATEGORY_CHANNELS, CHALLENGE_CATEGORIES
 
 class CTF(Extension):
     '''Commands for managing ctf forums'''
 
     @subcommand(name={"description": "The name of the ctf"})
-    # TODO uncomment
-    # @interactions.slash_default_member_permission(interactions.Permissions.ADMINISTRATOR)
+    @interactions.slash_default_member_permission(interactions.Permissions.ADMINISTRATOR)
     async def create(self, ctx: SlashContext, name: str):
         '''Creates a forum for the ctf'''
         if (ctx.guild == None):
@@ -17,11 +16,15 @@ class CTF(Extension):
             return
 
         name = sanitize_name("ctf-"+name, 100)
-        forum = await ctx.guild.create_forum_channel(name=name, position=1000, category=CTF_CATEGORY_CHANNEL, available_tags=[
+        # find category channel
+        category_channel = None
+        for cat in CTF_CATEGORY_CHANNELS:
+            if (ctx.guild.get_channel(cat) != None):
+                category_channel = cat
+        tags = [variant+cat for variant in ["unsolved-", "solved-"] for cat in CHALLENGE_CATEGORIES]
+        tags = [interactions.ThreadTag.create(tag) for tag in tags]
+        forum = await ctx.guild.create_forum_channel(name=name, position=1000, category=category_channel, available_tags=tags)
 
-        ])
-        # create tags
-        # interactions.ThreadTag.create("web",emoji=interactions.PartialEmoji.)
         # pinned general
 
         await ctx.send(f"Created {name}")

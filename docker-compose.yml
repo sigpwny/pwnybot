@@ -6,4 +6,5 @@ services:
     environment:
       - DISCORD_TOKEN
       - GUILD_IDS
-      - CTF_CATEGORY_CHANNEL
+      - CTF_CATEGORY_CHANNELS
+      - CHALLENGE_CATEGORIES
