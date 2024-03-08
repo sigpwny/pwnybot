@@ -10,7 +10,26 @@ class Chal(Extension):
     @subcommand(name={"description": "The name of the challenge"}, category={"description": "the category of the challenge", "autocomplete": True})
     async def create(self, ctx: SlashContext, name: str, category: str) -> None:
         '''Creates a channel for the challenge'''
-        await ctx.send("not implemented")
+        forum = await get_ctf_forum(ctx)
+        if (forum == None or ctx.channel.name != "General"):
+            await ctx.send("Must be used inside a ctf forum's general channel")
+            return
+        if (category == "unsolved"):
+            await ctx.send("Unsolved cannot be a category")
+            return
+        for post in forum.get_posts(exclude_archived=False):
+            if ((post.name or "") == name):
+                await ctx.send(f"Challenge {name} already exists")
+                return
+
+        # check valid category
+        for tag in forum.available_tags:
+            if (tag.name == category):
+                await forum.create_post(name=name, content=name, applied_tags=[tag, "unsolved"])
+                await ctx.send(f"Created {name}")
+                return
+
+        await ctx.send(f"Could not find category {category}")
 
     @create.autocomplete("category")
     async def get_categories(self, ctx: interactions.AutocompleteContext):
