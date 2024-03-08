@@ -2,6 +2,7 @@ import interactions
 from interactions import Extension, SlashContext
 
 from lib.util import subcommand, get_ctf_forum
+from lib.config import FORUM_GENERAL_CHANNEL
 
 
 class Chal(Extension):
@@ -12,7 +13,7 @@ class Chal(Extension):
     async def create(self, ctx: SlashContext, name: str, category: str) -> None:
         '''Creates a channel for the challenge'''
         forum = await get_ctf_forum(ctx)
-        if (forum == None or ctx.channel.name != "General"):
+        if (forum == None or ctx.channel.name != FORUM_GENERAL_CHANNEL):
             await ctx.send("Must be used inside a ctf forum's general channel")
             return
         if (category == "unsolved"):
@@ -36,7 +37,7 @@ class Chal(Extension):
     @create.autocomplete("category")
     async def get_categories(self, ctx: interactions.AutocompleteContext):
         forum = await get_ctf_forum(ctx)
-        if (forum == None or ctx.channel.name != "General"):
+        if (forum == None or ctx.channel.name != FORUM_GENERAL_CHANNEL):
             await ctx.send(["Must be used inside a ctf forum's general channel"])
             return
 

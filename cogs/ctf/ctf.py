@@ -2,7 +2,7 @@ import interactions
 from interactions import Extension, SlashContext
 
 from lib.util import subcommand, sanitize_name, get_ctf_forum
-from lib.config import CTF_CATEGORY_CHANNELS, CHALLENGE_CATEGORIES
+from lib.config import CTF_CATEGORY_CHANNELS, CHALLENGE_CATEGORIES, FORUM_GENERAL_CHANNEL
 
 class CTF(Extension):
     '''Commands for managing ctf forums'''
@@ -26,7 +26,7 @@ class CTF(Extension):
         tags = [interactions.ThreadTag.create(tag) for tag in tags]
         forum = await ctx.guild.create_forum_channel(name=ctf_name, position=1000, category=category_channel, available_tags=tags)
 
-        general = await forum.create_post(name="General", content=name)
+        general = await forum.create_post(name=FORUM_GENERAL_CHANNEL, content=name)
         await general.pin()
 
         await ctx.send(f"Created {ctf_name}")
@@ -37,7 +37,7 @@ class CTF(Extension):
     async def add_category(self, ctx: SlashContext, category: str):
         '''Adds tags for a custom category'''
         forum = await get_ctf_forum(ctx)
-        if (forum == None or ctx.channel.name != "General"):
+        if (forum == None or ctx.channel.name != FORUM_GENERAL_CHANNEL):
             await ctx.send("Must be used inside a ctf forum's general channel")
             return
         if (category == "unsolved"):
