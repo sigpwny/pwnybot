@@ -27,7 +27,7 @@ def get_option_type(annotation):
         return OptionType.NUMBER
 
     else:
-        raise NotImplementedError("That type isn't implemented yet")
+        raise NotImplementedError(f"Type {annotation} isn't implemented yet")
 
 
 def command(**kwargs):

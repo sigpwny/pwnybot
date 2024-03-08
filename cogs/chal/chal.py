@@ -7,7 +7,7 @@ class Chal(Extension):
     '''Commands for managing challenges in a ctf forum'''
 
     @subcommand(name={"description": "The name of the challenge"}, category={"description": "the category of the challenge"})
-    async def create(self, ctx: SlashContext, name: str, category: None) -> None:
+    async def create(self, ctx: SlashContext, name: str, category: str) -> None:
         '''Creates a channel for the challenge'''
         await ctx.send("not implemented")
 
