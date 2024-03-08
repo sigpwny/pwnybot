@@ -1,7 +1,7 @@
 import interactions
 from interactions import Extension, SlashContext
 
-from lib.util import subcommand, get_ctf_forum, logger
+from lib.util import subcommand, get_ctf_forum
 
 
 class Chal(Extension):
@@ -19,9 +19,7 @@ class Chal(Extension):
             await ctx.send(["Must be used inside a ctf forum's general channel"])
             return
 
-        categories = set()
-        for tag in forum.available_tags:
-            categories.add(tag.name.removeprefix("solved-").removeprefix("unsolved-"))
+        categories = [tag.name for tag in forum.available_tags if ctx.input_text in tag.name and tag.name != "unsolved"]
         await ctx.send(categories)
 
     @subcommand(flag={"description": "The flag for the challenge"})
