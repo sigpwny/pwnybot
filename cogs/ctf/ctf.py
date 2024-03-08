@@ -29,3 +29,9 @@ class CTF(Extension):
         await general.pin()
 
         await ctx.send(f"Created {ctf_name}")
+
+    @subcommand(name={"description": "The name of the category"})
+    @interactions.slash_default_member_permission(interactions.Permissions.ADMINISTRATOR)
+    async def add_category(self, ctx: SlashContext, name: str):
+        '''Adds tags for a custom category'''
+        await ctx.send("not implemented")
