@@ -38,6 +38,13 @@ class CTF(Extension):
         if (forum == None or ctx.channel.name != "General"):
             await ctx.send("Must be used inside a ctf forum's general channel")
             return
+        if (category == "unsolved"):
+            await ctx.send("Unsolved cannot be a category")
+            return
+        for tag in forum.available_tags:
+            if (tag.name.lower() == category.lower()):
+                await ctx.send(f"Category {category} already exists")
+                return
 
         await forum.create_tag(category)
 
