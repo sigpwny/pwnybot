@@ -8,14 +8,9 @@ The official sigpwny discord bot.
 
 Check the 'bot' scope, and after doing so, the list of bot-specific permissions should pop up. You will need:
 
-+ Manage Roles
 + Manage Channels
-+ Read Messages/View Channels
-+ Send Messages
-+ Read Message History
-+ Add Reactions
-
-Additionally, go to the 'Bot' tab and enable the 'Message Content Intent'.
++ Manage Roles
++ Manage Threads
 
 In the future, more permission may be needed, so ask the current maintainer.
 
