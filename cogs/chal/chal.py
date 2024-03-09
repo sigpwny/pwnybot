@@ -1,7 +1,9 @@
+import typing
+
 import interactions
 from interactions import Extension, SlashContext
 
-from lib.util import subcommand, get_ctf_forum
+from lib.util import subcommand, get_ctf_forum, logger
 from lib.config import FORUM_GENERAL_CHANNEL
 
 
@@ -48,4 +50,18 @@ class Chal(Extension):
     @subcommand(flag={"description": "The flag for the challenge"})
     async def solve(self, ctx: SlashContext, flag: str) -> None:
         '''Marks a challenge as solved with a flag'''
-        await ctx.send("not implemented")
+        forum = await get_ctf_forum(ctx)
+        if (forum == None):
+            await ctx.send("Must be used inside a ctf forum")
+            return
+        if (ctx.channel.name == FORUM_GENERAL_CHANNEL):
+            await ctx.send("Cannot be used inside a ctf forum's general channel")
+            return
+
+        post = typing.cast(interactions.GuildForumPost, ctx.channel)
+        tags = post.applied_tags
+        for tag in tags:
+            if (tag.name == "unsolved"):
+                tags.remove(tag)
+        await ctx.send("Marking channel as solved")
+        await post.edit(applied_tags=tags, archived=True)
