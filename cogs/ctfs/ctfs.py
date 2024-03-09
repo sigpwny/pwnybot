@@ -5,8 +5,8 @@ from lib.util import subcommand
 from lib.config import CTF_ROLES, UIUC_ROLES
 
 
-class Template(Extension):
-    '''Describe the cog'''
+class CTFs(Extension):
+    '''Commands for opting in/out of CTFs'''
 
     @subcommand()
     async def optin(self, ctx: SlashContext):
