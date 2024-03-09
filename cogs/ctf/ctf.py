@@ -73,4 +73,4 @@ class CTF(Extension):
 
         tar = typing.cast(interactions.Role | interactions.User, target)
         await forum.set_permission(target=tar, view_channel=True)
-        await ctx.send(f"Added <@{tar.id}> to the CTF")
+        await ctx.send(f"Added {tar.mention} to the CTF")

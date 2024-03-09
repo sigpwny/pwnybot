@@ -28,11 +28,13 @@ class Chal(Extension):
         # check valid category
         for tag in forum.available_tags:
             if (tag.name == category):
-                await forum.create_post(name=name, content=name, applied_tags=[tag, "unsolved"])
-                await ctx.send(f"Created {name}")
-                return
+                break
+        else:  # this indentation is intentional
+            await ctx.send(f"Could not find category {category}")
+            return
 
-        await ctx.send(f"Could not find category {category}")
+        await forum.create_post(name=name, content=name, applied_tags=[tag, "unsolved"])
+        await ctx.send(f"Created {name}")
 
     @create.autocomplete("category")
     async def get_categories(self, ctx: interactions.AutocompleteContext):
