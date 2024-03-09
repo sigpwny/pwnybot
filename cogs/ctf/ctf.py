@@ -1,17 +1,19 @@
+import typing
+
 import interactions
 from interactions import Extension, SlashContext
 
 from lib.util import subcommand, sanitize_name, get_ctf_forum
 from lib.config import CTF_CATEGORY_CHANNELS, CHALLENGE_CATEGORIES, FORUM_GENERAL_CHANNEL, CTF_ROLES
 
+
 class CTF(Extension):
     '''Commands for managing ctf forums'''
 
-
-    @subcommand(name={"description": "The name of the ctf"})
+    @subcommand(name={"description": "The name of the CTF"})
     @interactions.slash_default_member_permission(interactions.Permissions.ADMINISTRATOR)
     async def create(self, ctx: SlashContext, name: str):
-        '''Creates a forum for the ctf'''
+        '''Creates a forum for the CTF'''
         if (ctx.guild == None):
             await ctx.send("Must be used inside a guild")
             return
@@ -39,9 +41,7 @@ class CTF(Extension):
 
         general = await forum.create_post(name=FORUM_GENERAL_CHANNEL, content=name)
         await general.pin()
-
         await ctx.send(f"Created {ctf_name}")
-
 
     @subcommand(category={"description": "The name of the category"})
     @interactions.slash_default_member_permission(interactions.Permissions.ADMINISTRATOR)
@@ -49,7 +49,7 @@ class CTF(Extension):
         '''Adds tags for a custom category'''
         forum = await get_ctf_forum(ctx)
         if (forum == None or ctx.channel.name != FORUM_GENERAL_CHANNEL):
-            await ctx.send("Must be used inside a ctf forum's general channel")
+            await ctx.send("Must be used inside a CTF forum's general channel")
             return
         if (category == "unsolved"):
             await ctx.send("Unsolved cannot be a category")
@@ -60,5 +60,17 @@ class CTF(Extension):
                 return
 
         await forum.create_tag(category)
-
         await ctx.send(f"Added tag for {category}")
+
+    @subcommand(target={"description": "The user or role to add to this CTF", "type": interactions.OptionType.MENTIONABLE})
+    @interactions.slash_default_member_permission(interactions.Permissions.ADMINISTRATOR)
+    async def addrole(self, ctx: SlashContext, target: str):
+        '''Adds a user or role to a CTF'''
+        forum = await get_ctf_forum(ctx)
+        if (forum == None or ctx.channel.name != FORUM_GENERAL_CHANNEL):
+            await ctx.send("Must be used inside a CTF forum's general channel")
+            return
+
+        tar = typing.cast(interactions.Role | interactions.User, target)
+        await forum.set_permission(target=tar, view_channel=True)
+        await ctx.send(f"Added <@{tar.id}> to the CTF")
