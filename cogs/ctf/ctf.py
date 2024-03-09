@@ -45,7 +45,7 @@ class CTF(Extension):
 
     @subcommand(category={"description": "The name of the category"})
     @interactions.slash_default_member_permission(interactions.Permissions.ADMINISTRATOR)
-    async def add_category(self, ctx: SlashContext, category: str):
+    async def addcategory(self, ctx: SlashContext, category: str):
         '''Adds tags for a custom category'''
         forum = await get_ctf_forum(ctx)
         if (forum == None or ctx.channel.name != FORUM_GENERAL_CHANNEL):
