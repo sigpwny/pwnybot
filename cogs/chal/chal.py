@@ -15,14 +15,14 @@ class Chal(Extension):
         '''Creates a channel for the challenge'''
         forum = await get_ctf_forum(ctx)
         if (forum == None or ctx.channel.name != FORUM_GENERAL_CHANNEL):
-            await ctx.send("Must be used inside a CTF forum's general channel")
+            await ctx.send(":x: Must be used inside a CTF forum's general channel.")
             return
         if (category == "unsolved"):
-            await ctx.send("Unsolved cannot be a category")
+            await ctx.send(":x: Unsolved cannot be a category.")
             return
         for post in forum.get_posts(exclude_archived=False):
             if ((post.name or "") == name):
-                await ctx.send(f"Challenge {name} already exists")
+                await ctx.send(f":x: Challenge {name} already exists.")
                 return
 
         # check valid category
@@ -30,17 +30,17 @@ class Chal(Extension):
             if (tag.name == category):
                 break
         else:  # this indentation is intentional
-            await ctx.send(f"Could not find category {category}")
+            await ctx.send(f":x: Could not find category {category}.")
             return
 
         await forum.create_post(name=name, content=name, applied_tags=[tag, "unsolved"])
-        await ctx.send(f"Created {name}")
+        await ctx.send(f"Created {name}.")
 
     @create.autocomplete("category")
     async def get_categories(self, ctx: interactions.AutocompleteContext):
         forum = await get_ctf_forum(ctx)
         if (forum == None or ctx.channel.name != FORUM_GENERAL_CHANNEL):
-            await ctx.send(["Must be used inside a CTF forum's general channel"])
+            await ctx.send(["Must be used inside a CTF forum's general channel."])
             return
 
         categories = [tag.name for tag in forum.available_tags if ctx.input_text in tag.name and tag.name != "unsolved"]
@@ -51,10 +51,10 @@ class Chal(Extension):
         '''Marks a challenge as solved with a flag'''
         forum = await get_ctf_forum(ctx)
         if (forum == None):
-            await ctx.send("Must be used inside a CTF forum")
+            await ctx.send(":x: Must be used inside a CTF forum.")
             return
         if (ctx.channel.name == FORUM_GENERAL_CHANNEL):
-            await ctx.send("Cannot be used inside a CTF forum's general channel")
+            await ctx.send(":x: Cannot be used inside a CTF forum's general channel.")
             return
 
         post = typing.cast(interactions.GuildForumPost, ctx.channel)
@@ -62,5 +62,5 @@ class Chal(Extension):
         for tag in tags:
             if (tag.name == "unsolved"):
                 tags.remove(tag)
-        await ctx.send("Marking channel as solved")
+        await ctx.send("Marking channel as solved.")
         await post.edit(applied_tags=tags, archived=True)

@@ -35,7 +35,7 @@ async def on_slash_command_error(event: interactions.api.events.CommandError) ->
     elif isinstance(err, aiohttp.ClientError):
         await ctx.send(":x: HTTP Client error.")
     else:
-        await ctx.send(f"❌ An error has occured")
+        await ctx.send(f":x: An error has occured.")
         body = ''.join(traceback.format_exception(
             type(err), err, err.__traceback__))
         if len(body) > 2000 - 6:

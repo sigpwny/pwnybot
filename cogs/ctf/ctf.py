@@ -15,7 +15,7 @@ class CTF(Extension):
     async def create(self, ctx: SlashContext, name: str):
         '''Creates a forum for the CTF'''
         if (ctx.guild == None):
-            await ctx.send("Must be used inside a guild")
+            await ctx.send(":x: Must be used inside a guild.")
             return
 
         ctf_name = sanitize_name("ctf-"+name, 100)
@@ -41,7 +41,7 @@ class CTF(Extension):
 
         general = await forum.create_post(name=FORUM_GENERAL_CHANNEL, content=name)
         await general.pin()
-        await ctx.send(f"Created {ctf_name}")
+        await ctx.send(f"Created {ctf_name}.")
 
     @subcommand(category={"description": "The name of the category"})
     @interactions.slash_default_member_permission(interactions.Permissions.ADMINISTRATOR)
@@ -49,18 +49,18 @@ class CTF(Extension):
         '''Adds tags for a custom category'''
         forum = await get_ctf_forum(ctx)
         if (forum == None or ctx.channel.name != FORUM_GENERAL_CHANNEL):
-            await ctx.send("Must be used inside a CTF forum's general channel")
+            await ctx.send(":x: Must be used inside a CTF forum's general channel.")
             return
         if (category == "unsolved"):
-            await ctx.send("Unsolved cannot be a category")
+            await ctx.send(":x: Unsolved cannot be a category.")
             return
         for tag in forum.available_tags:
             if (tag.name.lower() == category.lower()):
-                await ctx.send(f"Category {category} already exists")
+                await ctx.send(f":x: Category {category} already exists.")
                 return
 
         await forum.create_tag(category)
-        await ctx.send(f"Added tag for {category}")
+        await ctx.send(f"Added tag for {category}.")
 
     @subcommand(target={"description": "The user or role to add to this CTF", "type": interactions.OptionType.MENTIONABLE})
     @interactions.slash_default_member_permission(interactions.Permissions.ADMINISTRATOR)
@@ -68,7 +68,7 @@ class CTF(Extension):
         '''Adds a user or role to a CTF'''
         forum = await get_ctf_forum(ctx)
         if (forum == None or ctx.channel.name != FORUM_GENERAL_CHANNEL):
-            await ctx.send("Must be used inside a CTF forum's general channel")
+            await ctx.send(":x: Must be used inside a CTF forum's general channel.")
             return
 
         tar = typing.cast(interactions.Role | interactions.User, target)
