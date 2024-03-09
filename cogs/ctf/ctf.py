@@ -2,7 +2,7 @@ import interactions
 from interactions import Extension, SlashContext
 
 from lib.util import subcommand, sanitize_name, get_ctf_forum
-from lib.config import CTF_CATEGORY_CHANNELS, CHALLENGE_CATEGORIES, FORUM_GENERAL_CHANNEL
+from lib.config import CTF_CATEGORY_CHANNELS, CHALLENGE_CATEGORIES, FORUM_GENERAL_CHANNEL, CTF_ROLES
 
 class CTF(Extension):
     '''Commands for managing ctf forums'''
@@ -24,7 +24,18 @@ class CTF(Extension):
                 category_channel = cat
         tags = CHALLENGE_CATEGORIES + ["unsolved"]
         tags = [interactions.ThreadTag.create(tag) for tag in tags]
-        forum = await ctx.guild.create_forum_channel(name=ctf_name, position=1000, category=category_channel, available_tags=tags)
+        forum = await ctx.guild.create_forum_channel(
+            name=ctf_name,
+            position=1000,
+            category=category_channel,
+            available_tags=tags)
+
+        await forum.set_permission(ctx.bot.user, view_channel=True)
+        await forum.set_permission(ctx.guild.default_role, view_channel=False)
+        for role in CTF_ROLES:
+            role = ctx.guild.get_role(role)
+            if (role != None):
+                await forum.set_permission(role, view_channel=True)
 
         general = await forum.create_post(name=FORUM_GENERAL_CHANNEL, content=name)
         await general.pin()

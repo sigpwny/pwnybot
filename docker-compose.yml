@@ -7,3 +7,4 @@ services:
       - DISCORD_TOKEN
       - GUILD_IDS
       - CTF_CATEGORY_CHANNELS
+      - CTF_ROLES
