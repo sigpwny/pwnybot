@@ -155,10 +155,9 @@ def setup_logger(level: int) -> Logger:
 
 
 async def get_ctf_forum(ctx: interactions.BaseContext) -> interactions.GuildForum | None:
-    if ( isinstance(ctx.channel, interactions.GuildForumPost) and
-             (ctx.channel.parent_channel.name or "").startswith("ctf-")):
+    if (isinstance(ctx.channel, interactions.GuildForumPost) and
+            (ctx.channel.parent_channel.name or "").startswith("ctf-")):
         return typing.cast(interactions.GuildForum, ctx.channel.parent_channel)
-
 
 
 logger = setup_logger(logging.INFO)
