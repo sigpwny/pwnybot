@@ -25,13 +25,19 @@ class CTFs(Extension):
             await ctx.send("Must have UIUC role")
             return
 
-        for role in CTF_ROLES:
-            role = await ctx.guild.fetch_role(role)
-            if (role):
-                await user.add_role(role)
+        await user.add_roles(CTF_ROLES)
         await ctx.send("Added CTF role")
 
     @subcommand()
     async def optout(self, ctx: SlashContext):
         '''Remove the CTF role'''
-        await ctx.send("not implemented")
+        if (ctx.guild == None):
+            await ctx.send("Must be used inside a guild")
+            return
+        user = ctx.guild.get_member(ctx.user.id)
+        if (user == None):
+            await ctx.send("User not in guild. This should be impossible.")
+            return
+
+        await user.remove_roles(CTF_ROLES)
+        await ctx.send("Removed CTF role")
