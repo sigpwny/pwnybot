@@ -35,6 +35,7 @@ class Chal(Extension):
 
     @create.autocomplete("category")
     async def get_categories(self, ctx: interactions.AutocompleteContext):
+        '''Autocomplete that provides challenge categories for chal create'''
         forum = await get_ctf_forum(ctx)
         if (forum == None or ctx.channel.name != FORUM_GENERAL_CHANNEL):
             await ctx.send(["Must be used inside a CTF forum's general channel."])
