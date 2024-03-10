@@ -54,11 +54,11 @@ class Chal(Extension):
         if (ctx.channel.name == FORUM_GENERAL_CHANNEL):
             await ctx.send(":x: Cannot be used inside a CTF forum's general channel.")
             return
-
         post = typing.cast(interactions.GuildForumPost, ctx.channel)
-        tags = post.applied_tags
-        for tag in tags:
-            if (tag.name == "unsolved"):
-                tags.remove(tag)
-        await ctx.send("Marking channel as solved.")
-        await post.edit(applied_tags=tags, archived=True)
+        if (not any(tag.name == "unsolved" for tag in post.applied_tags)):
+            await ctx.send(":x: Challenge has already been marked as solved.")
+            return
+
+        tags = [tag for tag in post.applied_tags if tag.name != "unsolved"]
+        await ctx.send("Marking challenge as solved.")
+        await post.edit(name="✔-" + post.name, applied_tags=tags, archived=True)
