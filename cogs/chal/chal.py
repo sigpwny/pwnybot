@@ -61,4 +61,10 @@ class Chal(Extension):
 
         tags = [tag for tag in post.applied_tags if tag.name != "unsolved"]
         await ctx.send("Marking challenge as solved.")
-        await post.edit(name="✔-" + post.name, applied_tags=tags, archived=True)
+        await post.edit(name="✔-" + (post.name or ""), applied_tags=tags, archived=True)
+
+        # send message in general
+        for post in forum.get_posts(exclude_archived=False):
+            if (post.name == FORUM_GENERAL_CHANNEL):
+                await post.send(f"{ctx.user.mention} solved challenge {ctx.channel.mention}")
+                return
