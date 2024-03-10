@@ -28,7 +28,8 @@ class CTF(Extension):
         for cat in CTF_CATEGORY_CHANNELS:
             if (ctx.guild.get_channel(cat) != None):
                 category_channel = cat
-        tags = CHALLENGE_CATEGORIES + ["unsolved"]
+        tags = [variant+cat for cat in CHALLENGE_CATEGORIES for variant in ["", "unsolved-"]]
+        tags.append("unsolved")
         tags = [interactions.ThreadTag.create(tag) for tag in tags]
         forum = await ctx.guild.create_forum_channel(
             name=ctf_name,
@@ -66,7 +67,8 @@ class CTF(Extension):
                 return
 
         await forum.create_tag(category)
-        await ctx.send(f"Added tag for {category}.")
+        await forum.create_tag("unsolved-"+category)
+        await ctx.send(f"Added tags for {category}.")
 
     @subcommand(target={"description": "The user or role to add to this CTF", "type": interactions.OptionType.MENTIONABLE})
     @IS_ADMIN

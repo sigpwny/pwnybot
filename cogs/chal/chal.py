@@ -17,7 +17,7 @@ class Chal(Extension):
         if (forum == None or ctx.channel.name != FORUM_GENERAL_CHANNEL):
             await ctx.send(":x: Must be used inside a CTF forum's general channel.")
             return
-        if (category == "unsolved"):
+        if ("unsolved" in category.lower()):
             await ctx.send(":x: Unsolved cannot be a category.")
             return
         for post in forum.get_posts(exclude_archived=False):
@@ -30,8 +30,8 @@ class Chal(Extension):
             await ctx.send(f":x: Could not find category {category}.")
             return
 
-        await forum.create_post(name=name, content=name, applied_tags=[category, "unsolved"])
-        await ctx.send(f"Created {name}.")
+        post = await forum.create_post(name=name, content=name, applied_tags=[category, "unsolved", "unsolved-"+category])
+        await ctx.send(f"{ctx.user.mention} created {post.mention}.")
 
     @create.autocomplete("category")
     async def get_categories(self, ctx: interactions.AutocompleteContext):
@@ -41,7 +41,7 @@ class Chal(Extension):
             await ctx.send(["Must be used inside a CTF forum's general channel."])
             return
 
-        categories = [tag.name for tag in forum.available_tags if ctx.input_text in tag.name and tag.name != "unsolved"]
+        categories = [tag.name for tag in forum.available_tags if (ctx.input_text in tag.name) and ("unsolved" not in tag.name)]
         await ctx.send(categories)
 
     @subcommand(flag={"description": "The flag for the challenge"})
@@ -59,7 +59,7 @@ class Chal(Extension):
             await ctx.send(":x: Challenge has already been marked as solved.")
             return
 
-        tags = [tag for tag in post.applied_tags if tag.name != "unsolved"]
+        tags = [tag for tag in post.applied_tags if "unsolved" not in tag.name]
         await ctx.send("Marking challenge as solved.")
         await post.edit(name="✔-" + (post.name or ""), applied_tags=tags, archived=True)
 
