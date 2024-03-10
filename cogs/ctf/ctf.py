@@ -20,7 +20,7 @@ class CTF(Extension):
             await ctx.send(":x: Must be used inside a guild.")
             return
 
-        ctf_name = sanitize_name("ctf-"+name, 100)
+        ctf_name = sanitize_name("ctf-"+name, max_length=100)
         # find category channel
         category_channel = None
         for cat in CTF_CATEGORY_CHANNELS:

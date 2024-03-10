@@ -113,7 +113,7 @@ def subcommand(**kwargs):
     return wrapper
 
 
-def sanitize_name(name: str, max_length=32) -> str:
+def sanitize_name(name: str, *, max_length=32) -> str:
     """Filter names to conform to Discord name requirements.
 
     Args:
