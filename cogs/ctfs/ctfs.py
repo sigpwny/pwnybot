@@ -31,6 +31,7 @@ class CTFs(Extension):
         if (ctx.guild == None):
             await ctx.send(":x: Must be used inside a guild.")
             return
+
         user = ctx.guild.get_member(ctx.user.id)
         if (user == None):
             await ctx.send(":x: User not in guild. This should be impossible.")
