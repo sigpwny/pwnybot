@@ -6,12 +6,14 @@ from interactions import Extension, SlashContext
 from lib.util import subcommand, sanitize_name, get_ctf_forum
 from lib.config import CTF_CATEGORY_CHANNELS, CHALLENGE_CATEGORIES, FORUM_GENERAL_CHANNEL, CTF_ROLES
 
+IS_ADMIN = interactions.slash_default_member_permission(interactions.Permissions.ADMINISTRATOR)
+
 
 class CTF(Extension):
     '''Commands for managing ctf forums'''
 
     @subcommand(name={"description": "The name of the CTF"})
-    @interactions.slash_default_member_permission(interactions.Permissions.ADMINISTRATOR)
+    @IS_ADMIN
     async def create(self, ctx: SlashContext, name: str):
         '''Creates a forum for the CTF'''
         if (ctx.guild == None):
@@ -44,7 +46,7 @@ class CTF(Extension):
         await ctx.send(f"Created {ctf_name}.")
 
     @subcommand(category={"description": "The name of the category"})
-    @interactions.slash_default_member_permission(interactions.Permissions.ADMINISTRATOR)
+    @IS_ADMIN
     async def addcategory(self, ctx: SlashContext, category: str):
         '''Adds tags for a custom category'''
         forum = await get_ctf_forum(ctx)
@@ -63,7 +65,7 @@ class CTF(Extension):
         await ctx.send(f"Added tag for {category}.")
 
     @subcommand(target={"description": "The user or role to add to this CTF", "type": interactions.OptionType.MENTIONABLE})
-    @interactions.slash_default_member_permission(interactions.Permissions.ADMINISTRATOR)
+    @IS_ADMIN
     async def addrole(self, ctx: SlashContext, target: str):
         '''Adds a user or role to a CTF'''
         forum = await get_ctf_forum(ctx)
