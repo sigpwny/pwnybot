@@ -36,6 +36,9 @@ class CTFs(Extension):
         if (user == None):
             await ctx.send(":x: User not in guild. This should be impossible.")
             return
+        if (not any(user.has_role(role) for role in CTF_ROLES)):
+            await ctx.send(":x: You do not have the CTF role.")
+            return
 
         await user.remove_roles(CTF_ROLES)
         await ctx.send("Removed CTF role.")
