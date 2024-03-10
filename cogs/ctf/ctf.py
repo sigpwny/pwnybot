@@ -53,7 +53,7 @@ class CTF(Extension):
         if (forum == None or ctx.channel.name != FORUM_GENERAL_CHANNEL):
             await ctx.send(":x: Must be used inside a CTF forum's general channel.")
             return
-        if (category == "unsolved"):
+        if (category.lower() == "unsolved"):
             await ctx.send(":x: Unsolved cannot be a category.")
             return
         for tag in forum.available_tags:
