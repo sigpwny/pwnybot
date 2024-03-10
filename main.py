@@ -28,8 +28,9 @@ async def on_slash_command_error(event: interactions.api.events.CommandError) ->
     ctx = event.ctx
     if isinstance(err, interactions.client.errors.NotFound):
         pass
+    # TODO figure out error types
     elif isinstance(err, interactions.client.errors.Forbidden):
-        await ctx.send(":x: Forbidden.")
+        await ctx.send(":x: I don't have enough privileges to perform this action.")
     elif isinstance(err, interactions.client.errors.InteractionMissingAccess):
         await ctx.send(":x: I don't have enough privileges to perform this action :(")
     elif isinstance(err, aiohttp.ClientError):
