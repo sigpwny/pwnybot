@@ -66,5 +66,5 @@ class Chal(Extension):
         # send message in general
         for post in forum.get_posts(exclude_archived=False):
             if (post.name == FORUM_GENERAL_CHANNEL):
-                await post.send(f"{ctx.user.mention} solved challenge {ctx.channel.mention}")
+                await post.send(f"{ctx.user.mention} solved challenge {ctx.channel.mention} with ||{flag}||")
                 return
