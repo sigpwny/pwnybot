@@ -1,31 +1,19 @@
-from discord.ext.commands import Bot
-from discord.ext import commands
-from discord_slash import SlashContext
-from lib.util import command_decorator, subcommand_decorator
+import interactions
+from interactions import Extension, SlashContext
+
+from lib.util import command, subcommand
 
 
-class Template(commands.Cog):
-    """Describe what the cog does."""
+class Template(Extension):
+    '''Describe the cog'''
 
-    def __init__(self, bot: Bot) -> None:
-        self.bot = bot
-
-    @command_decorator(message={'description': "The message"}, times={'description': "# of times max 3"})
+    @command(message={'description': "The message"}, times={'description': "# of times max 3", "max_value": 3, "min_value": 1})
     async def reverserepeat(self, ctx: SlashContext, message: str, times: int = 1) -> None:
-        """The reverserepeat command is pretty epic!! (/reverserepeat)
-
-        """
-        for _ in range(min(times, 3)):
+        '''The reverserepeat command is pretty epic!! (/reverserepeat)'''
+        for _ in range(times):
             await ctx.send(message[::-1])
 
-    @subcommand_decorator(message={'description': "The message"})
+    @subcommand(message={'description': "The message"})
     async def say(self, ctx: SlashContext, message: str) -> None:
-        """The message command is pretty epic!! (/template message)
-
-        """
+        '''The message command is pretty epic!! (/template say)'''
         await ctx.send(message)
-
-
-def setup(bot: Bot) -> None:
-    """Add the extension to the bot."""
-    bot.add_cog(Template(bot))

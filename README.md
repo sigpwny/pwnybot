@@ -8,14 +8,9 @@ The official sigpwny discord bot.
 
 Check the 'bot' scope, and after doing so, the list of bot-specific permissions should pop up. You will need:
 
-+ Manage Roles
 + Manage Channels
-+ Read Messages/View Channels
-+ Send Messages
-+ Read Message History
-+ Add Reactions
-
-Additionally, go to the 'Bot' tab and enable the 'Message Content Intent'.
++ Manage Roles
++ Manage Threads
 
 In the future, more permission may be needed, so ask the current maintainer.
 
@@ -25,15 +20,13 @@ Then, copy the link and invite the bot to your server.
 
 ```
 DISCORD_TOKEN=XXXXXX
-CTFD_TOKEN=XXXXXX
-GUILD_IDS=GUILD1
+GUILD_IDS=GUILD1_ID
+CTF_CATEGORY_CHANNELS=CHANNEL1_ID
+CTF_ROLES=ROLE1_ID
+UIUC_ROLES=ROLE2_ID
 ```
 
-Fill in the DISCORD_TOKEN with the token from the 'Bot' tab of the discord developer portal. Then, fill in the GUILD_IDS with a comma seperated list of each guild IDs you want the server running on. If you just have one, do `GUILD_IDS=xxxxxx`.
-
-Note that the bot is still partially functional without `CTFD_TOKEN` being defined.
-
-Using a role with perms higher than the level you need, make sure that `lib/config.py` has an accurate admin role ID. Some commands may not work if this is set incorrectly.
+Fill in the `DISCORD_TOKEN` with the token from the 'Bot' tab of the discord developer portal. Then, fill in the `GUILD_IDS` with a comma seperated list of each guild IDs you want the server running on. If you just have one, do `GUILD_IDS=XXXXXX`. Same goes for `CTF_CATEGORY` (category channels), `CTF_ROLES` (roles that can access CTF channels), and `UIUC_ROLES` (roles that can gain CTF roles).
 
 
 3. Startup docker with this command
