@@ -20,6 +20,8 @@ class CTF(Extension):
             await ctx.send(":x: Must be used inside a guild.")
             return
 
+        await ctx.defer()
+
         ctf_name = sanitize_name("ctf-"+name, max_length=100)
         # find category channel
         category_channel = None
@@ -41,9 +43,11 @@ class CTF(Extension):
             if (role != None):
                 await forum.set_permission(role, view_channel=True)
 
-        general = await forum.create_post(name=FORUM_GENERAL_CHANNEL, content=name)
+        general_message = ("To get started, run `/chal create <name> <category>`\n"
+                           "Solve a challenge in its respective channel with `/chal solve <flag>`")
+        general = await forum.create_post(name=FORUM_GENERAL_CHANNEL, content=general_message)
         await general.pin()
-        await ctx.send(f"Created {ctf_name}.")
+        await ctx.send(f"Created {forum.mention}.")
 
     @subcommand(category={"description": "The name of the category"})
     @IS_ADMIN
