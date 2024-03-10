@@ -21,6 +21,9 @@ class CTFs(Extension):
         if (not any(user.has_role(role) for role in UIUC_ROLES)):
             await ctx.send(":x: Must be UIUC verified.")
             return
+        if (any(user.has_role(role) for role in CTF_ROLES)):
+            await ctx.send(":x: You already have the CTF role.")
+            return
 
         await user.add_roles(CTF_ROLES)
         await ctx.send("Added CTF role.")
