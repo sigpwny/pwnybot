@@ -18,10 +18,7 @@ class CTFs(Extension):
         if (user == None):
             await ctx.send(":x: User not in guild. This should be impossible.")
             return
-        for role in UIUC_ROLES:
-            if (user.has_role(role)):
-                break
-        else:  # this indentation is intentional
+        if (not any(user.has_role(role) for role in UIUC_ROLES)):
             await ctx.send(":x: Must be UIUC verified.")
             return
 
