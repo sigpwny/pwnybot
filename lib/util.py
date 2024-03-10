@@ -52,8 +52,11 @@ def command(**kwargs):
 
         # inherit attributes set by other decorators
         for attr in dir(command):
-            if (not attr.startswith("_") and (not hasattr(wrapped, attr) or getattr(wrapped, attr) == None)):
-                setattr(wrapped, attr, getattr(command, attr))
+            if (attr.startswith("_")):
+                continue
+            if (getattr(wrapped, attr, None) is not None):
+                continue
+            setattr(wrapped, attr, getattr(command, attr))
 
         return wrapped
 
@@ -99,8 +102,11 @@ def subcommand(**kwargs):
 
         # inherit attributes set by other decorators
         for attr in dir(command):
-            if (not attr.startswith("_") and (not hasattr(wrapped, attr) or getattr(wrapped, attr) == None)):
-                setattr(wrapped, attr, getattr(command, attr))
+            if (attr.startswith("_")):
+                continue
+            if (getattr(wrapped, attr, None) is not None):
+                continue
+            setattr(wrapped, attr, getattr(command, attr))
 
         return wrapped
 
