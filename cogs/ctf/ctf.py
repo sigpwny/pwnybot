@@ -3,10 +3,9 @@ import typing
 import interactions
 from interactions import Extension, SlashContext
 
-from lib.util import subcommand, sanitize_name, get_ctf_forum
+from lib.util import subcommand, sanitize_name, get_ctf_forum, IS_ADMIN
 from lib.config import CTF_CATEGORY_CHANNELS, CHALLENGE_CATEGORIES, FORUM_GENERAL_CHANNEL, CTF_ROLES
 
-IS_ADMIN = interactions.slash_default_member_permission(interactions.Permissions.ADMINISTRATOR)
 
 
 class CTF(Extension):

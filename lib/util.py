@@ -9,6 +9,8 @@ from interactions.models.internal import OptionType
 
 from lib.config import GUILD_IDS
 
+IS_ADMIN = interactions.slash_default_member_permission(interactions.Permissions.ADMINISTRATOR)
+
 option_types = set(item.value for item in OptionType)
 
 
