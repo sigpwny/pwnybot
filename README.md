@@ -12,6 +12,8 @@ Check the 'bot' scope, and after doing so, the list of bot-specific permissions 
 + Manage Roles
 + Manage Threads
 
+Additionally, go to the 'Bot' tab and enable the 'Message Content Intent'.
+
 In the future, more permission may be needed, so ask the current maintainer.
 
 Then, copy the link and invite the bot to your server.
