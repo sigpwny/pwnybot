@@ -22,6 +22,7 @@ class copypasta(Extension):
                 self.id_lst.append(row[0])
                 self.name_lst.append(row[1])
                 self.pasta_lst.append(row[2])
+        print(self.name_lst)
             
 
     @subcommand(id={'description': "copypasta id"})
@@ -36,7 +37,7 @@ class copypasta(Extension):
 
 
 
-    @subcommand(name={'description': "copypasta name"})
+    @subcommand(name={'description': "copypasta name","autocomplete" : True})
     async def byname(self, ctx: SlashContext, name: str) -> None:
         """copypasta by name"""
         for exist_name in self.name_lst:
@@ -48,7 +49,12 @@ class copypasta(Extension):
     @byname.autocomplete("name")
     async def find_name(self, ctx: interactions.AutocompleteContext):
         '''Autocomplete that provides challenge categories for chal create'''
-        await ctx.send(self.name_lst)
+        current = ctx.kwargs.get("name")
+        new_lst = []
+        for exist_name in self.name_lst:
+            if current in exist_name:
+                new_lst.append(exist_name)
+        await ctx.send(new_lst[:25])
 
     @subcommand()
     async def random(self, ctx: SlashContext) -> None:
