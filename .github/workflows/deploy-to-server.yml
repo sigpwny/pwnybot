@@ -20,14 +20,20 @@ jobs:
           SSH_KEY_PATH: ${{ github.workspace }}/../private.key
       - name: Check out repository code
         uses: actions/checkout@v2
-      - name: Install openconnect
+      - name: Install OpenVPN
         run: |
           sudo apt update
-          sudo apt install -y openconnect
-      - name: Connect to university VPN & ssh in
+          sudo apt install openvpn openvpn-systemd-resolved
+      - name: Connect to OpenVPN server
         run: |
-          echo "$VPN_PASSWORD" | sudo openconnect --authgroup=1_SplitTunnel_Default --user=$VPN_USERNAME vpn.illinois.edu --passwd-on-stdin & 
-          sleep 5
+          echo "$OPENVPN_CONFIG" > ~/vpn.ovpn
+          sudo openvpn --config ~/vpn.ovpn --log "vpn.log" --daemon
+          sleep 15
+        env:
+          OPENVPN_CONFIG: ${{ secrets.OPENVPN_CONFIG }}
+
+      - name: Redeploy pwnybot
+        run: |
           cat deploy.sh | ssh -i $SSH_KEY_PATH "$SERVER_USER@$SERVER_IP"
         shell: bash
         env:
@@ -36,3 +42,8 @@ jobs:
           SSH_KEY_PATH: ${{ github.workspace }}/../private.key
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SERVER_IP: ${{ secrets.SERVER_IP }}
+      - name: Kill VPN connection
+        if: always()
+        run: |
+          sudo chmod 777 vpn.log
+          sudo killall openvpn
