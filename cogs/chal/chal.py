@@ -56,7 +56,7 @@ class Chal(Extension):
             return
         post = typing.cast(interactions.GuildForumPost, ctx.channel)
         if (not any(tag.name == "unsolved" for tag in post.applied_tags)):
-            await ctx.send(":x: Challenge has already been marked as solved.")
+            await ctx.send(":x: Challenge does not have unsolved tag.")
             return
 
         tags = [tag for tag in post.applied_tags if "unsolved" not in tag.name]
