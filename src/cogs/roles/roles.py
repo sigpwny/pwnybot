@@ -15,14 +15,14 @@ class Roles(Extension):
     async def add(self, ctx: SlashContext, role: str) -> None:
         """Add a private role. Requires the UIUC role."""
         if (ctx.guild == None):
-            await ctx.send(":x: You can only run this command in a server.")
+            await ctx.send(":x: You can only run this command in a server.", ephemeral=True)
             return
         user = ctx.guild.get_member(ctx.user.id)
         if (user == None):
-            await ctx.send(":x: You aren't in the server! Are you a ghost?")
+            await ctx.send(":x: You aren't in the server! Are you a ghost?", ephemeral=True)
             return
         if (not any(user.has_role(role) for role in UIUC_ROLES)):
-            await ctx.send(":x: You need to be UIUC verified to use this command. Verify yourself at <https://sigpwny.com/auth>.")
+            await ctx.send(":x: You need to be UIUC verified to use this command. Verify yourself at <https://sigpwny.com/auth>.", ephemeral=True)
             return
         for valid_role in self.roles:
             valid_role_name = valid_role.get("name")
@@ -31,10 +31,10 @@ class Roles(Extension):
                 continue
             if role == valid_role_name:
                 if user.has_role(valid_role_id):
-                    await ctx.send(f":x: You already have the **{role}** role.")
+                    await ctx.send(f":x: You already have the **{role}** role.", ephemeral=True)
                     return
                 await user.add_role(valid_role_id)
-                await ctx.send(f":white_check_mark: Added you to **{role}**.")
+                await ctx.send(f":white_check_mark: Added you to **{role}**.", ephemeral=True)
                 return
         await ctx.send(":x: Invalid role.")
 
@@ -42,11 +42,11 @@ class Roles(Extension):
     async def remove(self, ctx: SlashContext, role: str) -> None:
         """Removes a private role."""
         if (ctx.guild == None):
-            await ctx.send(":x: You can only run this command in a server.")
+            await ctx.send(":x: You can only run this command in a server.", ephemeral=True)
             return
         user = ctx.guild.get_member(ctx.user.id)
         if (user == None):
-            await ctx.send(":x: You aren't in the server! Are you a ghost?")
+            await ctx.send(":x: You aren't in the server! Are you a ghost?", ephemeral=True)
             return
         for valid_role in self.roles:
             valid_role_name = valid_role.get("name")
@@ -55,10 +55,10 @@ class Roles(Extension):
                 continue
             if role == valid_role_name:
                 if not user.has_role(valid_role_id):
-                    await ctx.send(f":x: You do not have the **{role}** role.")
+                    await ctx.send(f":x: You do not have the **{role}** role.", ephemeral=True)
                     return
                 await user.remove_role(valid_role_id)
-                await ctx.send(f":white_check_mark: Removed you from **{role}**.")
+                await ctx.send(f":white_check_mark: Removed you from **{role}**.", ephemeral=True)
                 return
         await ctx.send(":x: Invalid role.")
 
