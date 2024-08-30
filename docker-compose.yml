@@ -9,3 +9,6 @@ services:
       - CTF_CATEGORY_CHANNELS
       - CTF_ROLES
       - UIUC_ROLES
+    volumes:
+      - ./.env:/bot/.env
+      - ./config.yml:/bot/config.yml
