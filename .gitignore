@@ -3,3 +3,6 @@ debug*
 *.sw*
 __pycache__/
 .vscode/
+
+# config file
+config.yml
