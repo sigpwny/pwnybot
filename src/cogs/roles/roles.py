@@ -23,6 +23,7 @@ class Roles(Extension):
             return
         if (not any(user.has_role(role) for role in UIUC_ROLES)):
             await ctx.send(":x: You need to be UIUC verified to use this command. Verify yourself at <https://sigpwny.com/auth>.")
+            return
         for valid_role in self.roles:
             valid_role_name = valid_role.get("name")
             valid_role_id = valid_role.get("discord_role_id")
