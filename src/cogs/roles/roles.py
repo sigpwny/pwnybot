@@ -13,7 +13,7 @@ class Roles(Extension):
 
     @subcommand(role={"description": "Role to add","autocomplete": True})
     async def add(self, ctx: SlashContext, role: str) -> None:
-        """Add a private role. Requires the UIUC role."""
+        """Add yourself to a team role. Requires the UIUC role."""
         if (ctx.guild == None):
             await ctx.send(":x: You can only run this command in a server.", ephemeral=True)
             return
@@ -34,13 +34,13 @@ class Roles(Extension):
                     await ctx.send(f":x: You already have the **{role}** role.", ephemeral=True)
                     return
                 await user.add_role(valid_role_id)
-                await ctx.send(f":white_check_mark: Added you to **{role}**.", ephemeral=True)
+                await ctx.send(f":white_check_mark: Added to **{role}**.")
                 return
         await ctx.send(":x: Invalid role.")
 
     @subcommand(role={"description": "Role to remove","autocomplete": True})
     async def remove(self, ctx: SlashContext, role: str) -> None:
-        """Removes a private role."""
+        """Remove yourself from a team role."""
         if (ctx.guild == None):
             await ctx.send(":x: You can only run this command in a server.", ephemeral=True)
             return
@@ -58,7 +58,7 @@ class Roles(Extension):
                     await ctx.send(f":x: You do not have the **{role}** role.", ephemeral=True)
                     return
                 await user.remove_role(valid_role_id)
-                await ctx.send(f":white_check_mark: Removed you from **{role}**.", ephemeral=True)
+                await ctx.send(f":white_check_mark: Removed from **{role}**.")
                 return
         await ctx.send(":x: Invalid role.")
 
