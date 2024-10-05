@@ -21,8 +21,12 @@ class Chal(Extension):
             await ctx.send(":x: Unsolved cannot be a category.")
             return
         for post in forum.get_posts(exclude_archived=False):
-            if ((post.name or "") == name):
-                await ctx.send(f":x: Challenge {name} already exists.")
+            post_name = post.name or ""
+            # remove solved prefix
+            if (post_name.startswith("✔-")):
+                post_name = post_name[len("✔-"):]
+            if (post_name.lower() == name.lower()):
+                await ctx.send(f":x: Challenge {post.mention} already exists.")
                 return
 
         # check valid category
