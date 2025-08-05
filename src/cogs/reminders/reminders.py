@@ -71,7 +71,7 @@ class Reminders(Extension):
 
         description = ""
         for reminder in reminders:
-            description += f"{reminder['id']}: <#{reminder['channel_id']}>: {reminder['message']}\n"
+            description += f"{reminder['id']}: <#{reminder['channel_id']}>: '{reminder['message']}' <t:{int(reminder['remind_at'].timestamp())}:R>\n"
         
         embed = Embed(
             title="Reminders" + f" for {user.display_name}" if user else "",
