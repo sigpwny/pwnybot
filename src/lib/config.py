@@ -21,7 +21,7 @@ GUILD_IDS = os.getenv('GUILD_IDS', "").split(",") or config.get("guild_ids", [])
 CTF_CATEGORY_CHANNELS = os.getenv("CTF_CATEGORY_CHANNELS", "").split(",") or config.get("ctf_category_channels", [])
 CTF_ROLES = os.getenv("CTF_ROLES", "").split(",") or config.get("ctf_roles", [])
 UIUC_ROLES = os.getenv("UIUC_ROLES", "").split(",") or config.get("uiuc_roles", [])
-HELPER_ROLE = int(os.getenv("HELPER_ROLE", 0) or config.get("helper_role", 0))
+MODERATOR_ROLES = os.getenv("MODERATOR_ROLES", "").split(',') or config.get("moderator_roles", [])
 PRIVATE_ROLES = config.get("private_roles", [])
 
 CHALLENGE_CATEGORIES = ["crypto", "forensics", "misc", "pwn", "osint", "rev", "web"]

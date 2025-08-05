@@ -26,6 +26,7 @@ GUILD_IDS=GUILD1_ID
 CTF_CATEGORY_CHANNELS=CHANNEL1_ID
 CTF_ROLES=ROLE1_ID
 UIUC_ROLES=ROLE2_ID
+MODERATOR_ROLES=ROLE3_ID
 ```
 
 Fill in the `DISCORD_TOKEN` with the token from the 'Bot' tab of the discord developer portal. Then, fill in the `GUILD_IDS` with a comma seperated list of each guild IDs you want the server running on. If you just have one, do `GUILD_IDS=XXXXXX`. Same goes for `CTF_CATEGORY` (category channels), `CTF_ROLES` (roles that can access CTF channels), and `UIUC_ROLES` (roles that can gain CTF roles).

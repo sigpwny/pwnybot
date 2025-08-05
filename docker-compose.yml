@@ -1,4 +1,4 @@
-version: '3.3' # optional since v1.27.0
+version: "3.3" # optional since v1.27.0
 services:
   pwnybot:
     restart: always
@@ -9,6 +9,7 @@ services:
       - CTF_CATEGORY_CHANNELS
       - CTF_ROLES
       - UIUC_ROLES
+      - MODERATOR_ROLES
     volumes:
       - ./.env:/bot/.env
       - ./config.yml:/bot/config.yml

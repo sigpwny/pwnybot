@@ -1,7 +1,7 @@
 from interactions import Extension, SlashContext, BaseUser, Embed
 from cogs.reminders.db import ReminderDB
 from lib.util import subcommand
-from lib.config import HELPER_ROLE
+from lib.config import MODERATOR_ROLES
 import re
 from datetime import datetime, timedelta, timezone
 
@@ -29,7 +29,7 @@ class Reminders(Extension):
     async def create(self, ctx: SlashContext, when: str, message: str):
         """Create a reminder"""
 
-        if not any(role.id == HELPER_ROLE for role in ctx.author.roles):  # type: ignore
+        if not any(str(role.id) in MODERATOR_ROLES for role in ctx.author.roles):  # type: ignore
             await ctx.send(
                 "You do not have permission to use this command.", ephemeral=True
             )
