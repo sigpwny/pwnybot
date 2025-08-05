@@ -1,3 +1,3 @@
 cd ~/pwnybot
 git pull
-docker-compose up --build -d pwnybot
+docker-compose up --build -d pwnybot db

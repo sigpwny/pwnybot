@@ -12,3 +12,14 @@ services:
     volumes:
       - ./.env:/bot/.env
       - ./config.yml:/bot/config.yml
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: sigpwny
+      POSTGRES_PASSWORD: sigpwny
+      POSTGRES_DB: db
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:

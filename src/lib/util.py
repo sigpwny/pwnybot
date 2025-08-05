@@ -30,7 +30,9 @@ def command(**kwargs):
             data = {
                 "name": parameter.name,
                 "required": parameter.default == inspect.Parameter.empty,
-                "type": interactions.OptionType.from_type(parameter.annotation),
+                "type": interactions.OptionType.from_type(
+                    getattr(parameter.annotation, "__args__", [parameter.annotation])[0] # unwrap union types
+                ),
                 "description": f'{parameter.name} (missing description)'
             }
 

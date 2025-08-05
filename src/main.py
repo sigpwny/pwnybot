@@ -1,8 +1,10 @@
+import asyncio
 import traceback
 import sys
 import os
 import tempfile
 
+from cogs.reminders.watcher import reminder_watcher
 import interactions
 import aiohttp
 
@@ -18,6 +20,9 @@ bot = interactions.Client()
 async def on_ready() -> None:
     logger.info(f"{bot.user} connected.")
     logger.info(f"Hello, pwnybot is now live... do with that information what you will")
+
+    asyncio.create_task(reminder_watcher(bot))
+
     await bot.change_presence(activity="Online!")
 
 
