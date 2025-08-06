@@ -77,3 +77,9 @@ class ReminderDB:
 
     def get_all_reminders(self):
         return self.reminders
+    
+    def get_reminder_by_id(self, reminder_id: int):
+        for r in self.reminders:
+            if r["id"] == reminder_id:
+                return r
+        return None

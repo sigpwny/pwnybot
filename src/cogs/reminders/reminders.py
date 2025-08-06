@@ -1,4 +1,4 @@
-from interactions import Extension, SlashContext, BaseUser, Embed
+from interactions import Extension, Permissions, SlashContext, BaseUser, Embed
 from cogs.reminders.db import ReminderDB
 from lib.util import subcommand
 from lib.config import MODERATOR_ROLES
@@ -62,6 +62,13 @@ class Reminders(Extension):
     )
     async def list(self, ctx: SlashContext, user: BaseUser | None = None):
         """List the scheduled reminders for all users or a particular user"""
+
+        if not any(str(role.id) in MODERATOR_ROLES for role in ctx.author.roles):  # type: ignore
+            await ctx.send(
+                "You do not have permission to use this command.", ephemeral=True
+            )
+            return
+
         db = ReminderDB()
 
         if user is None:
@@ -78,4 +85,33 @@ class Reminders(Extension):
             description=description or "There are no reminders currently for this query"
         )
         
-        await ctx.send(embed=embed)
+        await ctx.send(embed=embed, ephemeral=True)
+
+    @subcommand(
+        reminder_id={
+            "description": "The ID of the reminder to delete"
+        }
+    )
+    async def delete(self, ctx: SlashContext, reminder_id: int):
+        """Delete a reminder by its ID"""
+        
+        if not any(str(role.id) in MODERATOR_ROLES for role in ctx.author.roles):  # type: ignore
+            await ctx.send(
+                "You do not have permission to use this command.", ephemeral=True
+            )
+            return
+
+        db = ReminderDB()
+        
+        reminder_to_delete = db.get_reminder_by_id(reminder_id)
+        
+        if reminder_to_delete is None:
+            await ctx.send(f"Reminder with ID {reminder_id} not found.", ephemeral=True)
+            return
+        
+        if reminder_to_delete["author_id"] != ctx.author_id and not ctx.member.has_permission(Permissions.ADMINISTRATOR): # type: ignore
+            await ctx.send("You can only delete your own reminders.", ephemeral=True)
+            return
+        
+        db.remove_reminder(reminder_id)
+        await ctx.send(f"Reminder {reminder_id} has been deleted successfully!", ephemeral=True)
