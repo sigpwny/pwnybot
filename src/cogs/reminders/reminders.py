@@ -30,9 +30,9 @@ class Reminders(Extension):
             "description": "When the reminer should be triggered. Format: (1w2d3h4m5s)"
         },
         message={"description": "What message should be attached to the reminder?"},
-        silent={"description": "Should the reminder be dmed?"}
+        silent={"description": "Should the reminder be dmed? (True/False)"}
     )
-    async def create(self, ctx: SlashContext, when: str, message: str, silent: bool = False):
+    async def create(self, ctx: SlashContext, when: str, message: str, silent: str = "False"):
         """Create a reminder"""
 
         if not any(str(role.id) in MODERATOR_ROLES for role in ctx.author.roles):  # type: ignore
@@ -57,7 +57,7 @@ class Reminders(Extension):
             message=f"Reminder for <@{ctx.author_id}>: {message}",
             channel_id=ctx.channel_id,
             author_id=ctx.author_id,
-            silent=silent
+            silent=silent.lower() == "true" or silent.lower() == "t"
         )
 
         await ctx.send("Reminder is queued!", ephemeral=True)
