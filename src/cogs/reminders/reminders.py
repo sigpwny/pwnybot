@@ -16,6 +16,11 @@ def parse_duration(duration_str):
         weeks=weeks, days=days, hours=hours, minutes=minutes, seconds=seconds
     )
 
+def get_reminder_channel(reminder):
+    if reminder["silent"]:
+        return "dm"
+    
+    return f"<#{reminder['channel_id']}>"
 
 class Reminders(Extension):
     """Commands for creating reminders"""
@@ -25,8 +30,9 @@ class Reminders(Extension):
             "description": "When the reminer should be triggered. Format: (1w2d3h4m5s)"
         },
         message={"description": "What message should be attached to the reminder?"},
+        silent={"description": "Should the reminder be dmed?"}
     )
-    async def create(self, ctx: SlashContext, when: str, message: str):
+    async def create(self, ctx: SlashContext, when: str, message: str, silent: bool = False):
         """Create a reminder"""
 
         if not any(str(role.id) in MODERATOR_ROLES for role in ctx.author.roles):  # type: ignore
@@ -51,6 +57,7 @@ class Reminders(Extension):
             message=f"Reminder for <@{ctx.author_id}>: {message}",
             channel_id=ctx.channel_id,
             author_id=ctx.author_id,
+            silent=silent
         )
 
         await ctx.send("Reminder is queued!", ephemeral=True)
@@ -78,7 +85,7 @@ class Reminders(Extension):
 
         description = ""
         for reminder in reminders:
-            description += f"{reminder['id']}: <#{reminder['channel_id']}>: '{reminder['message']}' <t:{int(reminder['remind_at'].timestamp())}:R>\n"
+            description += f"{reminder['id']}: {get_reminder_channel(reminder)}: '{reminder['message']}' <t:{int(reminder['remind_at'].timestamp())}:R>\n"
         
         embed = Embed(
             title="Reminders" + f" for {user.display_name}" if user else "",

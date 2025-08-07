@@ -5,7 +5,18 @@ from interactions import Client
 
 
 async def callback(bot: Client, reminder):
+    if reminder['silent']:
+        user = await bot.fetch_user(reminder["author_id"])
+        if not user:
+            return
+        
+        await user.send(reminder["message"])
+        return
+
     channel = await bot.fetch_channel(reminder["channel_id"])
+    if not channel:
+        return
+    
     await channel.send(reminder["message"])  # type: ignore
 
 

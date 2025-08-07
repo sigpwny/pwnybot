@@ -36,7 +36,8 @@ class ReminderDB:
                     remind_at TIMESTAMPTZ NOT NULL,
                     message TEXT NOT NULL,
                     channel_id BIGINT NOT NULL,
-                    author_id BIGINT NOT NULL
+                    author_id BIGINT NOT NULL,
+                    silent BOOLEAN DEFAULT FALSE
                 )
             """
             )
@@ -45,7 +46,7 @@ class ReminderDB:
     def load_reminders(self):
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(
-                "SELECT id, remind_at, message, channel_id, author_id FROM reminders"
+                "SELECT id, remind_at, message, channel_id, author_id, silent FROM reminders"
             )
             rows = cur.fetchall()
         for r in rows:
@@ -54,16 +55,16 @@ class ReminderDB:
         return rows
 
     def add_reminder(
-        self, remind_at: datetime, message: str, channel_id: int, author_id: int
+        self, remind_at: datetime, message: str, channel_id: int, author_id: int, silent: bool = False
     ):
         with self.conn.cursor() as cur:
             cur.execute(
-                "INSERT INTO reminders (remind_at, message, channel_id, author_id) VALUES (%s, %s, %s, %s) RETURNING id",
-                (remind_at, message, channel_id, author_id),
+                "INSERT INTO reminders (remind_at, message, channel_id, author_id, silent) VALUES (%s, %s, %s, %s, %s) RETURNING id",
+                (remind_at, message, channel_id, author_id, silent),
             )
             reminder_id = cur.fetchone()[0]  # type: ignore
             self.conn.commit()
-        self.reminders.append({"id": reminder_id, "remind_at": remind_at, "message": message, "channel_id": channel_id, "author_id": author_id})  # type: ignore
+        self.reminders.append({"id": reminder_id, "remind_at": remind_at, "message": message, "channel_id": channel_id, "author_id": author_id, "silent": silent})  # type: ignore
         return reminder_id
 
     def get_reminders_by_author_id(self, author_id: int):
