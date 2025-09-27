@@ -16,12 +16,17 @@ from lib.config import DISCORD_TOKEN
 bot = interactions.Client()
 
 
+_reminder_watcher_task = None
+
 @interactions.listen()
 async def on_ready() -> None:
+    global _reminder_watcher_task
+
     logger.info(f"{bot.user} connected.")
     logger.info(f"Hello, pwnybot is now live... do with that information what you will")
 
-    asyncio.create_task(reminder_watcher(bot))
+    if not _reminder_watcher_task or _reminder_watcher_task.done():
+        _reminder_watcher_task = asyncio.create_task(reminder_watcher(bot))
 
     await bot.change_presence(activity="Online!")
 
