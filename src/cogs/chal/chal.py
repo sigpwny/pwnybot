@@ -59,8 +59,8 @@ class Chal(Extension):
             await ctx.send(":x: Cannot be used inside a CTF forum's general channel.")
             return
         post = typing.cast(interactions.GuildForumPost, ctx.channel)
-        if (not any(tag.name == "unsolved" for tag in post.applied_tags)):
-            await ctx.send(":x: Challenge does not have unsolved tag.")
+        if (not any("unsolved" in tag.name for tag in post.applied_tags)):
+            await ctx.send(":x: Challenge does not have unsolved tag. Has tags: " + ", ".join(tag.name for tag in post.applied_tags))
             return
 
         tags = [tag for tag in post.applied_tags if "unsolved" not in tag.name]
