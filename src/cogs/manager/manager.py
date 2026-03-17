@@ -111,7 +111,8 @@ class Manager(Extension):
         assigned = []
         not_found = []
         for username in user_list:
-            member = next((m for m in guild.members if m.user.username == username), None)
+            potential_members = await guild.search_members(query=username, limit=5) # The search is fuzzy
+            member = next((m for m in potential_members if m.user.username == username), None)
             if member:
                 try:
                     await member.add_role(role)
