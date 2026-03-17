@@ -81,3 +81,49 @@ class Manager(Extension):
 
         await bot_message.edit(content=message)
         await ctx.send(f':white_check_mark: edited message.')
+
+    @subcommand(
+        role_name={'description': 'The name of the role to assign'},
+        usernames={'description': 'A comma-separated list of usernames (e.g. "user1, user2")'}
+    )
+    @IS_ADMIN
+    async def assign_roles(self, ctx: SlashContext, role_name: str, usernames: str) -> None:
+        '''
+        Assigns a role to a list of users by username.
+        '''
+        await ctx.defer()
+
+        user_list = [u.strip() for u in usernames.replace(", ", ",").split(",") if u.strip()]
+        if not user_list:
+            await ctx.send(":x: Please provide a comma-separated list of usernames.")
+            return
+
+        guild = ctx.guild
+        if guild is None:
+            await ctx.send(":x: Could not determine the guild context.")
+            return
+        
+        role = next((r for r in guild.roles if r.name == role_name), None)
+        if not role:
+            await ctx.send(f":x: Role '{role_name}' not found.")
+            return
+
+        assigned = []
+        not_found = []
+        for username in user_list:
+            member = next((m for m in guild.members if m.user.username == username), None)
+            if member:
+                try:
+                    await member.add_role(role)
+                    assigned.append(username)
+                except Exception:
+                    not_found.append(username)
+            else:
+                not_found.append(username)
+
+        msg = ""
+        if assigned:
+            msg += f":white_check_mark: Assigned role '{role_name}' to: {', '.join(assigned)}\n"
+        if not_found:
+            msg += f":x: Could not find or assign role to: {', '.join(not_found)}"
+        await ctx.send(msg or ":x: No users processed.")
