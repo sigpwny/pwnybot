@@ -1,0 +1,34 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "pwnybot",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-08-30",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "preview_urls": false,
+  "triggers": {
+    "crons": ["*/15 * * * *"],
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "pwnybot",
+      "database_id": "replace-with-d1-database-id",
+    },
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "REMINDER_SCHEDULER",
+        "class_name": "ReminderScheduler",
+      },
+    ],
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["ReminderScheduler"],
+    },
+  ],
+  "vars": {},
+}

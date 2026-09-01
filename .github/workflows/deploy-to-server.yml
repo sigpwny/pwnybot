@@ -1,8 +1,5 @@
 name: Deploy to Server
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 jobs:
   deploy:
@@ -35,7 +32,8 @@ jobs:
 
       - name: Redeploy pwnybot
         run: |
-          cat deploy.sh | ssh -i $SSH_KEY_PATH "$SERVER_USER@$SERVER_IP"
+          ssh -i "$SSH_KEY_PATH" "$SERVER_USER@$SERVER_IP" \
+            "V2_CUTOVER_APPROVED='$V2_CUTOVER_APPROVED' sh -s" < deploy.sh
         shell: bash
         env:
           VPN_PASSWORD: ${{secrets.VPN_PASSWORD}}
@@ -43,6 +41,7 @@ jobs:
           SSH_KEY_PATH: ${{ github.workspace }}/../private.key
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SERVER_IP: ${{ secrets.SERVER_IP }}
+          V2_CUTOVER_APPROVED: ${{ secrets.V2_CUTOVER_APPROVED }}
       - name: Kill VPN connection
         if: always()
         run: |

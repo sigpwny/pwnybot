@@ -1,27 +1,13 @@
-version: "3.3" # optional since v1.27.0
 services:
   pwnybot:
-    restart: always
-    build: .
-    environment:
-      - DISCORD_TOKEN
-      - GUILD_IDS
-      - CTF_CATEGORY_CHANNELS
-      - CTF_ROLES
-      - UIUC_ROLES
-      - MODERATOR_ROLES
+    build: ./server
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "127.0.0.1:8787:8787"
     volumes:
-      - ./.env:/bot/.env
-      - ./config.yml:/bot/config.yml
-  db:
-    restart: always
-    image: postgres
-    environment:
-      POSTGRES_USER: sigpwny
-      POSTGRES_PASSWORD: sigpwny
-      POSTGRES_DB: db
-    volumes:
-      - db_data:/var/lib/postgresql/data
+      - pwnybot_data:/app/data
 
 volumes:
-  db_data:
+  pwnybot_data:

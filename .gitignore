@@ -6,3 +6,12 @@ __pycache__/
 
 # config file
 config.yml
+
+# TypeScript runtime
+node_modules/
+dist/
+.wrangler/
+server/data/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
