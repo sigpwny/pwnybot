@@ -1,6 +1,10 @@
+import {
+  ComponentType,
+  InteractionResponseType,
+  MessageFlags,
+  TextInputStyle,
+} from "discord-api-types/v10";
 import type { InteractionMessageData } from "./types.js";
-
-export const EPHEMERAL = 1 << 6;
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -10,7 +14,7 @@ function json(body: unknown, status = 200): Response {
 }
 
 export function pong(): Response {
-  return json({ type: 1 });
+  return json({ type: InteractionResponseType.Pong });
 }
 
 export function message(
@@ -19,27 +23,27 @@ export function message(
 ): Response {
   const payload = typeof data === "string" ? { content: data } : data;
   return json({
-    type: 4,
+    type: InteractionResponseType.ChannelMessageWithSource,
     data: {
       ...payload,
-      flags: (payload.flags ?? 0) | (ephemeral ? EPHEMERAL : 0),
+      flags: (payload.flags ?? 0) | (ephemeral ? MessageFlags.Ephemeral : 0),
     },
   });
 }
 
 export function deferred(ephemeral = false): Response {
   return json({
-    type: 5,
-    data: { flags: ephemeral ? EPHEMERAL : 0 },
+    type: InteractionResponseType.DeferredChannelMessageWithSource,
+    data: { flags: ephemeral ? MessageFlags.Ephemeral : 0 },
   });
 }
 
 export function deferredUpdate(): Response {
-  return json({ type: 6 });
+  return json({ type: InteractionResponseType.DeferredMessageUpdate });
 }
 
 export function updateMessage(data: InteractionMessageData): Response {
-  return json({ type: 7, data });
+  return json({ type: InteractionResponseType.UpdateMessage, data });
 }
 
 export function modal(
@@ -49,18 +53,18 @@ export function modal(
   value = "",
 ): Response {
   return json({
-    type: 9,
+    type: InteractionResponseType.Modal,
     data: {
       custom_id: customId,
       title,
       components: [
         {
-          type: 1,
+          type: ComponentType.ActionRow,
           components: [
             {
-              type: 4,
+              type: ComponentType.TextInput,
               custom_id: "content",
-              style: 2,
+              style: TextInputStyle.Paragraph,
               label,
               value,
               required: true,
@@ -77,7 +81,10 @@ export function modal(
 export function autocomplete(
   choices: Array<{ name: string; value: string | number }>,
 ): Response {
-  return json({ type: 8, data: { choices: choices.slice(0, 25) } });
+  return json({
+    type: InteractionResponseType.ApplicationCommandAutocompleteResult,
+    data: { choices: choices.slice(0, 25) },
+  });
 }
 
 export function badRequest(error: string): Response {

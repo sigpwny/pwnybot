@@ -1,4 +1,12 @@
 import {
+  ApplicationCommandOptionType,
+  ApplicationCommandType,
+  ButtonStyle,
+  ChannelType,
+  ComponentType,
+  PermissionFlagsBits,
+} from "discord-api-types/v10";
+import {
   addGuildMemberRole,
   editOriginalInteractionResponseWithFile,
   listChannelMessages,
@@ -22,40 +30,38 @@ const MODAL_TTL_MS = 15 * 60_000;
 export const managerCommand: CommandDefinition = {
   command: {
     name: "manager",
-    type: 1,
+    type: ApplicationCommandType.ChatInput,
     description: "No Description Set",
-    default_member_permissions: "8",
-    contexts: [0],
-    integration_types: [0],
+    default_member_permissions: String(PermissionFlagsBits.Administrator),
     options: [
       {
-        type: 1,
+        type: ApplicationCommandOptionType.Subcommand,
         name: "say",
         description: "Says your previous message in the channel you specify",
         options: [
           {
-            type: 7,
+            type: ApplicationCommandOptionType.Channel,
             name: "channel",
             description: "The channel to send the message in",
             required: true,
-            channel_types: [0],
+            channel_types: [ChannelType.GuildText],
           },
         ],
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionType.Subcommand,
         name: "edit",
         description: "Edits a message said by the bot",
         options: [
           {
-            type: 7,
+            type: ApplicationCommandOptionType.Channel,
             name: "message_channel",
             description: "The channel of the original message",
             required: true,
-            channel_types: [0],
+            channel_types: [ChannelType.GuildText],
           },
           {
-            type: 3,
+            type: ApplicationCommandOptionType.String,
             name: "message_id",
             description: "The ID of the message to edit",
             required: true,
@@ -63,18 +69,18 @@ export const managerCommand: CommandDefinition = {
         ],
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionType.Subcommand,
         name: "assign_roles",
         description: "Assigns a role to a list of users by username.",
         options: [
           {
-            type: 3,
+            type: ApplicationCommandOptionType.String,
             name: "role_name",
             description: "The name of the role to assign",
             required: true,
           },
           {
-            type: 3,
+            type: ApplicationCommandOptionType.String,
             name: "usernames",
             description:
               'A comma-separated list of usernames (e.g. "user1, user2")',
@@ -125,17 +131,17 @@ export const managerCommand: CommandDefinition = {
           embeds: [{ description: source.content }],
           components: [
             {
-              type: 1,
+              type: ComponentType.ActionRow,
               components: [
                 {
-                  type: 2,
-                  style: 3,
+                  type: ComponentType.Button,
+                  style: ButtonStyle.Success,
                   label: "Confirm",
                   custom_id: `manager-say:confirm:${id}`,
                 },
                 {
-                  type: 2,
-                  style: 2,
+                  type: ComponentType.Button,
+                  style: ButtonStyle.Secondary,
                   label: "Cancel",
                   custom_id: `manager-say:cancel:${id}`,
                 },

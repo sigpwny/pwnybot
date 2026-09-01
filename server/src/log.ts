@@ -1,4 +1,4 @@
-import { DiscordApiError } from "./discord/client.js";
+import { discordErrorMetadata } from "./discord/client.js";
 import type { DiscordInteraction } from "./discord/types.js";
 
 export function logError(
@@ -6,14 +6,14 @@ export function logError(
   error: unknown,
   metadata: Record<string, string | number | boolean | undefined> = {},
 ): void {
-  const discordError = error instanceof DiscordApiError ? error : undefined;
+  const discordError = discordErrorMetadata(error);
   console.error(
     JSON.stringify({
       level: "error",
       event,
       error_type: error instanceof Error ? error.name : "unknown",
-      discord_status: discordError?.status,
-      discord_route: discordError?.route,
+      discord_status: discordError.status,
+      discord_route: discordError.route,
       ...metadata,
     }),
   );

@@ -1,4 +1,8 @@
 import {
+  ApplicationCommandOptionType,
+  ApplicationCommandType,
+} from "discord-api-types/v10";
+import {
   createChannelMessage,
   createForumPost,
   editChannel,
@@ -15,24 +19,22 @@ const GENERAL = "General";
 export const chalCommand: CommandDefinition = {
   command: {
     name: "chal",
-    type: 1,
+    type: ApplicationCommandType.ChatInput,
     description: "No Description Set",
-    contexts: [0],
-    integration_types: [0],
     options: [
       {
-        type: 1,
+        type: ApplicationCommandOptionType.Subcommand,
         name: "create",
         description: "Creates a channel for the challenge",
         options: [
           {
-            type: 3,
+            type: ApplicationCommandOptionType.String,
             name: "name",
             description: "The name of the challenge",
             required: true,
           },
           {
-            type: 3,
+            type: ApplicationCommandOptionType.String,
             name: "category",
             description: "the category of the challenge",
             required: true,
@@ -41,12 +43,12 @@ export const chalCommand: CommandDefinition = {
         ],
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionType.Subcommand,
         name: "solve",
         description: "Marks a challenge as solved with a flag",
         options: [
           {
-            type: 3,
+            type: ApplicationCommandOptionType.String,
             name: "flag",
             description: "The flag for the challenge",
             required: true,

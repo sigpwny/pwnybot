@@ -1,4 +1,8 @@
 import {
+  ApplicationCommandOptionType,
+  ApplicationCommandType,
+} from "discord-api-types/v10";
+import {
   addGuildMemberRole,
   removeGuildMemberRole,
 } from "../discord/client.js";
@@ -16,18 +20,16 @@ import type { CommandDefinition } from "./types.js";
 export const rolesCommand: CommandDefinition = {
   command: {
     name: "roles",
-    type: 1,
+    type: ApplicationCommandType.ChatInput,
     description: "No Description Set",
-    contexts: [0],
-    integration_types: [0],
     options: [
       {
-        type: 1,
+        type: ApplicationCommandOptionType.Subcommand,
         name: "add",
         description: "Add yourself to a team role. Requires the UIUC role.",
         options: [
           {
-            type: 3,
+            type: ApplicationCommandOptionType.String,
             name: "role",
             description: "Role to add",
             required: true,
@@ -36,12 +38,12 @@ export const rolesCommand: CommandDefinition = {
         ],
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionType.Subcommand,
         name: "remove",
         description: "Remove yourself from a team role.",
         options: [
           {
-            type: 3,
+            type: ApplicationCommandOptionType.String,
             name: "role",
             description: "Role to remove",
             required: true,

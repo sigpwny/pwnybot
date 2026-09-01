@@ -1,3 +1,8 @@
+import {
+  InteractionResponseType,
+  InteractionType,
+  MessageFlags,
+} from "discord-api-types/v10";
 import type { DiscordInteraction } from "../discord/types.js";
 import { dispatchComponent, dispatchModal } from "./components.js";
 import { basicCommands } from "./basic.js";
@@ -29,10 +34,10 @@ export async function dispatchCommand(
   interaction: DiscordInteraction,
   runtime: CommandRuntime,
 ): Promise<Response> {
-  if (interaction.type === 3) {
+  if (interaction.type === InteractionType.MessageComponent) {
     return dispatchComponent(interaction, runtime);
   }
-  if (interaction.type === 5) {
+  if (interaction.type === InteractionType.ModalSubmit) {
     return dispatchModal(interaction, runtime);
   }
   const definition = commandDefinitions.find(
@@ -41,15 +46,19 @@ export async function dispatchCommand(
   if (!definition) {
     return new Response(
       JSON.stringify({
-        type: 4,
-        data: { content: ":x: Unknown command.", flags: 64 },
+        type: InteractionResponseType.ChannelMessageWithSource,
+        data: {
+          content: ":x: Unknown command.",
+          flags: MessageFlags.Ephemeral,
+        },
       }),
       {
         headers: { "Content-Type": "application/json" },
       },
     );
   }
-  return interaction.type === 4 && definition.autocomplete
+  return interaction.type === InteractionType.ApplicationCommandAutocomplete &&
+    definition.autocomplete
     ? definition.autocomplete(interaction, runtime)
     : definition.handle(interaction, runtime);
 }

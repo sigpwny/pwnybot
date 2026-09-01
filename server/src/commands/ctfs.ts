@@ -1,4 +1,8 @@
 import {
+  ApplicationCommandOptionType,
+  ApplicationCommandType,
+} from "discord-api-types/v10";
+import {
   addGuildMemberRole,
   removeGuildMemberRole,
 } from "../discord/client.js";
@@ -10,18 +14,16 @@ import type { CommandDefinition } from "./types.js";
 export const ctfsCommand: CommandDefinition = {
   command: {
     name: "ctfs",
-    type: 1,
+    type: ApplicationCommandType.ChatInput,
     description: "No Description Set",
-    contexts: [0],
-    integration_types: [0],
     options: [
       {
-        type: 1,
+        type: ApplicationCommandOptionType.Subcommand,
         name: "optin",
         description: "Add yourself to the CTF Team. Requires the UIUC role.",
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionType.Subcommand,
         name: "optout",
         description: "Remove yourself from the CTF Team.",
       },

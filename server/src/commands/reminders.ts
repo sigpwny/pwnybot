@@ -1,5 +1,12 @@
+import {
+  ApplicationCommandOptionType,
+  ApplicationCommandType,
+  ButtonStyle,
+  ComponentType,
+} from "discord-api-types/v10";
 import { message } from "../discord/responses.js";
 import type { Reminder } from "../storage/types.js";
+import type { InteractionMessageData } from "../discord/types.js";
 import { logError } from "../log.js";
 import {
   deferredTask,
@@ -40,7 +47,7 @@ export function renderReminderPage(
   requestedPage: number,
   stateId: string,
   title?: string,
-) {
+): InteractionMessageData {
   const pages: string[][] = [[]];
   for (const reminder of reminders) {
     const line = `${reminder.id}: ${reminder.silent ? "dm" : `<#${reminder.channelId}>`}: '${reminder.message}' <t:${Math.floor(reminder.remindAt / 1_000)}:R>`;
@@ -72,18 +79,18 @@ export function renderReminderPage(
       pageCount > 1
         ? [
             {
-              type: 1,
+              type: ComponentType.ActionRow,
               components: [
                 {
-                  type: 2,
-                  style: 2,
+                  type: ComponentType.Button,
+                  style: ButtonStyle.Secondary,
                   label: "Previous",
                   custom_id: `reminders-page:${stateId}:${page - 1}`,
                   disabled: page === 0,
                 },
                 {
-                  type: 2,
-                  style: 2,
+                  type: ComponentType.Button,
+                  style: ButtonStyle.Secondary,
                   label: "Next",
                   custom_id: `reminders-page:${stateId}:${page + 1}`,
                   disabled: page === pageCount - 1,
@@ -98,32 +105,30 @@ export function renderReminderPage(
 export const remindersCommand: CommandDefinition = {
   command: {
     name: "reminders",
-    type: 1,
+    type: ApplicationCommandType.ChatInput,
     description: "No Description Set",
-    contexts: [0],
-    integration_types: [0],
     options: [
       {
-        type: 1,
+        type: ApplicationCommandOptionType.Subcommand,
         name: "create",
         description: "Create a reminder",
         options: [
           {
-            type: 3,
+            type: ApplicationCommandOptionType.String,
             name: "when",
             description:
               "When the reminer should be triggered. Format: (1w2d3h4m5s)",
             required: true,
           },
           {
-            type: 3,
+            type: ApplicationCommandOptionType.String,
             name: "message",
             description: "What message should be attached to the reminder?",
             required: true,
             max_length: 1900,
           },
           {
-            type: 5,
+            type: ApplicationCommandOptionType.Boolean,
             name: "silent",
             description: "Should the reminder be dmed?",
             required: false,
@@ -131,13 +136,13 @@ export const remindersCommand: CommandDefinition = {
         ],
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionType.Subcommand,
         name: "list",
         description:
           "List the scheduled reminders for all users or a particular user",
         options: [
           {
-            type: 6,
+            type: ApplicationCommandOptionType.User,
             name: "user",
             description:
               "User whose reminders you would like to view, default is all users.",
@@ -146,12 +151,12 @@ export const remindersCommand: CommandDefinition = {
         ],
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionType.Subcommand,
         name: "delete",
         description: "Delete a reminder by its ID",
         options: [
           {
-            type: 4,
+            type: ApplicationCommandOptionType.Integer,
             name: "reminder_id",
             description: "The ID of the reminder to delete",
             required: true,

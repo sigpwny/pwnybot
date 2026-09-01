@@ -1,3 +1,4 @@
+import { ChannelType } from "discord-api-types/v10";
 import { getChannel } from "../discord/client.js";
 import type { AppEnv } from "../env.js";
 import type { DiscordChannel } from "../discord/types.js";
@@ -24,7 +25,10 @@ export async function getCtfContext(
     return null;
   }
   const forum = await getChannel(env, post.parent_id);
-  if (forum.type !== 15 || !forum.name?.startsWith("ctf-")) {
+  if (
+    forum.type !== ChannelType.GuildForum ||
+    !forum.name?.startsWith("ctf-")
+  ) {
     return null;
   }
   return { post, forum };

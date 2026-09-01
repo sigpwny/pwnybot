@@ -1,4 +1,11 @@
 import {
+  ApplicationCommandOptionType,
+  ApplicationCommandType,
+  ChannelType,
+  OverwriteType,
+  PermissionFlagsBits,
+} from "discord-api-types/v10";
+import {
   createForumPost,
   createGuildChannel,
   editChannel,
@@ -16,7 +23,7 @@ import { getCtfContext } from "./ctf-context.js";
 import { guildId, option, stringOption, subcommand } from "./options.js";
 import type { CommandDefinition } from "./types.js";
 
-const VIEW_CHANNEL = String(1n << 10n);
+const VIEW_CHANNEL = String(PermissionFlagsBits.ViewChannel);
 const GENERAL = "General";
 const CHALLENGE_CATEGORIES = [
   "crypto",
@@ -44,19 +51,17 @@ function newTag(name: string): Omit<DiscordForumTag, "id"> {
 export const ctfCommand: CommandDefinition = {
   command: {
     name: "ctf",
-    type: 1,
+    type: ApplicationCommandType.ChatInput,
     description: "No Description Set",
-    default_member_permissions: "8",
-    contexts: [0],
-    integration_types: [0],
+    default_member_permissions: String(PermissionFlagsBits.Administrator),
     options: [
       {
-        type: 1,
+        type: ApplicationCommandOptionType.Subcommand,
         name: "create",
         description: "Creates a forum for the CTF",
         options: [
           {
-            type: 3,
+            type: ApplicationCommandOptionType.String,
             name: "name",
             description: "The name of the CTF",
             required: true,
@@ -64,12 +69,12 @@ export const ctfCommand: CommandDefinition = {
         ],
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionType.Subcommand,
         name: "addcategory",
         description: "Adds tags for a custom category",
         options: [
           {
-            type: 3,
+            type: ApplicationCommandOptionType.String,
             name: "category",
             description: "The name of the category",
             required: true,
@@ -77,12 +82,12 @@ export const ctfCommand: CommandDefinition = {
         ],
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionType.Subcommand,
         name: "addrole",
         description: "Adds a user or role to a CTF",
         options: [
           {
-            type: 9,
+            type: ApplicationCommandOptionType.Mentionable,
             name: "target",
             description: "The user or role to add to this CTF",
             required: true,
@@ -118,20 +123,30 @@ export const ctfCommand: CommandDefinition = {
         ]);
         tagNames.push("unsolved");
         const permissionOverwrites = [
-          { id: botUser.id, type: 1, allow: VIEW_CHANNEL, deny: "0" },
-          { id: targetGuildId, type: 0, allow: "0", deny: VIEW_CHANNEL },
+          {
+            id: botUser.id,
+            type: OverwriteType.Member,
+            allow: VIEW_CHANNEL,
+            deny: "0",
+          },
+          {
+            id: targetGuildId,
+            type: OverwriteType.Role,
+            allow: "0",
+            deny: VIEW_CHANNEL,
+          },
           ...runtime.env.CTF_ROLES.filter((roleId) =>
             roles.some((role) => role.id === roleId),
           ).map((roleId) => ({
             id: roleId,
-            type: 0,
+            type: OverwriteType.Role,
             allow: VIEW_CHANNEL,
             deny: "0",
           })),
         ];
         const forum = await createGuildChannel(runtime.env, targetGuildId, {
           name: sanitizeName(`ctf-${stringOption(interaction, "name")}`, 100),
-          type: 15,
+          type: ChannelType.GuildForum,
           position: 1000,
           parent_id: parentId,
           available_tags: tagNames.map(newTag),
@@ -207,7 +222,9 @@ export const ctfCommand: CommandDefinition = {
       }
 
       const target = String(option(interaction, "target")?.value ?? "");
-      const targetType = interaction.data?.resolved?.roles?.[target] ? 0 : 1;
+      const targetType = interaction.data?.resolved?.roles?.[target]
+        ? OverwriteType.Role
+        : OverwriteType.Member;
       await addChannelPermission(
         runtime.env,
         context.forum,

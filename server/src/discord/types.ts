@@ -1,114 +1,80 @@
-export interface DiscordUser {
-  id: string;
-  username: string;
-  global_name?: string | null;
-}
+import type {
+  APIApplicationCommandInteractionDataOption,
+  APIChannel,
+  APIGuildForumTag,
+  APIInteraction,
+  APIInteractionDataResolved,
+  APIInteractionGuildMember,
+  APIMessage,
+  APIModalSubmission,
+  APIModalSubmissionComponent,
+  APIOverwrite,
+  APIRole,
+  APIThreadMetadata,
+  APIUser,
+  RESTPatchAPIInteractionOriginalResponseJSONBody,
+  RESTPutAPIApplicationGuildCommandsJSONBody,
+  Snowflake,
+} from "discord-api-types/v10";
 
-export interface DiscordMember {
-  user?: DiscordUser;
-  roles: string[];
-  permissions?: string;
-}
-
-export interface DiscordRole {
-  id: string;
-  name: string;
-}
-
-export interface DiscordForumTag {
-  id: string;
-  name: string;
-  moderated?: boolean;
-  emoji_id?: string | null;
-  emoji_name?: string | null;
-}
-
-export interface DiscordChannel {
-  id: string;
-  guild_id?: string;
-  parent_id?: string | null;
-  name?: string;
-  type: number;
-  flags?: number;
-  archived?: boolean;
-  available_tags?: DiscordForumTag[];
-  applied_tags?: string[];
-  permission_overwrites?: DiscordPermissionOverwrite[];
-  thread_metadata?: {
-    archive_timestamp: string;
+export type DiscordUser = Pick<APIUser, "id" | "username"> & Partial<APIUser>;
+export type DiscordMember = Pick<APIInteractionGuildMember, "roles"> &
+  Partial<Omit<APIInteractionGuildMember, "user" | "roles">> & {
+    user?: DiscordUser;
   };
-  message?: { id: string };
-}
+export type DiscordRole = APIRole;
+export type DiscordForumTag = APIGuildForumTag;
+export type DiscordPermissionOverwrite = APIOverwrite;
+export type DiscordMessage = APIMessage;
+export type DiscordCommandOption = APIApplicationCommandInteractionDataOption &
+  Partial<{
+    value: string | number | boolean;
+    focused: boolean;
+    options: DiscordCommandOption[];
+  }>;
+export type DiscordComponent = APIModalSubmissionComponent &
+  Partial<{
+    custom_id: string;
+    value: string;
+    components: DiscordComponent[];
+  }>;
+export type DiscordCommandPayload =
+  RESTPutAPIApplicationGuildCommandsJSONBody[number];
+export type InteractionMessageData =
+  RESTPatchAPIInteractionOriginalResponseJSONBody;
 
-export interface DiscordPermissionOverwrite {
-  id: string;
-  type: 0 | 1;
-  allow: string;
-  deny: string;
-}
+export type DiscordChannel = APIChannel &
+  Partial<{
+    guild_id: Snowflake;
+    parent_id: Snowflake | null;
+    name: string;
+    flags: number;
+    available_tags: APIGuildForumTag[];
+    applied_tags: Snowflake[];
+    permission_overwrites: APIOverwrite[];
+    thread_metadata: APIThreadMetadata;
+    message: APIMessage;
+  }>;
 
-export interface DiscordMessage {
-  id: string;
-  content: string;
-  author: DiscordUser;
-  embeds?: unknown[];
-}
-
-export interface DiscordCommandOption {
-  name: string;
-  type: number;
-  value?: string | number | boolean;
-  focused?: boolean;
-  options?: DiscordCommandOption[];
-}
-
-export interface DiscordInteraction {
-  id: string;
-  application_id: string;
-  type: number;
-  token: string;
-  guild_id?: string;
-  channel_id?: string;
+/**
+ * Runtime-neutral command view over Discord's interaction union. Individual
+ * handlers narrow the optional data fields according to interaction type.
+ */
+export type DiscordInteraction = Pick<
+  APIInteraction,
+  "id" | "application_id" | "type" | "token"
+> & {
+  guild_id?: Snowflake;
+  channel_id?: Snowflake;
   channel?: DiscordChannel;
   member?: DiscordMember;
-  user?: DiscordUser;
+  user?: APIUser;
   data?: {
     name?: string;
     options?: DiscordCommandOption[];
     custom_id?: string;
     components?: DiscordComponent[];
-    resolved?: {
-      users?: Record<string, DiscordUser>;
-      members?: Record<string, DiscordMember>;
-      roles?: Record<string, DiscordRole>;
-      channels?: Record<string, DiscordChannel>;
-    };
+    resolved?: APIInteractionDataResolved;
   };
-  message?: DiscordMessage & { components?: DiscordComponent[] };
-}
-
-export interface DiscordComponent {
-  type: number;
-  custom_id?: string;
-  value?: string;
-  components?: DiscordComponent[];
-}
-
-export interface DiscordCommandPayload {
-  name: string;
-  type: number;
-  description?: string;
-  default_member_permissions?: string;
-  contexts?: number[];
-  integration_types?: number[];
-  options?: unknown[];
-}
-
-export interface InteractionMessageData {
-  content?: string;
-  embeds?: unknown[];
-  flags?: number;
-  allowed_mentions?: unknown;
-  components?: unknown[];
-  attachments?: unknown[];
-}
+  message?: APIMessage;
+};

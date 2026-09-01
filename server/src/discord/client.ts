@@ -1,3 +1,33 @@
+import {
+  DiscordAPIError,
+  HTTPError,
+  REST,
+  type RESTOptions,
+} from "@discordjs/rest";
+import {
+  Routes,
+  type APIChannel,
+  type APIMessage,
+  type APIRole,
+  type APIUser,
+  type RESTGetAPIChannelMessagesQuery,
+  type RESTGetAPIChannelThreadsArchivedPublicResult,
+  type RESTGetAPIGuildChannelsResult,
+  type RESTGetAPIGuildMemberResult,
+  type RESTGetAPIGuildMembersSearchQuery,
+  type RESTGetAPIGuildMembersSearchResult,
+  type RESTGetAPIGuildRolesResult,
+  type RESTGetAPIGuildThreadsResult,
+  type RESTPatchAPIChannelJSONBody,
+  type RESTPatchAPIChannelMessageJSONBody,
+  type RESTPatchAPIInteractionOriginalResponseJSONBody,
+  type RESTPostAPICurrentUserCreateDMChannelJSONBody,
+  type RESTPostAPIGuildChannelJSONBody,
+  type RESTPostAPIGuildForumThreadsJSONBody,
+  type RESTPostAPIChannelMessageJSONBody,
+  type RESTPutAPIApplicationGuildCommandsJSONBody,
+  type RESTPutAPIChannelPermissionJSONBody,
+} from "discord-api-types/v10";
 import type { AppEnv } from "../env.js";
 import type {
   DiscordChannel,
@@ -9,104 +39,47 @@ import type {
   InteractionMessageData,
 } from "./types.js";
 
-const DISCORD_API = "https://discord.com/api/v10";
-const USER_AGENT = "DiscordBot (https://github.com/sigpwny/pwnybot, 2.0.0)";
-const REQUEST_TIMEOUT_MS = 10_000;
-const MAX_ATTEMPTS = 3;
-const MAX_RETRY_DELAY_MS = 15_000;
+const restClients = new Map<string, REST>();
 
-export class DiscordApiError extends Error {
-  constructor(
-    readonly status: number,
-    readonly route: string,
-    readonly details: string,
-  ) {
-    super(`Discord API request failed (${status}) for ${route}: ${details}`);
+function discordRest(env: AppEnv): REST {
+  let client = restClients.get(env.DISCORD_BOT_TOKEN);
+  if (!client) {
+    client = new REST({
+      version: "10",
+      retries: 3,
+      timeout: 10_000,
+      makeRequest: fetch as unknown as RESTOptions["makeRequest"],
+      userAgentAppendix: "pwnybot/2.0.0",
+    }).setToken(env.DISCORD_BOT_TOKEN);
+    restClients.set(env.DISCORD_BOT_TOKEN, client);
   }
+  return client;
 }
 
-async function discordFetch(
-  env: AppEnv,
-  route: string,
-  init: RequestInit = {},
-): Promise<Response> {
-  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt += 1) {
-    let response: Response;
-    try {
-      response = await fetch(`${DISCORD_API}${route}`, {
-        ...init,
-        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-        headers: {
-          Authorization: `Bot ${env.DISCORD_BOT_TOKEN}`,
-          "User-Agent": USER_AGENT,
-          ...init.headers,
-        },
-      });
-    } catch (error) {
-      if (attempt === MAX_ATTEMPTS - 1) {
-        throw error;
-      }
-      await sleep(retryDelay(attempt));
-      continue;
-    }
-
-    if (response.ok) {
-      return response;
-    }
-
-    const details = (await response.text()).slice(0, 1_000);
-    const retryable = response.status === 429 || response.status >= 500;
-    if (!retryable || attempt === MAX_ATTEMPTS - 1) {
-      throw new DiscordApiError(response.status, route, details);
-    }
-    await sleep(
-      response.status === 429
-        ? rateLimitDelay(response, details)
-        : retryDelay(attempt),
-    );
+export function discordErrorMetadata(error: unknown): {
+  status?: number;
+  route?: string;
+} {
+  if (error instanceof DiscordAPIError || error instanceof HTTPError) {
+    return { status: error.status, route: redactDiscordRoute(error.url) };
   }
-  throw new Error("Discord request retry loop exited unexpectedly");
+  return {};
 }
 
-function retryDelay(attempt: number): number {
-  return Math.min(MAX_RETRY_DELAY_MS, 500 * 2 ** attempt);
-}
-
-function rateLimitDelay(response: Response, details: string): number {
-  let seconds = Number(response.headers.get("Retry-After"));
+function redactDiscordRoute(url: string): string {
   try {
-    const body = JSON.parse(details) as { retry_after?: number };
-    if (typeof body.retry_after === "number") {
-      seconds = body.retry_after;
-    }
+    const parsed = new URL(url);
+    return parsed.pathname.replace(
+      /(\/webhooks\/\d+\/)[^/]+/,
+      "$1[interaction-token]",
+    );
   } catch {
-    // Fall back to the header or exponential backoff.
+    return url.replace(/(\/webhooks\/\d+\/)[^/]+/, "$1[interaction-token]");
   }
-  return Number.isFinite(seconds)
-    ? Math.min(MAX_RETRY_DELAY_MS, Math.max(0, seconds * 1_000))
-    : 1_000;
 }
 
-function sleep(milliseconds: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, milliseconds));
-}
-
-async function jsonRequest<T>(
-  env: AppEnv,
-  route: string,
-  method = "GET",
-  body?: unknown,
-): Promise<T> {
-  const response = await discordFetch(env, route, {
-    method,
-    headers:
-      body === undefined ? undefined : { "Content-Type": "application/json" },
-    body: body === undefined ? undefined : JSON.stringify(body),
-  });
-  if (response.status === 204) {
-    return undefined as T;
-  }
-  return response.json() as Promise<T>;
+function isNotFound(error: unknown): boolean {
+  return discordErrorMetadata(error).status === 404;
 }
 
 export async function registerGuildCommands(
@@ -114,37 +87,41 @@ export async function registerGuildCommands(
   guildId: string,
   commands: DiscordCommandPayload[],
 ): Promise<void> {
-  await jsonRequest(
-    env,
-    `/applications/${env.DISCORD_APPLICATION_ID}/guilds/${guildId}/commands`,
-    "PUT",
-    commands,
+  await discordRest(env).put(
+    Routes.applicationGuildCommands(env.DISCORD_APPLICATION_ID, guildId),
+    { body: commands satisfies RESTPutAPIApplicationGuildCommandsJSONBody },
   );
 }
 
 export async function getCurrentUser(env: AppEnv): Promise<DiscordUser> {
-  return jsonRequest(env, "/users/@me");
+  return (await discordRest(env).get(Routes.user())) as APIUser;
 }
 
 export async function getChannel(
   env: AppEnv,
   channelId: string,
 ): Promise<DiscordChannel> {
-  return jsonRequest(env, `/channels/${channelId}`);
+  return (await discordRest(env).get(
+    Routes.channel(channelId),
+  )) as DiscordChannel;
 }
 
 export async function listGuildChannels(
   env: AppEnv,
   guildId: string,
 ): Promise<DiscordChannel[]> {
-  return jsonRequest(env, `/guilds/${guildId}/channels`);
+  return (await discordRest(env).get(
+    Routes.guildChannels(guildId),
+  )) as RESTGetAPIGuildChannelsResult as DiscordChannel[];
 }
 
 export async function listGuildRoles(
   env: AppEnv,
   guildId: string,
 ): Promise<DiscordRole[]> {
-  return jsonRequest(env, `/guilds/${guildId}/roles`);
+  return (await discordRest(env).get(
+    Routes.guildRoles(guildId),
+  )) as RESTGetAPIGuildRolesResult;
 }
 
 export async function getGuildMember(
@@ -153,9 +130,11 @@ export async function getGuildMember(
   userId: string,
 ): Promise<DiscordMember | null> {
   try {
-    return await jsonRequest(env, `/guilds/${guildId}/members/${userId}`);
+    return (await discordRest(env).get(
+      Routes.guildMember(guildId, userId),
+    )) as RESTGetAPIGuildMemberResult as DiscordMember;
   } catch (error) {
-    if (error instanceof DiscordApiError && error.status === 404) {
+    if (isNotFound(error)) {
       return null;
     }
     throw error;
@@ -167,10 +146,13 @@ export async function searchGuildMembers(
   guildId: string,
   query: string,
 ): Promise<DiscordMember[]> {
-  return jsonRequest(
-    env,
-    `/guilds/${guildId}/members/search?query=${encodeURIComponent(query)}&limit=5`,
-  );
+  const search = new URLSearchParams({
+    query,
+    limit: "5",
+  } satisfies Record<keyof RESTGetAPIGuildMembersSearchQuery, string>);
+  return (await discordRest(env).get(Routes.guildMembersSearch(guildId), {
+    query: search,
+  })) as RESTGetAPIGuildMembersSearchResult as DiscordMember[];
 }
 
 export async function listChannelMessages(
@@ -178,10 +160,12 @@ export async function listChannelMessages(
   channelId: string,
   limit = 100,
 ): Promise<DiscordMessage[]> {
-  return jsonRequest(
-    env,
-    `/channels/${channelId}/messages?limit=${Math.min(100, Math.max(1, limit))}`,
-  );
+  const query = new URLSearchParams({
+    limit: String(Math.min(100, Math.max(1, limit))),
+  });
+  return (await discordRest(env).get(Routes.channelMessages(channelId), {
+    query,
+  })) as APIMessage[];
 }
 
 export async function getChannelMessage(
@@ -190,12 +174,11 @@ export async function getChannelMessage(
   messageId: string,
 ): Promise<DiscordMessage | null> {
   try {
-    return await jsonRequest(
-      env,
-      `/channels/${channelId}/messages/${messageId}`,
-    );
+    return (await discordRest(env).get(
+      Routes.channelMessage(channelId, messageId),
+    )) as APIMessage;
   } catch (error) {
-    if (error instanceof DiscordApiError && error.status === 404) {
+    if (isNotFound(error)) {
       return null;
     }
     throw error;
@@ -208,14 +191,11 @@ export async function editChannelMessage(
   messageId: string,
   content: string,
 ): Promise<DiscordMessage> {
-  return jsonRequest(
-    env,
-    `/channels/${channelId}/messages/${messageId}`,
-    "PATCH",
-    {
-      content,
-    },
-  );
+  const body = { content } satisfies RESTPatchAPIChannelMessageJSONBody;
+  return (await discordRest(env).patch(
+    Routes.channelMessage(channelId, messageId),
+    { body },
+  )) as APIMessage;
 }
 
 export async function addGuildMemberRole(
@@ -224,11 +204,7 @@ export async function addGuildMemberRole(
   userId: string,
   roleId: string,
 ): Promise<void> {
-  await discordFetch(
-    env,
-    `/guilds/${guildId}/members/${userId}/roles/${roleId}`,
-    { method: "PUT" },
-  );
+  await discordRest(env).put(Routes.guildMemberRole(guildId, userId, roleId));
 }
 
 export async function removeGuildMemberRole(
@@ -237,50 +213,54 @@ export async function removeGuildMemberRole(
   userId: string,
   roleId: string,
 ): Promise<void> {
-  await discordFetch(
-    env,
-    `/guilds/${guildId}/members/${userId}/roles/${roleId}`,
-    { method: "DELETE" },
+  await discordRest(env).delete(
+    Routes.guildMemberRole(guildId, userId, roleId),
   );
 }
 
 export async function createGuildChannel(
   env: AppEnv,
   guildId: string,
-  body: unknown,
+  body: RESTPostAPIGuildChannelJSONBody,
 ): Promise<DiscordChannel> {
-  return jsonRequest(env, `/guilds/${guildId}/channels`, "POST", body);
+  return (await discordRest(env).post(Routes.guildChannels(guildId), {
+    body,
+  })) as DiscordChannel;
 }
 
 export async function editChannel(
   env: AppEnv,
   channelId: string,
-  body: unknown,
+  body: RESTPatchAPIChannelJSONBody,
 ): Promise<DiscordChannel> {
-  return jsonRequest(env, `/channels/${channelId}`, "PATCH", body);
+  return (await discordRest(env).patch(Routes.channel(channelId), {
+    body,
+  })) as DiscordChannel;
 }
 
 export async function setChannelPermission(
   env: AppEnv,
   channelId: string,
   targetId: string,
-  type: 0 | 1,
+  type: RESTPutAPIChannelPermissionJSONBody["type"],
   allow: string,
   deny = "0",
 ): Promise<void> {
-  await jsonRequest(
-    env,
-    `/channels/${channelId}/permissions/${targetId}`,
-    "PUT",
-    { type, allow, deny },
-  );
+  const body = {
+    type,
+    allow,
+    deny,
+  } satisfies RESTPutAPIChannelPermissionJSONBody;
+  await discordRest(env).put(Routes.channelPermission(channelId, targetId), {
+    body,
+  });
 }
 
 export async function addChannelPermission(
   env: AppEnv,
   channel: DiscordChannel,
   targetId: string,
-  type: 0 | 1,
+  type: RESTPutAPIChannelPermissionJSONBody["type"],
   permission: bigint,
 ): Promise<void> {
   const existing = channel.permission_overwrites?.find(
@@ -305,11 +285,14 @@ export async function createForumPost(
   content: string,
   appliedTags: string[] = [],
 ): Promise<DiscordChannel> {
-  return jsonRequest(env, `/channels/${forumId}/threads`, "POST", {
+  const body = {
     name,
     message: { content },
     applied_tags: appliedTags,
-  });
+  } satisfies RESTPostAPIGuildForumThreadsJSONBody;
+  return (await discordRest(env).post(Routes.threads(forumId), {
+    body,
+  })) as DiscordChannel;
 }
 
 export async function listForumPosts(
@@ -317,44 +300,33 @@ export async function listForumPosts(
   guildId: string,
   forumId: string,
 ): Promise<DiscordChannel[]> {
-  const active = await jsonRequest<{ threads: DiscordChannel[] }>(
-    env,
-    `/guilds/${guildId}/threads/active`,
-  );
+  const active = (await discordRest(env).get(
+    Routes.guildActiveThreads(guildId),
+  )) as RESTGetAPIGuildThreadsResult;
   const archived: DiscordChannel[] = [];
   let before: string | undefined;
   while (true) {
-    const query = before
-      ? `?before=${encodeURIComponent(before)}&limit=100`
-      : "?limit=100";
-    const page = await jsonRequest<{
-      threads: DiscordChannel[];
-      has_more: boolean;
-    }>(env, `/channels/${forumId}/threads/archived/public${query}`);
-    archived.push(...page.threads);
+    const query = new URLSearchParams({ limit: "100" });
+    if (before) {
+      query.set("before", before);
+    }
+    const page = (await discordRest(env).get(
+      Routes.channelThreads(forumId, "public"),
+      { query },
+    )) as RESTGetAPIChannelThreadsArchivedPublicResult;
+    archived.push(...(page.threads as DiscordChannel[]));
     if (!page.has_more || page.threads.length === 0) {
       break;
     }
-    before = page.threads.at(-1)?.thread_metadata?.archive_timestamp;
+    before = (page.threads.at(-1) as DiscordChannel | undefined)
+      ?.thread_metadata?.archive_timestamp;
     if (!before) {
       break;
     }
   }
-  return [...active.threads, ...archived].filter(
+  return [...(active.threads as DiscordChannel[]), ...archived].filter(
     (thread) => thread.parent_id === forumId,
   );
-}
-
-export async function listActiveForumPosts(
-  env: AppEnv,
-  guildId: string,
-  forumId: string,
-): Promise<DiscordChannel[]> {
-  const active = await jsonRequest<{ threads: DiscordChannel[] }>(
-    env,
-    `/guilds/${guildId}/threads/active`,
-  );
-  return active.threads.filter((thread) => thread.parent_id === forumId);
 }
 
 export async function createChannelMessage(
@@ -363,19 +335,25 @@ export async function createChannelMessage(
   content: string,
   nonce?: string,
 ): Promise<DiscordMessage> {
-  return jsonRequest(env, `/channels/${channelId}/messages`, "POST", {
+  const body = {
     content,
     ...(nonce ? { nonce, enforce_nonce: true } : {}),
-  });
+  } satisfies RESTPostAPIChannelMessageJSONBody;
+  return (await discordRest(env).post(Routes.channelMessages(channelId), {
+    body,
+  })) as APIMessage;
 }
 
 export async function createDm(
   env: AppEnv,
   userId: string,
 ): Promise<DiscordChannel> {
-  return jsonRequest(env, "/users/@me/channels", "POST", {
+  const body = {
     recipient_id: userId,
-  });
+  } satisfies RESTPostAPICurrentUserCreateDMChannelJSONBody;
+  return (await discordRest(env).post(Routes.userChannels(), {
+    body,
+  })) as APIChannel as DiscordChannel;
 }
 
 export async function pinForumPost(
@@ -390,11 +368,9 @@ export async function editOriginalInteractionResponse(
   token: string,
   data: InteractionMessageData,
 ): Promise<void> {
-  await jsonRequest(
-    env,
-    `/webhooks/${env.DISCORD_APPLICATION_ID}/${token}/messages/@original`,
-    "PATCH",
-    data,
+  await discordRest(env).patch(
+    Routes.webhookMessage(env.DISCORD_APPLICATION_ID, token, "@original"),
+    { auth: false, body: data },
   );
 }
 
@@ -403,11 +379,9 @@ export async function createInteractionFollowup(
   token: string,
   data: InteractionMessageData,
 ): Promise<void> {
-  await jsonRequest(
-    env,
-    `/webhooks/${env.DISCORD_APPLICATION_ID}/${token}`,
-    "POST",
-    data,
+  await discordRest(env).post(
+    Routes.webhook(env.DISCORD_APPLICATION_ID, token),
+    { auth: false, body: data },
   );
 }
 
@@ -418,22 +392,22 @@ export async function editOriginalInteractionResponseWithFile(
   filename: string,
   content: string,
 ): Promise<void> {
-  const form = new FormData();
-  form.append(
-    "payload_json",
-    JSON.stringify({
-      ...data,
-      attachments: [{ id: "0", filename }],
-    }),
-  );
-  form.append(
-    "files[0]",
-    new Blob([content], { type: "text/plain;charset=utf-8" }),
-    filename,
-  );
-  await discordFetch(
-    env,
-    `/webhooks/${env.DISCORD_APPLICATION_ID}/${token}/messages/@original`,
-    { method: "PATCH", body: form },
+  const body = {
+    ...data,
+    attachments: [{ id: "0", filename }],
+  } satisfies RESTPatchAPIInteractionOriginalResponseJSONBody;
+  await discordRest(env).patch(
+    Routes.webhookMessage(env.DISCORD_APPLICATION_ID, token, "@original"),
+    {
+      auth: false,
+      body,
+      files: [
+        {
+          data: new TextEncoder().encode(content),
+          name: filename,
+          contentType: "text/plain;charset=utf-8",
+        },
+      ],
+    },
   );
 }

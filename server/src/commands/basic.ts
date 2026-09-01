@@ -1,33 +1,29 @@
+import {
+  ApplicationCommandOptionType,
+  ApplicationCommandType,
+} from "discord-api-types/v10";
 import { createInteractionFollowup } from "../discord/client.js";
 import { message } from "../discord/responses.js";
 import { afterInteractionAck, claimInteraction } from "./helpers.js";
 import { integerOption, stringOption } from "./options.js";
 import type { CommandDefinition } from "./types.js";
 
-const CHAT_INPUT = 1;
-const STRING = 3;
-const INTEGER = 4;
-const GUILD_CONTEXT = 0;
-const GUILD_INSTALL = 0;
-
 export const basicCommands: CommandDefinition[] = [
   {
     command: {
       name: "reverserepeat",
-      type: CHAT_INPUT,
+      type: ApplicationCommandType.ChatInput,
       description:
         "The reverserepeat command is pretty epic!! (/reverserepeat)",
-      contexts: [GUILD_CONTEXT],
-      integration_types: [GUILD_INSTALL],
       options: [
         {
-          type: STRING,
+          type: ApplicationCommandOptionType.String,
           name: "message",
           description: "The message",
           required: true,
         },
         {
-          type: INTEGER,
+          type: ApplicationCommandOptionType.Integer,
           name: "times",
           description: "# of times max 3",
           required: false,
@@ -62,18 +58,16 @@ export const basicCommands: CommandDefinition[] = [
   {
     command: {
       name: "template",
-      type: CHAT_INPUT,
+      type: ApplicationCommandType.ChatInput,
       description: "No Description Set",
-      contexts: [GUILD_CONTEXT],
-      integration_types: [GUILD_INSTALL],
       options: [
         {
-          type: 1,
+          type: ApplicationCommandOptionType.Subcommand,
           name: "say",
           description: "The message command is pretty epic!! (/template say)",
           options: [
             {
-              type: STRING,
+              type: ApplicationCommandOptionType.String,
               name: "message",
               description: "The message",
               required: true,

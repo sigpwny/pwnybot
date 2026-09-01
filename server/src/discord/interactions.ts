@@ -1,4 +1,5 @@
 import nacl from "tweetnacl";
+import { InteractionType } from "discord-api-types/v10";
 import type { CommandRuntime } from "../commands/types.js";
 import { dispatchCommand } from "../commands/index.js";
 import type { AppEnv } from "../env.js";
@@ -107,10 +108,17 @@ export async function handleDiscordInteraction(
     return badRequest("invalid_json");
   }
 
-  if (interaction.type === 1) {
+  if (interaction.type === InteractionType.Ping) {
     return pong();
   }
-  if (![2, 3, 4, 5].includes(interaction.type)) {
+  if (
+    ![
+      InteractionType.ApplicationCommand,
+      InteractionType.MessageComponent,
+      InteractionType.ApplicationCommandAutocomplete,
+      InteractionType.ModalSubmit,
+    ].includes(interaction.type)
+  ) {
     return badRequest("unsupported_interaction_type");
   }
 

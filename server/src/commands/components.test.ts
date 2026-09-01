@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { InteractionType } from "discord-api-types/v10";
 import type { AppEnv } from "../env.js";
 import { MemoryStorage } from "../storage/memory.js";
 import { dispatchComponent } from "./components.js";
@@ -34,7 +35,7 @@ test("manager say confirmations are owner-bound", async () => {
       id: "interaction",
       application_id: "12345678901234567",
       token: "token",
-      type: 3,
+      type: InteractionType.MessageComponent,
       guild_id: "20",
       channel_id: "30",
       member: { user: { id: "11", username: "other" }, roles: [] },

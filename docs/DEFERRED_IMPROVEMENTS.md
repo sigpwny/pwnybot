@@ -25,5 +25,6 @@ The reviewed serverless-native improvements are implemented in v2.
 19. A non-destructive PostgreSQL-to-D1/SQLite reminder importer preserves IDs and timestamps and verifies imports.
 20. Cloudflare deployment is automated first; self-host deployment remains manual.
 21. Command registration remains guild-scoped for the initial rollout.
+22. Discord protocol types, enums, and routes use `discord-api-types/v10`; Discord REST transport uses `@discordjs/rest` with `fetch`. The custom Hono dispatcher and hardened signature verifier remain in place.
 
 Forum permission overwrites and generic public errors were already completed during the initial rewrite.

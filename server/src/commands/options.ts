@@ -1,3 +1,4 @@
+import { ApplicationCommandOptionType } from "discord-api-types/v10";
 import type {
   DiscordCommandOption,
   DiscordInteraction,
@@ -6,7 +7,9 @@ import type {
 export function subcommand(
   interaction: DiscordInteraction,
 ): DiscordCommandOption | undefined {
-  return interaction.data?.options?.find((option) => option.type === 1);
+  return interaction.data?.options?.find(
+    (option) => option.type === ApplicationCommandOptionType.Subcommand,
+  );
 }
 
 export function options(

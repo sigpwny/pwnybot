@@ -8,6 +8,8 @@ The official SIGPwny Discord bot. Version 2 is a TypeScript rewrite built around
 - `server/src/worker.ts` is the Cloudflare Workers entrypoint.
 - `server/src/node.ts` is the self-hosted Node.js entrypoint.
 - `server/src/commands/` keeps each command declaration beside its handler.
+- `discord-api-types/v10` supplies Discord protocol types, enums, and REST routes.
+- `@discordjs/rest` handles Discord REST transport, buckets, rate limits, retries, and timeouts using `fetch`.
 - `server/src/storage/` provides D1, SQLite, and in-memory adapters behind one asynchronous interface.
 - `server/src/reminders/` delivers D1 reminders through a singleton Durable Object alarm. Node uses the same delivery code with an in-process timer.
 - Discord state such as forums, challenges, roles, and messages remains in Discord. Only reminders are stored locally.
@@ -90,6 +92,7 @@ Use `npm run db:import:postgres` for a non-destructive reminder migration. See t
 - Discord side effects are deduplicated by interaction ID for 24 hours.
 - Temporary component and pagination state is owner, guild, and channel bound.
 - Discord REST requests use bounded timeouts and retries for network, rate-limit, and server failures.
+- The custom Hono interaction dispatcher and bounded Ed25519 verifier remain runtime-neutral; no Gateway client is included.
 - Failed reminders retry five times with exponential backoff, then are deleted and logged.
 - Runtime errors are emitted as structured metadata without tokens or message content.
 

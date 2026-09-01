@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import nacl from "tweetnacl";
+import {
+  InteractionResponseType,
+  InteractionType,
+} from "discord-api-types/v10";
 import type { CommandRuntime } from "../commands/types.js";
 import type { AppEnv } from "../env.js";
 import { MemoryStorage } from "../storage/memory.js";
@@ -55,14 +59,16 @@ test("signed Discord ping receives a pong", async () => {
   const response = await handleDiscordInteraction(
     env,
     runtime,
-    signedRequest('{"type":1}'),
+    signedRequest(JSON.stringify({ type: InteractionType.Ping })),
   );
   assert.equal(response.status, 200);
-  assert.deepEqual(await response.json(), { type: 1 });
+  assert.deepEqual(await response.json(), {
+    type: InteractionResponseType.Pong,
+  });
 });
 
 test("invalid Discord signatures are rejected", async () => {
-  const request = signedRequest('{"type":1}');
+  const request = signedRequest(JSON.stringify({ type: InteractionType.Ping }));
   request.headers.set("X-Signature-Ed25519", "00".repeat(64));
   const response = await handleDiscordInteraction(env, runtime, request);
   assert.equal(response.status, 401);

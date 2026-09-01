@@ -20,8 +20,10 @@
     "discord:commands:register": "tsx src/scripts/register-discord-commands.ts"
   },
   "dependencies": {
+    "@discordjs/rest": "^2.6.3",
     "@hono/node-server": "^2.1.1",
     "better-sqlite3": "^12.2.0",
+    "discord-api-types": "^0.38.54",
     "dotenv": "^16.6.1",
     "hono": "^4.9.6",
     "pg": "^8.16.3",

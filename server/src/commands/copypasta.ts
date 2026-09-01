@@ -1,3 +1,7 @@
+import {
+  ApplicationCommandOptionType,
+  ApplicationCommandType,
+} from "discord-api-types/v10";
 import { autocomplete, message } from "../discord/responses.js";
 import copypastas from "./copypasta-data.json" with { type: "json" };
 import {
@@ -11,26 +15,29 @@ import type { CommandDefinition } from "./types.js";
 export const copypastaCommand: CommandDefinition = {
   command: {
     name: "copypasta",
-    type: 1,
+    type: ApplicationCommandType.ChatInput,
     description: "No Description Set",
-    contexts: [0],
-    integration_types: [0],
     options: [
       {
-        type: 1,
+        type: ApplicationCommandOptionType.Subcommand,
         name: "byid",
         description: "copypasta by id",
         options: [
-          { type: 4, name: "id", description: "copypasta id", required: true },
+          {
+            type: ApplicationCommandOptionType.Integer,
+            name: "id",
+            description: "copypasta id",
+            required: true,
+          },
         ],
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionType.Subcommand,
         name: "byname",
         description: "copypasta by name",
         options: [
           {
-            type: 3,
+            type: ApplicationCommandOptionType.String,
             name: "name",
             description: "copypasta name",
             required: true,
@@ -38,7 +45,11 @@ export const copypastaCommand: CommandDefinition = {
           },
         ],
       },
-      { type: 1, name: "random", description: "random copypasta" },
+      {
+        type: ApplicationCommandOptionType.Subcommand,
+        name: "random",
+        description: "random copypasta",
+      },
     ],
   },
   async handle(interaction) {

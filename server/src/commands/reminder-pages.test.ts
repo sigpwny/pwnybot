@@ -15,8 +15,8 @@ test("reminder pages stay within Discord embed limits", () => {
     attempts: 0,
   }));
   const page = renderReminderPage(reminders, 1, "state");
-  const embed = page.embeds[0];
-  assert.ok(embed.description.length <= 3_900);
-  assert.equal(embed.footer.text, "Page 2 of 3");
-  assert.equal(page.components.length, 1);
+  const embed = page.embeds?.[0];
+  assert.ok(embed?.description && embed.description.length <= 3_900);
+  assert.equal(embed?.footer?.text, "Page 2 of 3");
+  assert.equal(page.components?.length, 1);
 });
