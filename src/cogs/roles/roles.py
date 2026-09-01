@@ -2,7 +2,7 @@ import interactions
 from interactions import Extension, SlashContext
 
 from lib.util import subcommand
-from lib.config import UIUC_ROLES, PRIVATE_ROLES
+from lib.config import BOT_COMMANDS_CHANNEL_ID, UIUC_ROLES, PRIVATE_ROLES
 
 
 class Roles(Extension):
@@ -14,15 +14,16 @@ class Roles(Extension):
     @subcommand(role={"description": "Role to add","autocomplete": True})
     async def add(self, ctx: SlashContext, role: str) -> None:
         """Add yourself to a team role. Requires the UIUC role."""
+        ephemeral = ctx.channel_id != BOT_COMMANDS_CHANNEL_ID
         if (ctx.guild == None):
-            await ctx.send(":x: You can only run this command in a server.", ephemeral=True)
+            await ctx.send(":x: You can only run this command in a server.", ephemeral=ephemeral)
             return
         user = ctx.guild.get_member(ctx.user.id)
         if (user == None):
-            await ctx.send(":x: You aren't in the server! Are you a ghost?", ephemeral=True)
+            await ctx.send(":x: You aren't in the server! Are you a ghost?", ephemeral=ephemeral)
             return
         if (not any(user.has_role(role) for role in UIUC_ROLES)):
-            await ctx.send(":x: You need to be UIUC verified to use this command. Verify yourself at <https://sigpwny.com/auth>.", ephemeral=True)
+            await ctx.send(":x: You need to be UIUC verified to use this command. Verify yourself at <https://sigpwny.com/auth>.", ephemeral=ephemeral)
             return
         for valid_role in self.roles:
             valid_role_name = valid_role.get("name")
@@ -31,22 +32,23 @@ class Roles(Extension):
                 continue
             if role == valid_role_name:
                 if user.has_role(valid_role_id):
-                    await ctx.send(f":x: You already have the **{role}** role.", ephemeral=True)
+                    await ctx.send(f":x: You already have the **{role}** role.", ephemeral=ephemeral)
                     return
                 await user.add_role(valid_role_id)
-                await ctx.send(f":white_check_mark: Added to **{role}**.")
+                await ctx.send(f":white_check_mark: Added to **{role}**.", ephemeral=ephemeral)
                 return
-        await ctx.send(":x: Invalid role.")
+        await ctx.send(":x: Invalid role.", ephemeral=ephemeral)
 
     @subcommand(role={"description": "Role to remove","autocomplete": True})
     async def remove(self, ctx: SlashContext, role: str) -> None:
         """Remove yourself from a team role."""
+        ephemeral = ctx.channel_id != BOT_COMMANDS_CHANNEL_ID
         if (ctx.guild == None):
-            await ctx.send(":x: You can only run this command in a server.", ephemeral=True)
+            await ctx.send(":x: You can only run this command in a server.", ephemeral=ephemeral)
             return
         user = ctx.guild.get_member(ctx.user.id)
         if (user == None):
-            await ctx.send(":x: You aren't in the server! Are you a ghost?", ephemeral=True)
+            await ctx.send(":x: You aren't in the server! Are you a ghost?", ephemeral=ephemeral)
             return
         for valid_role in self.roles:
             valid_role_name = valid_role.get("name")
@@ -55,12 +57,12 @@ class Roles(Extension):
                 continue
             if role == valid_role_name:
                 if not user.has_role(valid_role_id):
-                    await ctx.send(f":x: You do not have the **{role}** role.", ephemeral=True)
+                    await ctx.send(f":x: You do not have the **{role}** role.", ephemeral=ephemeral)
                     return
                 await user.remove_role(valid_role_id)
-                await ctx.send(f":white_check_mark: Removed from **{role}**.")
+                await ctx.send(f":white_check_mark: Removed from **{role}**.", ephemeral=ephemeral)
                 return
-        await ctx.send(":x: Invalid role.")
+        await ctx.send(":x: Invalid role.", ephemeral=ephemeral)
 
     @add.autocomplete("role")
     @remove.autocomplete("role")
