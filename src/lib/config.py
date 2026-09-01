@@ -23,6 +23,10 @@ CTF_ROLES = os.getenv("CTF_ROLES", "").split(",") or config.get("ctf_roles", [])
 UIUC_ROLES = os.getenv("UIUC_ROLES", "").split(",") or config.get("uiuc_roles", [])
 MODERATOR_ROLES = os.getenv("MODERATOR_ROLES", "").split(',') or config.get("moderator_roles", [])
 PRIVATE_ROLES = config.get("private_roles", [])
+BOT_COMMANDS_CHANNEL_ID = int(
+    os.getenv("BOT_COMMANDS_CHANNEL_ID")
+    or config.get("bot_commands_channel_id", 861767929002721310)
+)
 
 CHALLENGE_CATEGORIES = ["crypto", "forensics", "misc", "pwn", "osint", "rev", "web"]
 FORUM_GENERAL_CHANNEL = "General"

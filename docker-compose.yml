@@ -10,6 +10,7 @@ services:
       - CTF_ROLES
       - UIUC_ROLES
       - MODERATOR_ROLES
+      - BOT_COMMANDS_CHANNEL_ID
     volumes:
       - ./.env:/bot/.env
       - ./config.yml:/bot/config.yml
