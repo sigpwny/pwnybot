@@ -1,49 +1,105 @@
-# PWNYBOT
+# pwnybot
 
-The official sigpwny discord bot.
-### Installation
+The official SIGPwny Discord bot. Version 2 is a TypeScript rewrite built around Discord HTTP interactions, with Cloudflare Workers and D1 as the default runtime. The same Hono application can run on Node.js with SQLite when a conventional server is required.
 
-1. Clone from github
-2. If you haven't already, create a discord bot and then go to OAUTH 2 > URL Generator.
+## Architecture
 
-Check the 'bot' scope, and after doing so, the list of bot-specific permissions should pop up. You will need:
+- `server/src/app.ts` is the runtime-neutral Hono application.
+- `server/src/worker.ts` is the Cloudflare Workers entrypoint.
+- `server/src/node.ts` is the self-hosted Node.js entrypoint.
+- `server/src/commands/` keeps each command declaration beside its handler.
+- `server/src/storage/` provides D1, SQLite, and in-memory adapters behind one asynchronous interface.
+- `server/src/reminders/` delivers D1 reminders through a singleton Durable Object alarm. Node uses the same delivery code with an in-process timer.
+- Discord state such as forums, challenges, roles, and messages remains in Discord. Only reminders are stored locally.
 
-+ Manage Channels
-+ Manage Roles
-+ Manage Threads
+No Discord Gateway process or Python runtime is required.
 
-Additionally, go to the 'Bot' tab and enable the 'Message Content Intent'.
+## Compatibility
 
-In the future, more permission may be needed, so ask the current maintainer.
+The initial v2 port includes:
 
-Then, copy the link and invite the bot to your server.
+- `/reverserepeat`
+- `/template say`
+- `/chal create` and `/chal solve`
+- `/ctf create`, `/ctf addcategory`, and `/ctf addrole`
+- `/ctfs optin` and `/ctfs optout`
+- `/roles add` and `/roles remove`, including autocomplete
+- `/manager assign_roles`
+- `/manager say` with ephemeral Confirm/Cancel buttons
+- `/manager edit` with direct modal input
+- `/copypasta byid`, `/copypasta byname`, and `/copypasta random`
+- `/reminders create`, `/reminders list`, and `/reminders delete`
 
-2. Create a `.env` file like this:
+The v1 reaction watcher has been replaced by authenticated HTTP interactions. No Gateway connection is used.
 
+## Development
+
+Prerequisites:
+
+- Node.js 22 or newer
+- npm
+- A Discord application with a bot user
+
+```bash
+cp .env.example .env
+cd server
+npm install
+npm run typecheck
+npm test
 ```
-DISCORD_TOKEN=XXXXXX
-GUILD_IDS=GUILD1_ID
-CTF_CATEGORY_CHANNELS=CHANNEL1_ID
-CTF_ROLES=ROLE1_ID
-UIUC_ROLES=ROLE2_ID
-MODERATOR_ROLES=ROLE3_ID
+
+Register commands after filling in `.env`:
+
+```bash
+npm run discord:commands:register
 ```
 
-Fill in the `DISCORD_TOKEN` with the token from the 'Bot' tab of the discord developer portal. Then, fill in the `GUILD_IDS` with a comma seperated list of each guild IDs you want the server running on. If you just have one, do `GUILD_IDS=XXXXXX`. Same goes for `CTF_CATEGORY` (category channels), `CTF_ROLES` (roles that can access CTF channels), and `UIUC_ROLES` (roles that can gain CTF roles).
+Discord must send interactions to:
 
-
-3. Startup docker with this command
-
-```
-docker-compose up -d pwnybot
+```text
+https://<hostname>/api/discord/interactions/callback
 ```
 
-Note that `docker-compose up -d --build pwnybot` can be helpful to force rebuild all dependencies.
+See the deployment guides:
 
+- [Cloudflare Workers and D1](docs/deployment/cloudflare-workers.md)
+- [Self-hosted Node and SQLite](docs/deployment/self-hosted.md)
 
-##### Interested in helping?
+## Configuration
 
-+ Check the issues for feature requests and bugs
-+ Create a branch and submit a PR.
-+ Please do not push directly to master! (This will redeploy pwnybot with potentially broken code :0)
-+ Check out the `cogs/template` directory for a starting point.
+| Variable | Purpose |
+| --- | --- |
+| `DISCORD_APPLICATION_ID` | Discord application ID |
+| `DISCORD_BOT_TOKEN` | Bot token used for Discord REST requests |
+| `DISCORD_PUBLIC_KEY` | Ed25519 public key used to verify interactions |
+| `GUILD_IDS` | Comma-separated guild IDs for command registration |
+| `CTF_CATEGORY_CHANNELS` | Comma-separated candidate parent category IDs |
+| `CTF_ROLES` | Comma-separated CTF team role IDs |
+| `UIUC_ROLES` | Comma-separated UIUC verification role IDs |
+| `MODERATOR_ROLES` | Comma-separated reminder moderator role IDs |
+| `PRIVATE_ROLES` | JSON array of `{ "name", "discord_role_id" }` objects |
+
+Node additionally accepts `PORT` and `SQLITE_PATH`.
+
+V1 `config.yml` is not loaded by v2. Convert its `private_roles` array to the `PRIVATE_ROLES` JSON environment variable before cutover. Existing PostgreSQL reminders must be drained or migrated separately; v2 does not discard the old Docker volume automatically.
+
+Use `npm run db:import:postgres` for a non-destructive reminder migration. See the deployment guides for target-specific commands.
+
+## Reliability
+
+- Discord side effects are deduplicated by interaction ID for 24 hours.
+- Temporary component and pagination state is owner, guild, and channel bound.
+- Discord REST requests use bounded timeouts and retries for network, rate-limit, and server failures.
+- Failed reminders retry five times with exponential backoff, then are deleted and logged.
+- Runtime errors are emitted as structured metadata without tokens or message content.
+
+## Verification
+
+```bash
+cd server
+npm run format:check
+npm run typecheck
+npm test
+npm run build
+npx wrangler deploy --dry-run
+```
