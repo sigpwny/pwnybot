@@ -4,15 +4,19 @@ on:
     branches:
       - main
   workflow_dispatch:
+permissions:
+  contents: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Create SSH key
         run: |
           mkdir -p ~/.ssh/
-          echo "$SSH_PRIVATE_KEY" | base64 -d > ../private.key
-          sudo chmod 600 ../private.key
+          echo "$SSH_PRIVATE_KEY" | base64 --decode > "$SSH_KEY_PATH"
+          chmod 600 "$SSH_KEY_PATH"
           echo "$SSH_KNOWN_HOSTS" | base64 -d > ~/.ssh/known_hosts
         shell: bash
         env:
@@ -20,31 +24,35 @@ jobs:
           SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
           SSH_KEY_PATH: ${{ github.workspace }}/../private.key
       - name: Check out repository code
-        uses: actions/checkout@v2
-      - name: Install OpenVPN
+        uses: actions/checkout@v4
+      - name: Install WireGuard
         run: |
-          sudo apt update
-          sudo apt install openvpn openvpn-systemd-resolved
-      - name: Connect to OpenVPN server
-        run: |
-          echo "$OPENVPN_CONFIG" > ~/vpn.ovpn
-          sudo openvpn --config ~/vpn.ovpn --log "vpn.log" --daemon
-          sleep 15
+          sudo apt-get update
+          sudo apt-get install --yes wireguard-tools resolvconf
+      - name: Connect to WireGuard server
         env:
-          OPENVPN_CONFIG: ${{ secrets.OPENVPN_CONFIG }}
+          WIREGUARD_CONFIG: ${{ secrets.WIREGUARD_CONFIG }}
+        run: |
+          umask 077
+          printf '%s\n' "$WIREGUARD_CONFIG" > "$RUNNER_TEMP/wg0.conf"
+          sudo wg-quick up "$RUNNER_TEMP/wg0.conf"
+          sudo wg show wg0
+          ping -c 3 -W 5 192.168.231.1
 
       - name: Redeploy pwnybot
         run: |
-          cat deploy.sh | ssh -i $SSH_KEY_PATH "$SERVER_USER@$SERVER_IP"
+          cat deploy.sh | ssh -o BatchMode=yes -o ConnectTimeout=15 -i "$SSH_KEY_PATH" "$SERVER_USER@$SERVER_IP"
         shell: bash
         env:
-          VPN_PASSWORD: ${{secrets.VPN_PASSWORD}}
-          VPN_USERNAME: ${{secrets.VPN_USERNAME}}
           SSH_KEY_PATH: ${{ github.workspace }}/../private.key
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SERVER_IP: ${{ secrets.SERVER_IP }}
-      - name: Kill VPN connection
+      - name: Disconnect WireGuard
         if: always()
         run: |
-          sudo chmod 777 vpn.log
-          sudo killall openvpn
+          status=0
+          if sudo wg show wg0 >/dev/null 2>&1; then
+            sudo wg-quick down "$RUNNER_TEMP/wg0.conf" || status=$?
+          fi
+          rm -f "$RUNNER_TEMP/wg0.conf"
+          exit "$status"
