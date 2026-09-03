@@ -1,4 +1,3 @@
-version: "3.3" # optional since v1.27.0
 services:
   pwnybot:
     restart: always
@@ -16,7 +15,7 @@ services:
       - ./config.yml:/bot/config.yml
   db:
     restart: always
-    image: postgres
+    image: postgres:17
     environment:
       POSTGRES_USER: sigpwny
       POSTGRES_PASSWORD: sigpwny
