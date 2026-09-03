@@ -24,7 +24,7 @@ jobs:
           SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
           SSH_KEY_PATH: ${{ github.workspace }}/../private.key
       - name: Check out repository code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Install WireGuard
         run: |
           sudo apt-get update
@@ -37,7 +37,6 @@ jobs:
           printf '%s\n' "$WIREGUARD_CONFIG" > "$RUNNER_TEMP/wg0.conf"
           sudo wg-quick up "$RUNNER_TEMP/wg0.conf"
           sudo wg show wg0
-          ping -c 3 -W 5 192.168.231.1
 
       - name: Redeploy pwnybot
         run: |
