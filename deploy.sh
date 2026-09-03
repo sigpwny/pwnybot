@@ -1,3 +1,5 @@
+set -euo pipefail
+
 cd ~/pwnybot
-git pull
-docker-compose up --build -d pwnybot db
+git pull --ff-only
+docker compose up --build -d pwnybot db
