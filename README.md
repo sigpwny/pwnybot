@@ -11,6 +11,7 @@ Check the 'bot' scope, and after doing so, the list of bot-specific permissions 
 + Manage Channels
 + Manage Roles
 + Manage Threads
++ Manage Messages
 
 Additionally, go to the 'Bot' tab and enable the 'Message Content Intent'.
 
@@ -28,11 +29,14 @@ CTF_ROLES=ROLE1_ID
 UIUC_ROLES=ROLE2_ID
 MODERATOR_ROLES=ROLE3_ID
 BOT_COMMANDS_CHANNEL_ID=CHANNEL2_ID
+CENSOR_ROLE_ID=749118678821240832
 ```
 
 Fill in the `DISCORD_TOKEN` with the token from the 'Bot' tab of the discord developer portal. Then, fill in the `GUILD_IDS` with a comma seperated list of each guild IDs you want the server running on. If you just have one, do `GUILD_IDS=XXXXXX`. Same goes for `CTF_CATEGORY` (category channels), `CTF_ROLES` (roles that can access CTF channels), and `UIUC_ROLES` (roles that can gain CTF roles).
 
 `BOT_COMMANDS_CHANNEL_ID` is optional and defaults to `861767929002721310`.
+`CENSOR_ROLE_ID` controls which role may use `/censor` and defaults to `749118678821240832`.
+
 
 
 3. Startup docker with this command

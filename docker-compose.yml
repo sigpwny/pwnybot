@@ -10,6 +10,7 @@ services:
       - UIUC_ROLES
       - MODERATOR_ROLES
       - BOT_COMMANDS_CHANNEL_ID
+      - CENSOR_ROLE_ID
     volumes:
       - ./.env:/bot/.env
       - ./config.yml:/bot/config.yml

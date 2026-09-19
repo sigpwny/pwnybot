@@ -22,6 +22,10 @@ CTF_CATEGORY_CHANNELS = os.getenv("CTF_CATEGORY_CHANNELS", "").split(",") or con
 CTF_ROLES = os.getenv("CTF_ROLES", "").split(",") or config.get("ctf_roles", [])
 UIUC_ROLES = os.getenv("UIUC_ROLES", "").split(",") or config.get("uiuc_roles", [])
 MODERATOR_ROLES = os.getenv("MODERATOR_ROLES", "").split(',') or config.get("moderator_roles", [])
+CENSOR_ROLE_ID = int(
+    os.getenv("CENSOR_ROLE_ID")
+    or config.get("censor_role_id", 749118678821240832)
+)
 PRIVATE_ROLES = config.get("private_roles", [])
 BOT_COMMANDS_CHANNEL_ID = int(
     os.getenv("BOT_COMMANDS_CHANNEL_ID")
