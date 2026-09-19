@@ -6,7 +6,7 @@ from lib.util import command
 
 
 class Censor(Extension):
-    """Commands for temporarily censoring members."""
+    """Commands for channel-specific message censorship."""
 
     def __init__(self, _):
         self.censored_members: set[tuple[int, int]] = set()
@@ -25,7 +25,7 @@ class Censor(Extension):
 
     @command(member={"description": "Member whose messages to delete"})
     async def censor(self, ctx: SlashContext, member: interactions.User) -> None:
-        """Delete a member's messages in this channel until the bot restarts."""
+        """Delete a member's messages in this channel."""
         if not await self._can_manage_censorship(ctx):
             return
 
@@ -36,7 +36,7 @@ class Censor(Extension):
 
         self.censored_members.add(censor_entry)
         await ctx.send(
-            f":white_check_mark: Censoring {member.mention} in this channel until the bot restarts.",
+            f":white_check_mark: Messages from {member.mention} will now be deleted in this channel.",
             ephemeral=True,
         )
 
@@ -53,9 +53,33 @@ class Censor(Extension):
 
         self.censored_members.remove(censor_entry)
         await ctx.send(
-            f":white_check_mark: No longer censoring {member.mention} in this channel.",
+            f":white_check_mark: Messages from {member.mention} will no longer be deleted in this channel.",
             ephemeral=True,
         )
+
+    @command()
+    async def censored(self, ctx: SlashContext) -> None:
+        """List censored members and their channels."""
+        if not await self._can_manage_censorship(ctx):
+            return
+
+        if not self.censored_members:
+            await ctx.send("No members are currently censored.", ephemeral=True)
+            return
+
+        chunks = []
+        chunk = "Currently censored members:"
+        for channel_id, member_id in sorted(self.censored_members):
+            entry = f"<@{member_id}>: <#{channel_id}>"
+            if len(chunk) + len(entry) + 1 > 2000:
+                chunks.append(chunk)
+                chunk = entry
+            else:
+                chunk = f"{chunk}\n{entry}"
+        chunks.append(chunk)
+
+        for chunk in chunks:
+            await ctx.send(chunk, ephemeral=True)
 
     @interactions.listen(interactions.api.events.MessageCreate)
     async def on_message_create(self, event: interactions.api.events.MessageCreate) -> None:
